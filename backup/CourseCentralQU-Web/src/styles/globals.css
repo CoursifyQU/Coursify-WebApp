@@ -1,0 +1,385 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Additional styles from app/globals.css */
+.gradient-bg {
+  background: radial-gradient(circle at 50% 50%, rgba(0, 48, 95, 0.1) 0%, rgba(255, 255, 255, 0) 70%),
+    radial-gradient(circle at 80% 20%, rgba(239, 178, 21, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #00305f, #d62839 50%, #efb215);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.blur-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: -1;
+  opacity: 0.5;
+}
+
+.blur-circle-blue {
+  background-color: rgba(0, 48, 95, 0.3);
+}
+
+.blur-circle-gold {
+  background-color: rgba(239, 178, 21, 0.3);
+}
+
+.blur-circle-red {
+  background-color: rgba(214, 40, 57, 0.2);
+}
+
+@keyframes spin-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes ping-slow {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+.animate-ping-slow {
+  animation: ping-slow 2s ease-in-out infinite;
+}
+@keyframes subtle-bounce {
+  0%,
+  100% {
+    transform: translateY(0) translateZ(0);
+  }
+  50% {
+    transform: translateY(-8px) translateZ(0);
+  }
+}
+.animate-subtle-bounce {
+  animation: subtle-bounce 4s ease-in-out infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+/* Enhanced animation for the traveling border effect */
+@keyframes border-travel {
+  0% {
+    clip-path: polygon(0 0, 8% 0, 8% 100%, 0 100%);
+    opacity: 1;
+  }
+  25% {
+    clip-path: polygon(0 0, 100% 0, 100% 8%, 0 8%);
+    opacity: 1;
+  }
+  50% {
+    clip-path: polygon(92% 0, 100% 0, 100% 100%, 92% 100%);
+    opacity: 1;
+  }
+  75% {
+    clip-path: polygon(0 92%, 100% 92%, 100% 100%, 0 100%);
+    opacity: 1;
+  }
+  100% {
+    clip-path: polygon(0 0, 8% 0, 8% 100%, 0 100%);
+    opacity: 1;
+  }
+}
+.animate-border-travel {
+  animation: border-travel 3s linear infinite;
+  filter: drop-shadow(0 0 3px #efb215);
+}
+
+.dot-pattern {
+  background-image: radial-gradient(circle, #00305f 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Glowing effect for selected questions */
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(0, 48, 95, 0.5), 0 0 10px rgba(214, 40, 57, 0.3), 0 0 15px rgba(239, 178, 21, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(0, 48, 95, 0.7), 0 0 20px rgba(214, 40, 57, 0.5), 0 0 30px rgba(239, 178, 21, 0.3);
+  }
+}
+
+.glow-effect {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Custom slider styles */
+.slider-thumb {
+  height: 1.25rem;
+  width: 1.25rem;
+  border-radius: 9999px;
+  border: 2px solid #00305f;
+  background-color: white;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.slider-thumb:focus {
+  outline: none;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: #00305f;
+  --tw-ring-offset-width: 2px;
+}
+
+.slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(0, 48, 95, 0.4);
+}
+
+.slider-thumb:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Auth page specific styles */
+.auth-gradient-bg {
+  background: linear-gradient(135deg, 
+    rgba(0, 48, 95, 0.9) 0%, 
+    rgba(0, 59, 113, 0.8) 50%, 
+    rgba(0, 48, 95, 0.9) 100%),
+    radial-gradient(circle at 90% 10%, rgba(214, 40, 57, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 10% 90%, rgba(239, 178, 21, 0.1) 0%, transparent 60%);
+  background-size: 200% 200%, 100% 100%, 100% 100%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%, 0% 0%, 0% 0%;
+  }
+  50% {
+    background-position: 100% 50%, 0% 0%, 0% 0%;
+  }
+  100% {
+    background-position: 0% 50%, 0% 0%, 0% 0%;
+  }
+}
+
+.auth-card {
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
+              0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+              0 0 64px rgba(0, 48, 95, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: cardEntrance 0.6s ease-out;
+}
+
+.auth-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
+              0 0 0 1px rgba(255, 255, 255, 0.15) inset,
+              0 0 64px rgba(0, 48, 95, 0.15);
+}
+
+@keyframes cardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.auth-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.auth-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: all 0.5s ease;
+  z-index: -1;
+}
+
+.auth-button:hover::before {
+  left: 100%;
+}
+
+.auth-button:active {
+  transform: scale(0.98);
+}
+
+.auth-input {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.auth-input:focus {
+  border-color: #efb215;
+  box-shadow: 0 0 0 2px rgba(239, 178, 21, 0.25);
+}
+
+.auth-link {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.auth-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background: linear-gradient(90deg, #00305f, #efb215);
+  transition: width 0.3s ease;
+  opacity: 0.8;
+  border-radius: 2px;
+}
+
+.auth-link:hover::after {
+  width: 100%;
+}
