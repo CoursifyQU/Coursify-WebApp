@@ -1,237 +1,453 @@
-'use client';
+"use client"
 
-import React from 'react';
-import Link from 'next/link';
-import Navigation from '@/components/Navigation';
-import Image from 'next/image';
-import Footer from '@/components/Footer';
+import { useRef } from "react"
+import { motion, useInView } from "framer-motion"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import {
+  Github,
+  Linkedin,
+  Mail,
+  ChevronRight,
+  BookOpen,
+  Users,
+  GraduationCap,
+  Brain,
+  BarChart3,
+  MessageSquare,
+} from "lucide-react"
+import Link from "next/link"
+import { useToast } from "@/components/ui/use-toast"
+// import { FloatingElements } from "@/components/floating-elements"
 
-// Team member data
-const teamMembers = [
-  {
-    name: 'Amaan Javed',
-    role: 'Software Engineer',
-    program: "Queen's Computing '26",
-    image: '/images/placeholder-profile.png', // Replace with actual image
-    links: {
-      linkedin: 'https://linkedin.com/in/',
-      github: 'https://github.com/',
-      website: 'https://website.com/'
-    }
-  },
-  {
-    name: 'Aayush Aryal',
-    role: 'Software Engineer',
-    program: "Queen's Computing '28",
-    image: '/images/placeholder-profile.png', // Replace with actual image
-    links: {
-      linkedin: 'https://linkedin.com/in/',
-      github: 'https://github.com/',
-      website: 'https://website.com/'
-    }
+export default function About() {
+  // Refs for animations
+  const headerRef = useRef<HTMLDivElement>(null)
+  const missionRef = useRef<HTMLDivElement>(null)
+  const statsRef = useRef<HTMLDivElement>(null)
+  const teamRef = useRef<HTMLDivElement>(null)
+  const helpRef = useRef<HTMLDivElement>(null)
+  const involvedRef = useRef<HTMLDivElement>(null)
+  const { toast } = useToast()
+
+  const isHeaderInView = useInView(headerRef, { once: true, amount: 0.5 })
+  const isMissionInView = useInView(missionRef, { once: true, amount: 0.3 })
+  const isStatsInView = useInView(statsRef, { once: true, amount: 0.5 })
+  const isTeamInView = useInView(teamRef, { once: true, amount: 0.3 })
+  const isHelpInView = useInView(helpRef, { once: true, amount: 0.3 })
+  const isInvolvedInView = useInView(involvedRef, { once: true, amount: 0.5 })
+
+  const copyToClipboard = (email: string, name: string) => {
+    navigator.clipboard.writeText(email).then(() => {
+      toast({
+        title: "Email copied!",
+        description: `${name}'s email has been copied to your clipboard.`,
+        duration: 3000,
+      })
+    })
   }
-];
 
-// Stats data
-const stats = [
-  {
-    title: "We have gathered",
-    value: "500+ courses",
-    icon: "📊"
-  },
-  {
-    title: "From over",
-    value: "8+ Semesters",
-    icon: "🗓️"
-  },
-  {
-    title: "all to support",
-    value: "Queen's students",
-    icon: "🎓"
-  }
-];
-
-export default function AboutPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-white relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden -z-10">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#00305f]/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#d62839]/5 rounded-full blur-3xl"></div>
-        <div 
-          className="absolute inset-0 opacity-[0.02]" 
-          style={{
-            backgroundImage: 'radial-gradient(#00305f 1px, transparent 1px)',
-            backgroundSize: '40px 40px'
-          }}
-        ></div>
+    <div className="relative min-h-screen overflow-hidden mesh-gradient">
+      {/* Custom animations */}
+      <style jsx global>{`
+        .mesh-gradient {
+          background-color: hsla(0, 0%, 100%, 1);
+          background-image:
+            radial-gradient(at 21% 33%, hsla(225, 100%, 19%, 0.05) 0px, transparent 50%),
+            radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.05) 0px, transparent 50%),
+            radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.05) 0px, transparent 50%);
+        }
+        
+        .card-hover-effect {
+          transition: all 0.3s ease;
+        }
+        
+        .card-hover-effect:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .dot-pattern {
+          background-image: radial-gradient(circle, #00305f 1px, transparent 1px);
+          background-size: 20px 20px;
+        }
+        
+        .gradient-text {
+          background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
+          background-size: 300% 300%;
+          animation: gradient-shift 6s ease infinite;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          color: transparent;
+        }
+        
+        @keyframes gradient-shift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        
+        .team-card-gradient {
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .team-card-gradient::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(to right, #00305f, #d62839, #efb215);
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.3s ease;
+        }
+        
+        .team-card-gradient:hover::before {
+          transform: scaleX(1);
+        }
+      `}</style>
+
+      {/* Simple background elements */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#d62839]/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#00305f]/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-[#efb215]/5 rounded-full blur-3xl"></div>
       </div>
 
-      <Navigation />
-      
-      <main className="flex-grow px-4 py-16">
-        <div className="max-w-6xl mx-auto">
-          {/* Hero Section */}
-          <section className="mb-24">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute w-96 h-96 bg-[#d62839]/5 rounded-full blur-3xl -top-10 -right-20"></div>
+        <div className="absolute w-80 h-80 bg-[#00305f]/5 rounded-full blur-3xl -bottom-10 -left-20"></div>
+        <div className="dot-pattern absolute inset-0 opacity-[0.08]"></div>
+      </div>
+
+      <div className="container py-12 px-4 md:px-6 relative z-10">
+        <motion.div
+          ref={headerRef}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.8 }}
+          className="mb-16 max-w-3xl mx-auto text-center"
+        >
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-[#00305f]/10 mb-4">
+            <span className="text-[#00305f] text-sm font-medium mr-2">Our Story</span>
+            <span className="flex h-1.5 w-1.5 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d62839] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#d62839]"></span>
+            </span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">
+            <span className="text-[#00305f]">About</span> <span className="gradient-text">CourseCentral</span>
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            Helping Queen's University students make informed academic decisions through data and AI.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20 max-w-5xl mx-auto">
+          <motion.div
+            ref={missionRef}
+            initial={{ opacity: 0, x: -30 }}
+            animate={isMissionInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
+            transition={{ duration: 0.6 }}
+          >
             <div className="relative">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-6 text-[#00305f]">
-                About <span className="text-[#d62839]">Course Central</span>
-              </h1>
-              <div className="w-32 h-1.5 bg-gradient-to-r from-[#d62839] to-[#00305f] mx-auto mb-12 rounded-full"></div>
-              <div className="absolute -top-10 right-1/4 w-12 h-12 bg-[#efb215]/10 rounded-full blur-lg"></div>
-              <div className="absolute top-10 -left-4 w-16 h-16 bg-[#d62839]/10 rounded-full blur-lg"></div>
+              <div className="absolute -left-4 -top-4 w-12 h-12 bg-[#efb215]/20 rounded-full blur-lg"></div>
+              <h2 className="text-2xl font-bold mb-6 text-[#00305f] relative z-10">Our Mission</h2>
             </div>
-            
-            <div className="max-w-3xl mx-auto text-center">
-              <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
-                Course Central was created to help Queen's University students make informed decisions 
-                about their courses by providing comprehensive data, AI-powered insights, and a community 
-                of shared experiences.
+            <div className="space-y-4">
+              <p className="text-gray-700">
+                CourseCentral was created to address a critical gap in the Queen's University student experience: the
+                lack of comprehensive, accessible data about courses and their historical performance.
               </p>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                Our platform combines grade distributions, professor reviews, and course information 
-                in one place, making course selection easier and more transparent.
+              <p className="text-gray-700">
+                We believe that students should have access to detailed information about courses, including grade
+                distributions, professor performance, and peer experiences, to make informed decisions about their
+                academic journey.
               </p>
-            </div>
-          </section>
-          
-          {/* What We're Doing Section */}
-          <section className="mb-24 relative">
-            <div className="absolute -top-20 -left-20 w-40 h-40 bg-[#00305f]/5 rounded-full blur-3xl"></div>
-            <h2 className="text-3xl font-bold text-center mb-14 text-[#00305f]">
-              What is Course Central doing?
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {stats.map((stat, index) => (
-                <div 
-                  key={index} 
-                  className="border border-gray-200 rounded-xl p-8 text-center shadow-sm hover:shadow-lg transition-all duration-300 bg-white group relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#00305f]/0 via-[#00305f]/0 to-[#00305f]/0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                  <div className="text-3xl mb-3">{stat.icon}</div>
-                  <p className="text-sm uppercase tracking-wider text-gray-500 mb-2">{stat.title}</p>
-                  <p className="text-2xl font-bold text-[#d62839]">{stat.value}</p>
-                </div>
-              ))}
-            </div>
-            
-            <div className="mt-14 text-center text-gray-600 max-w-3xl mx-auto">
-              <p className="mb-2 text-lg">
-                Course Central is a free resource for students to find all the course information they need.
-              </p>
-              <p className="text-md">
-                We're continuously working to improve our platform and add more features to help students succeed.
+              <p className="text-gray-700">
+                By combining official university data with cutting-edge AI technology, we've built a platform that
+                empowers students to optimize their course selections and academic planning.
               </p>
             </div>
-          </section>
-          
-          {/* Meet the Team Section */}
-          <section className="mb-24 relative">
-            <div className="absolute -right-20 top-40 w-64 h-64 bg-[#d62839]/5 rounded-full blur-3xl"></div>
-            <h2 className="text-3xl font-bold text-center mb-16 text-[#00305f]">Meet the Team</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-14 max-w-5xl mx-auto">
-              {teamMembers.map((member, index) => (
-                <div 
-                  key={index} 
-                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1 group"
-                >
-                  <div className="h-8 bg-gradient-to-r from-[#00305f] to-[#d62839]"></div>
-                  <div className="p-8 relative">
-                    <div className="flex items-center justify-center mb-6 -mt-16">
-                      <div className="w-28 h-28 rounded-full bg-white p-1.5 shadow-lg overflow-hidden relative">
-                        <div className="rounded-full w-full h-full bg-gradient-to-r from-[#efb215]/30 to-[#d62839]/30 flex items-center justify-center text-3xl font-bold text-[#00305f]">
-                          {member.name.split(' ').map(n => n[0]).join('')}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <h3 className="text-2xl font-bold text-center text-[#00305f] mb-1">{member.name}</h3>
-                    <p className="text-gray-600 text-center mb-2">{member.role}</p>
-                    <p className="text-[#d62839] text-sm font-medium text-center mb-6">{member.program}</p>
-                    
-                    <div className="flex justify-center space-x-4">
-                      <Link 
-                        href={member.links.linkedin} 
-                        target="_blank"
-                        aria-label="LinkedIn"
-                        className="bg-gray-100 hover:bg-[#0077b5]/10 text-gray-700 hover:text-[#0077b5] transition-colors p-3 rounded-full"
-                      >
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                        </svg>
-                      </Link>
-                      <Link 
-                        href={member.links.github} 
-                        target="_blank"
-                        aria-label="GitHub"
-                        className="bg-gray-100 hover:bg-gray-800/10 text-gray-700 hover:text-gray-800 transition-colors p-3 rounded-full"
-                      >
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                        </svg>
-                      </Link>
-                      <Link 
-                        href={member.links.website} 
-                        target="_blank"
-                        aria-label="Personal Website"
-                        className="bg-gray-100 hover:bg-[#d62839]/10 text-gray-700 hover:text-[#d62839] transition-colors p-3 rounded-full"
-                      >
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm1 16.057v-3.057h2.994c-.059 1.143-.212 2.24-.456 3.279-.823-.12-1.674-.188-2.538-.222zm1.957 2.162c-.499 1.33-1.159 2.497-1.957 3.456v-3.62c.666.028 1.319.081 1.957.164zm-1.957-7.219v-3.015c.868-.034 1.721-.103 2.548-.224.238 1.027.389 2.111.446 3.239h-2.994zm0-5.014v-3.661c.806.969 1.471 2.15 1.971 3.496-.642.084-1.3.137-1.971.165zm2.703-3.267c1.237.496 2.354 1.228 3.29 2.146-.642.234-1.311.442-2.019.607-.344-.992-.775-1.91-1.271-2.753zm-7.241 13.56c-.244-1.039-.398-2.136-.456-3.279h2.994v3.057c-.865.034-1.714.102-2.538.222zm2.538 1.776v3.62c-.798-.959-1.458-2.126-1.957-3.456.638-.083 1.291-.136 1.957-.164zm-2.994-7.055c.057-1.128.207-2.212.446-3.239.827.121 1.68.19 2.548.224v3.015h-2.994zm1.024-5.179c.5-1.346 1.165-2.527 1.97-3.496v3.661c-.671-.028-1.329-.081-1.97-.165zm-2.005-.35c-.708-.165-1.377-.373-2.018-.607.937-.918 2.053-1.65 3.29-2.146-.496.844-.927 1.762-1.272 2.753zm-.549 1.918c-.264 1.151-.434 2.36-.492 3.611h-3.933c.165-1.658.739-3.197 1.617-4.518.88.361 1.816.67 2.808.907zm.009 9.262c-.988.236-1.92.542-2.797.9-.89-1.328-1.471-2.879-1.637-4.551h3.934c.058 1.265.231 2.488.5 3.651zm.553 1.917c.342.976.768 1.881 1.257 2.712-1.223-.49-2.326-1.211-3.256-2.115.636-.229 1.299-.435 1.999-.597zm9.924 0c.7.163 1.362.367 1.999.597-.931.903-2.034 1.625-3.257 2.116.489-.832.915-1.737 1.258-2.713zm.553-1.917c.27-1.163.442-2.386.501-3.651h3.934c-.167 1.672-.748 3.223-1.638 4.551-.877-.358-1.81-.664-2.797-.9zm.501-5.651c-.058-1.251-.229-2.46-.492-3.611.992-.237 1.929-.546 2.809-.907.877 1.321 1.451 2.86 1.616 4.518h-3.933z"/>
-                        </svg>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-          
-          {/* Mission Section */}
-          <section className="mb-24">
-            <div className="bg-gradient-to-r from-[#00305f]/10 to-[#d62839]/10 rounded-2xl p-10 lg:p-14 max-w-4xl mx-auto transition-all duration-500 ease-in-out shadow-sm hover:shadow-md transform hover:translate-y-[-2px]">
-              <h2 className="text-2xl font-bold text-center mb-6 text-[#00305f]">Our Mission</h2>
-              <p className="text-lg text-center text-gray-700 mb-8 leading-relaxed">
-                To empower Queen's students to make better academic decisions through data transparency and community insights.
-              </p>
-              <div className="flex justify-center">
-                <Link 
-                  href="/ai-features" 
-                  className="relative group bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
-                >
-                  <span className="relative z-10">Try AI Assistant</span>
-                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-0 bg-gradient-to-r from-[#c61e29] to-[#8a1a2e] transition-transform duration-700 ease-in-out"></div>
-                  <div className="absolute top-0 right-0 w-12 h-12 -mt-4 -mr-4 bg-white/10 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-in-out delay-100"></div>
+            <div className="mt-6">
+              <Button
+                asChild
+                variant="outline"
+                className="group border-[#00305f] text-[#00305f] hover:bg-[#00305f] hover:text-white"
+              >
+                <Link href="/schools/queens">
+                  <span className="flex items-center">
+                    Explore Courses
+                    <ChevronRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-300" />
+                  </span>
                 </Link>
+              </Button>
+            </div>
+          </motion.div>
+
+          <motion.div
+            ref={statsRef}
+            initial={{ opacity: 0, x: 30 }}
+            animate={isStatsInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="bg-white p-8 rounded-xl border border-gray-100 shadow-sm card-hover-effect"
+          >
+            <h2 className="text-2xl font-bold mb-6 text-[#00305f]">Platform Stats</h2>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="bg-[#00305f]/5 p-6 rounded-xl text-center">
+                <div className="w-12 h-12 bg-[#00305f]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <BookOpen className="h-5 w-5 text-[#00305f]" />
+                </div>
+                <p className="text-3xl font-bold text-[#d62839]">500+</p>
+                <p className="text-sm text-gray-600">Courses Tracked</p>
+              </div>
+              <div className="bg-[#d62839]/5 p-6 rounded-xl text-center">
+                <div className="w-12 h-12 bg-[#d62839]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <BarChart3 className="h-5 w-5 text-[#d62839]" />
+                </div>
+                <p className="text-3xl font-bold text-[#00305f]">8+</p>
+                <p className="text-sm text-gray-600">Semesters of Data</p>
+              </div>
+              <div className="bg-[#efb215]/5 p-6 rounded-xl text-center">
+                <div className="w-12 h-12 bg-[#efb215]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <GraduationCap className="h-5 w-5 text-[#efb215]" />
+                </div>
+                <p className="text-3xl font-bold text-[#d62839]">50+</p>
+                <p className="text-sm text-gray-600">Departments</p>
+              </div>
+              <div className="bg-[#00305f]/5 p-6 rounded-xl text-center">
+                <div className="w-12 h-12 bg-[#00305f]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Users className="h-5 w-5 text-[#00305f]" />
+                </div>
+                <p className="text-3xl font-bold text-[#00305f]">1000s</p>
+                <p className="text-sm text-gray-600">Students Helped</p>
               </div>
             </div>
-          </section>
-          
-          {/* Contact/Get Involved Section */}
-          <section>
-            <h2 className="text-2xl font-bold text-center mb-8 text-[#00305f]">Get Involved</h2>
-            <div className="text-center">
-              <p className="text-gray-700 mb-6">
-                Interested in contributing to Course Central or have suggestions?
-              </p>
-              <a 
-                href="mailto:contact@coursecentral.ca" 
-                className="text-[#d62839] font-medium hover:text-[#c61e29] transition-colors inline-flex items-center"
-              >
-                <span>Reach out to us</span>
-                <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </a>
-            </div>
-          </section>
+          </motion.div>
         </div>
-      </main>
-      
-      {/* Footer */}
-      <Footer />
+
+        <motion.div
+          ref={teamRef}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6 }}
+          className="mb-20"
+        >
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-[#d62839]/10 mb-4">
+              <span className="text-[#d62839] text-sm font-medium">Our Team</span>
+            </div>
+            <h2 className="text-3xl font-bold mb-4 text-[#00305f]">Meet the Team</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              We're a group of passionate Queen's students dedicated to improving the academic experience.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <Card className="team-card-gradient card-hover-effect border-gray-100">
+                <CardContent className="p-6">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-24 h-24 bg-gradient-to-br from-[#00305f]/80 to-[#00305f] rounded-full flex items-center justify-center mb-4 shadow-lg">
+                      <span className="text-2xl font-bold text-white">AJ</span>
+                    </div>
+                    <h3 className="text-xl font-bold text-[#00305f]">Amaan Javed</h3>
+                    <p className="text-[#d62839] mb-4">Software Engineer</p>
+                    <p className="mb-6 text-gray-600">Queen's Computing '26</p>
+                    <div className="flex space-x-4">
+                      <a 
+                        href="https://github.com/amaanjaved1" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
+                      >
+                        <Github className="h-5 w-5" />
+                      </a>
+                      <a 
+                        href="https://www.linkedin.com/in/amaan-javed/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
+                      >
+                        <Linkedin className="h-5 w-5" />
+                      </a>
+                      <button 
+                        onClick={() => copyToClipboard("amaanjaved2004@gmail.com", "Amaan")}
+                        className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
+                      >
+                        <Mail className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <Card className="team-card-gradient card-hover-effect border-gray-100">
+                <CardContent className="p-6">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="w-24 h-24 bg-gradient-to-br from-[#d62839]/80 to-[#d62839] rounded-full flex items-center justify-center mb-4 shadow-lg">
+                      <span className="text-2xl font-bold text-white">AA</span>
+                    </div>
+                    <h3 className="text-xl font-bold text-[#00305f]">Aayush Aryal</h3>
+                    <p className="text-[#d62839] mb-4">Software Engineer</p>
+                    <p className="mb-6 text-gray-600">Queen's Computing '28.</p>
+                    <div className="flex space-x-4">
+                      <a 
+                        href="https://github.com/aayusha59" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
+                      >
+                        <Github className="h-5 w-5" />
+                      </a>
+                      <a 
+                        href="https://www.linkedin.com/in/aayush-aryal1/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
+                      >
+                        <Linkedin className="h-5 w-5" />
+                      </a>
+                      <button 
+                        onClick={() => copyToClipboard("1aryalaayush@gmail.com", "Aayush")}
+                        className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
+                      >
+                        <Mail className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          ref={helpRef}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isHelpInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-5xl mx-auto text-center mb-20"
+        >
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-[#efb215]/10 mb-4">
+            <span className="text-[#efb215] text-sm font-medium">Features</span>
+          </div>
+          <h2 className="text-3xl font-bold mb-6 text-[#00305f]">How CourseCentral Helps</h2>
+          <p className="mb-10 text-gray-600 max-w-3xl mx-auto">
+            CourseCentral provides Queen's students with tools and insights that were previously unavailable:
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isHelpInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 card-hover-effect"
+            >
+              <div className="w-12 h-12 bg-[#00305f]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="h-5 w-5 text-[#00305f]" />
+              </div>
+              <h3 className="font-bold text-lg text-[#00305f] mb-3">Data-Driven Decisions</h3>
+              <p className="text-gray-600">
+                Access historical grade data to understand course difficulty and make informed choices.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isHelpInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 card-hover-effect"
+            >
+              <div className="w-12 h-12 bg-[#d62839]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Brain className="h-5 w-5 text-[#d62839]" />
+              </div>
+              <h3 className="font-bold text-lg text-[#00305f] mb-3">AI-Powered Insights</h3>
+              <p className="text-gray-600">
+                Get instant answers to specific questions about courses, professors, and requirements.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isHelpInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 card-hover-effect"
+            >
+              <div className="w-12 h-12 bg-[#efb215]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <GraduationCap className="h-5 w-5 text-[#efb215]" />
+              </div>
+              <h3 className="font-bold text-lg text-[#00305f] mb-3">Academic Planning</h3>
+              <p className="text-gray-600">
+                Plan your academic journey with comprehensive information about course sequences and prerequisites.
+              </p>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          ref={involvedRef}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInvolvedInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-4xl mx-auto"
+        >
+          <div className="bg-gradient-to-r from-[#00305f] to-[#00305f]/90 rounded-2xl p-10 text-white relative overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute w-96 h-96 bg-[#d62839]/20 rounded-full blur-3xl top-10 right-10"></div>
+              <div className="absolute w-80 h-80 bg-[#efb215]/20 rounded-full blur-3xl -bottom-10 -left-10"></div>
+              <div className="dot-pattern absolute inset-0 opacity-[0.1]"></div>
+            </div>
+
+            <div className="relative z-10 text-center">
+              <h2 className="text-3xl font-bold mb-4">Get Involved</h2>
+              <p className="mb-8 text-white/80 max-w-2xl mx-auto">
+                We're always looking for passionate Queen's students to help improve CourseCentral. Whether you're
+                interested in data analysis, software development, or user experience, we'd love to hear from you.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <Button asChild className="bg-[#d62839] hover:bg-[#d62839]/90 text-white">
+                  <Link href="mailto:info@coursecentral.ca">
+                    <span className="flex items-center">
+                      <Mail className="mr-2 h-5 w-5" />
+                      Contact Us
+                    </span>
+                  </Link>
+                </Button>
+
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-white text-white hover:bg-white hover:text-[#00305f]"
+                >
+                  <Link href="/queens-answers">
+                    <span className="flex items-center">
+                      <MessageSquare className="mr-2 h-5 w-5" />
+                      Try AI Assistant
+                    </span>
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
     </div>
-  );
-} 
+  )
+}

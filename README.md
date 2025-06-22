@@ -1,52 +1,49 @@
-# 📚 CourseCentralQU – Webapp
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-The webapp code for CourseCentralQU, a course insights platform built for Queen's University students. This repository powers the data collection layer for a system that:
+## Getting Started
 
-- Displays **historic grade distribution data** for courses.
-- Hosts a **RAG-powered chatbot** trained on real student feedback from Reddit and RateMyProfessors.
+First, set up your environment variables:
 
-The chatbot enables Queen’s students to get honest, up-to-date insights on courses and instructors — beyond just what's in the calendar.
+1. Create a `.env.local` file in the root directory with the following variables:
 
----
+```
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_KEY=your_supabase_service_key
+```
 
-## 📦 Related Repositories
+2. Replace the placeholder values with your actual Supabase credentials.
 
-This project is split across multiple repositories:
-
-| Repository | Purpose |
-|-----------|---------|
-| [CourseCentralQU-Scrapers](https://github.com/CourseCentralQU/CourseCentral-Scrapers) | Handles scraping data from Queen’s calendar, Reddit, and RateMyProf |
-| **CourseCentralQU-RAG** (🚧 under construction) | Fine-tunes embeddings and manages vector DB for retrieval |
-| [CourseCentralQU-Web](https://github.com/CourseCentralQU/CourseCentral-WebApp) | Frontend built in Next.js for the public-facing site |
-
-> 🔗 Live Website: [CourseCentralQU](https://course-central-web-1p9pc64uw-amaans-projects-0cfc711a.vercel.app/)
-
----
-
-## 🛠️ Tech Stack
-
-This web application is built with:
-
-- **Next.js** – React framework for fast, scalable web development
-- **Tailwind CSS** – Utility-first CSS framework for rapid UI styling
-- **TypeScript** – Ensures robust typing and better dev experience
-- **Supabase** – Handles the PostgreSQL database and auth
-- **Vercel** – Deploys and hosts the web app
-
----
-
-## ⚙️ Key Features
-
-- 🔍 **Course Search** – Search Queen’s University courses and view historical grade data
-- 💬 **AI Chatbot (RAG)** – Ask questions about courses and professors based on scraped reviews
-- 📈 **Grade Distributions** – Quickly visualize historical grade stats per course
-
----
-
-## 🚀 Setup & Development
-
-1. Clone the repository:
+Then, run the development server:
 
 ```bash
-git clone https://github.com/your-username/CourseCentralQU-Web.git
-cd CourseCentralQU-Web
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

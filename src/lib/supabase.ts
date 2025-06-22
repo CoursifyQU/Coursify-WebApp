@@ -1,25 +1,22 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js"
 
-// Initialize the Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// Create a single supabase client for the browser
+// Use environment variables for Supabase configuration
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Check for environment variables
+// Check if environment variables are set
 if (!supabaseUrl || !supabaseAnonKey) {
-  if (typeof window === 'undefined') {
-    // This is server-side, so we need to throw an error that will be caught during build
-    console.error('Missing Supabase environment variables. Please check your environment configuration.');
-    throw new Error('Missing Supabase environment variables. Please check your .env.local file.');
-  } else {
-    // Client-side, we can just log the error
-    console.error('Missing Supabase environment variables in the browser.');
+  console.error("Missing Supabase environment variables. Please check your .env file.")
+  
+  // In development, throw an error to make it obvious
+  if (process.env.NODE_ENV === "development") {
+    throw new Error(
+      "Missing Supabase environment variables. Please create a .env.local file with NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY"
+    )
   }
 }
 
-// Create and export the properly typed Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+console.log("Connecting to Supabase URL:", supabaseUrl)
 
-// Log only in development to avoid leaking in production
-if (process.env.NODE_ENV !== 'production') {
-  console.log('Supabase client initialized successfully');
-} 
+export const supabase = createClient(supabaseUrl || "", supabaseAnonKey || "")

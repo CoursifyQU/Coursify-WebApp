@@ -1,236 +1,306 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import Navigation from "@/components/Navigation";
-import { useState } from "react";
-import AuthGate from "@/components/auth/AuthGate";
+import type React from "react"
 
-export default function AddCourses() {
-  const [isDragging, setIsDragging] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [isUploaded, setIsUploaded] = useState(false);
-  
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-  
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-  
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0];
-      handleFileUpload(file);
+import { useState, useRef } from "react"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Info, UploadCloud, AlertTriangle } from "lucide-react"
+import { AuthModal } from "@/components/auth-modal"
+import { useAuth } from "@/lib/auth/auth-context"
+import { getSupabaseClient } from "@/lib/supabase/client"
+
+export default function AddCoursesPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [uploadSuccess, setUploadSuccess] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const { user } = useAuth()
+
+  const handleUpload = async (file: File) => {
+    if (!user) {
+      setIsModalOpen(true)
+      return
     }
-  };
-  
+
+    setIsUploading(true)
+    setUploadError(null)
+
+    try {
+      const supabase = getSupabaseClient()
+      const timestamp = new Date().getTime()
+      // Create a filename with user ID and timestamp to ensure uniqueness
+      const fileName = `${user.id}_${timestamp}_${file.name}`
+      
+      // Upload file to the course-distributions bucket
+      // Add publicUpload: true to bypass RLS policies
+      const { data, error } = await supabase.storage
+        .from('course-distributions')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        })
+      
+      if (error) {
+        if (error.message.includes('row-level security')) {
+          console.error("RLS error:", error);
+          // Try again but create the path with the user's ID to match potential RLS policies
+          const userSpecificPath = `${user.id}/${fileName}`;
+          const secondAttempt = await supabase.storage
+            .from('course-distributions')
+            .upload(userSpecificPath, file, {
+              cacheControl: '3600',
+              upsert: false
+            });
+            
+          if (secondAttempt.error) {
+            console.error("Second attempt error:", secondAttempt.error);
+            
+            // If still getting RLS errors, try one more approach
+            if (secondAttempt.error.message.includes('row-level security')) {
+              // Try to get a public upload URL
+              try {
+                const { data: uploadData } = await supabase.storage.from('course-distributions').createSignedUploadUrl(
+                  userSpecificPath
+                );
+                
+                if (uploadData && uploadData.signedUrl) {
+                  // Use the signed URL to upload
+                  const uploadResponse = await fetch(uploadData.signedUrl, {
+                    method: 'PUT',
+                    body: file,
+                    headers: {
+                      'Content-Type': file.type,
+                    },
+                  });
+                  
+                  if (uploadResponse.ok) {
+                    console.log("File uploaded successfully with signed URL");
+                    setUploadSuccess(true);
+                    return;
+                  } else {
+                    throw new Error(`Upload failed: ${uploadResponse.statusText}`);
+                  }
+                }
+              } catch (signedUrlError) {
+                console.error("Signed URL upload error:", signedUrlError);
+              }
+            }
+            
+            throw secondAttempt.error;
+          }
+          
+          console.log("File uploaded successfully with user-specific path:", secondAttempt.data);
+          setUploadSuccess(true);
+          return;
+        }
+        throw error;
+      }
+      
+      console.log("File uploaded successfully:", data)
+      setUploadSuccess(true)
+    } catch (error) {
+      console.error("Error uploading file:", error)
+      setUploadError(typeof error === 'object' && error !== null && 'message' in error
+        ? String(error.message)
+        : "There was an error uploading your file. Please try again.")
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      handleFileUpload(file);
+    if (e.target.files && e.target.files[0]) {
+      handleUpload(e.target.files[0])
     }
-  };
-  
-  const handleFileUpload = (file: File) => {
-    // Check if file is PDF
-    if (file.type === "application/pdf") {
-      setUploadedFile(file);
-      // Simulate upload success
-      setTimeout(() => {
-        setIsUploaded(true);
-        
-        // Store upload information in localStorage
-        localStorage.setItem('courseDistributionUploaded', 'true');
-        localStorage.setItem('courseDistributionUploadedAt', new Date().toISOString());
-        
-        // In a real implementation, you would also store this in the database
-        // For example: supabase.from('user_uploads').insert({user_id: user.id, upload_type: 'grade_distribution', file_name: file.name});
-      }, 1500);
-    } else {
-      alert("Please upload a PDF file. SOLUS grade distributions are downloaded as PDF files.");
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleUpload(e.dataTransfer.files[0])
     }
-  };
-  
-  const handleSubmitAnother = () => {
-    setUploadedFile(null);
-    setIsUploaded(false);
-  };
+  }
+
+  const handleSelectFileClick = () => {
+    if (!user) {
+      setIsModalOpen(true)
+      return
+    }
+    
+    fileInputRef.current?.click()
+  }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      {/* Header navigation */}
-      <Navigation />
-      
-      <main className="flex-grow flex flex-col items-center justify-center px-4 py-12">
-        <div className="max-w-4xl w-full">
-          {/* Section header */}
+    <div className="relative min-h-screen overflow-hidden mesh-gradient">
+      {/* Background elements */}
+      <div className="absolute inset-0 -z-10 pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#d62839]/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#00305f]/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-[#efb215]/5 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute w-96 h-96 bg-[#d62839]/5 rounded-full blur-3xl -top-10 -right-20"></div>
+        <div className="absolute w-80 h-80 bg-[#00305f]/5 rounded-full blur-3xl -bottom-10 -left-20"></div>
+        <div className="dot-pattern absolute inset-0 opacity-[0.08]"></div>
+      </div>
+
+      <div className="container mx-auto py-12 px-4 md:px-6 relative z-10">
+        <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00305f] to-[#00305f]/90">Add Course Distributions</span>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2 text-[#00305f]">
+              Add Course <span className="gradient-text">Distributions</span>
             </h1>
-            <div className="relative mx-auto w-24 mb-6">
-              <div className="w-24 h-1.5 bg-gradient-to-r from-[#d62839] to-[#a31e36] mb-8 rounded-full mx-auto"></div>
-              <div className="absolute -top-1 -right-1 w-8 h-8 bg-[#efb215]/30 rounded-full blur-md animate-pulse-slow"></div>
-            </div>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Help improve the site and future course selections
-            </p>
+            <div className="w-24 h-1 bg-[#d62839] mx-auto mb-4"></div>
+            <p className="text-gray-600">Help improve the site and future course selections</p>
           </div>
-          
-          {/* How To Find Guide Button */}
+
           <div className="flex justify-center mb-8">
-            <Link
+            <a
               href="https://www.queensu.ca/registrar/academic-info/grades/release-dates-and-viewing"
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 flex items-center shadow-md"
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="relative group bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white px-6 py-3 rounded-xl inline-flex items-center justify-center font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105 cursor-pointer"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-              How To Find SOLUS Distribution
-            </Link>
+              <Info className="mr-2 h-4 w-4" />
+              <span className="text-sm">How To Find SOLUS Distribution</span>
+            </a>
           </div>
-        
-          {/* Main Upload Container - Wrapped with AuthGate */}
-          <AuthGate message="Please log in to upload course distributions. Your contributions help other students make informed decisions!">
-            {!isUploaded ? (
-              <div className="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-200">
-                <div className="py-6 px-6 bg-[#00305f] border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-white">Upload SOLUS Grade Distribution</h2>
-                </div>
-                
-                {/* Drag and drop area */}
-                <div 
-                  className={`p-8 sm:p-12 ${
-                    isDragging 
-                      ? "bg-[#00305f]/5" 
-                      : "bg-white"
-                  } transition-all duration-300`}
-                >
-                  <div
-                    className={`border-2 border-dashed rounded-xl py-12 px-6 text-center cursor-pointer transition-all duration-300 ${
-                      isDragging 
-                        ? "border-[#d62839] bg-[#d62839]/5" 
-                        : "border-gray-300 hover:border-[#d62839]/60 hover:bg-gray-50"
-                    }`}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    onClick={() => document.getElementById("file-upload")?.click()}
-                  >
-                    {uploadedFile ? (
-                      <div className="py-4">
-                        <div className="flex items-center justify-center mb-3">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-[#d62839] animate-pulse" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-                          </svg>
-                        </div>
-                        <p className="text-md font-medium text-[#00305f] mb-2">{uploadedFile.name}</p>
-                        <p className="text-[#d62839] text-sm">Processing your file...</p>
-                      </div>
-                    ) : (
-                      <>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-                        </svg>
-                        <h3 className="mt-4 text-xl font-medium text-[#00305f]">
-                          Drop your file here
-                        </h3>
-                        <p className="mt-2 text-sm text-gray-600 max-w-xs mx-auto">
-                          Drag and drop your SOLUS grade distribution PDF, or click to browse
-                        </p>
-                        
-                        <div className="mt-5">
-                          <button className="px-4 py-2 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#00305f]/60 transition-colors">
-                            Select PDF File
-                          </button>
-                        </div>
-                      </>
-                    )}
-                    
-                    <input
-                      id="file-upload"
-                      type="file"
-                      accept="application/pdf"
-                      className="hidden"
-                      onChange={handleFileChange}
-                    />
-                  </div>
-                </div>
-                
-                {/* Important Note */}
-                <div className="p-4 border-t border-gray-200">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#efb215]" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm text-gray-700">
-                        <span className="font-medium text-[#efb215]">Important:</span> Currently, we only support on-campus courses. Online course distributions will be supported in future updates.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-white rounded-xl overflow-hidden shadow-xl border border-gray-200">
-                <div className="p-8 text-center">
-                  <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+
+          <Card className="overflow-hidden border-none shadow-md">
+            <div className="bg-[#00305f] px-6 py-4">
+              <h2 className="text-lg font-medium text-white">Upload SOLUS Grade Distribution</h2>
+            </div>
+
+            <div className="p-6">
+              {uploadSuccess ? (
+                <div className="text-center py-6">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <h2 className="text-2xl font-bold text-[#00305f] mb-2">Upload Successful!</h2>
-                  <p className="text-gray-600 mb-8">
-                    Thank you for contributing to CourseCentral. Your data will help future students make better course decisions.
+                  <h3 className="text-xl font-bold text-[#00305f] mb-2">Upload Successful!</h3>
+                  <p className="text-gray-600 mb-4">
+                    Thank you for contributing to CourseCentral. Your data will help other students make better course
+                    decisions.
                   </p>
+                  <Button onClick={() => setUploadSuccess(false)} className="bg-[#00305f] hover:bg-[#00305f]/90">
+                    Upload Another File
+                  </Button>
+                </div>
+              ) : (
+                <div className="relative">
+                  {isUploading && (
+                    <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10">
+                      <div className="flex flex-col items-center">
+                        <div className="w-10 h-10 border-4 border-[#00305f]/20 border-t-[#00305f] rounded-full animate-spin mb-3"></div>
+                        <p className="text-[#00305f] font-medium">Uploading...</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center hover:border-[#00305f] transition-colors duration-300"
+                    onDragOver={handleDragOver}
+                    onDrop={handleDrop}
+                  >
+                    <div className="w-16 h-16 bg-[#00305f]/10 rounded-full flex items-center justify-center mb-4">
+                      <UploadCloud className="h-8 w-8 text-[#00305f]" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-[#00305f] mb-2">Drop your file here</h3>
+                    <p className="text-gray-500 text-center mb-6">
+                      Drag and drop your SOLUS grade distribution PDF,
+                      <br />
+                      or click to browse
+                    </p>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".pdf"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                    <Button
+                      variant="outline"
+                      onClick={handleSelectFileClick}
+                      className="border-[#00305f] text-[#00305f] hover:bg-[#00305f]/10"
+                    >
+                      Select PDF File
+                    </Button>
+
+                    {uploadError && (
+                      <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg">
+                        <div className="flex items-start">
+                          <AlertTriangle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm">{uploadError}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   
-                  <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4">
-                    <button
-                      onClick={handleSubmitAnother}
-                      className="w-full sm:w-auto px-6 py-3 bg-[#00305f] hover:bg-[#00305f]/90 text-white font-medium rounded-lg transition-colors duration-300 shadow-md"
-                    >
-                      Upload Another Distribution
-                    </button>
-                    
-                    <Link
-                      href="/"
-                      className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white font-medium rounded-lg transition-colors duration-300 shadow-md"
-                    >
-                      Return to Homepage
-                    </Link>
+                  <div className="mt-6 flex items-start p-4 bg-[#efb215]/10 rounded-lg">
+                    <AlertTriangle className="h-5 w-5 text-[#efb215] mr-3 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-gray-700">
+                      <span className="font-medium">Important:</span> Currently, we only support on-campus courses.
+                      Online course distributions will be supported in future updates.
+                    </p>
                   </div>
                 </div>
-              </div>
-            )}
-          </AuthGate>
+              )}
+            </div>
+          </Card>
         </div>
-      </main>
-      
-      {/* Animated background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#d62839]/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#00305f]/5 rounded-full blur-3xl"></div>
       </div>
-      
-      {/* Animation styles */}
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Sign in to upload distributions"
+        description="You need to sign in with your Queen's University email to upload course distributions."
+      />
+
+      {/* Add the CSS for the gradient text and dot pattern */}
       <style jsx global>{`
-        @keyframes pulse-slow {
-          0%, 100% { opacity: 0.7; }
-          50% { opacity: 0.95; }
+        .mesh-gradient {
+          background-color: hsla(0, 0%, 100%, 1);
+          background-image:
+            radial-gradient(at 21% 33%, hsla(225, 100%, 19%, 0.05) 0px, transparent 50%),
+            radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.05) 0px, transparent 50%),
+            radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.05) 0px, transparent 50%);
         }
-        .animate-pulse-slow {
-          animation: pulse-slow 3s ease-in-out infinite;
+        
+        .dot-pattern {
+          background-image: radial-gradient(circle, #00305f 1px, transparent 1px);
+          background-size: 20px 20px;
+        }
+        
+        .gradient-text {
+          background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
+          background-size: 300% 300%;
+          animation: gradient-shift 6s ease infinite;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          color: transparent;
+        }
+        
+        @keyframes gradient-shift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
       `}</style>
     </div>
-  );
-} 
+  )
+}

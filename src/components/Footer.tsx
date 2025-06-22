@@ -1,22 +1,74 @@
-import React from 'react';
-import Link from 'next/link';
+import Link from "next/link"
 
-export default function Footer() {
+const Footer = () => {
   return (
-    <footer className="py-6 bg-gradient-to-r from-[#00305f] via-[#00254a] to-[#efb215]/90 text-white shadow-md">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0">
-            <p className="text-white/90">© {new Date().getFullYear()} CourseCentral</p>
+    <footer className="w-full border-t bg-gradient-to-r from-[#00305f] via-[#d62839] to-[#efb215] text-white">
+      <div className="container py-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="space-y-3">
+            <h3 className="text-lg font-bold">CourseCentral</h3>
+            <p className="text-sm text-white/80">Helping Queen's University students make informed course decisions.</p>
           </div>
-          <div className="flex space-x-4">
-            <Link href="/about" className="text-white/80 hover:text-white transition">About</Link>
-            <Link href="#" className="text-white/80 hover:text-white transition">Privacy Policy</Link>
-            <Link href="#" className="text-white/80 hover:text-white transition">Terms of Service</Link>
-            <Link href="mailto:contact@coursecentral.ca" className="text-white/80 hover:text-white transition">Contact</Link>
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold">Navigation</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/" className="hover:underline">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/schools/queens" className="hover:underline">
+                  Queen's Courses
+                </Link>
+              </li>
+              <li>
+                <Link href="/queens-answers" className="hover:underline">
+                  AI Assistant
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="hover:underline">
+                  About
+                </Link>
+              </li>
+            </ul>
           </div>
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold">Resources</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="#" className="hover:underline">
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:underline">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:underline">
+                  Terms of Service
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold">Contact</h3>
+            <p className="text-sm text-white/80">Have questions or feedback? Reach out to us.</p>
+            <Link href="mailto:info@coursecentral.ca" className="text-sm hover:underline">
+              info@coursecentral.ca
+            </Link>
+          </div>
+        </div>
+        <div className="mt-8 pt-4 border-t border-white/20 text-center text-sm text-white/80">
+          <p>© {new Date().getFullYear()} CourseCentral. All rights reserved.</p>
+          <p className="mt-2">Not officially affiliated with Queen's University.</p>
         </div>
       </div>
     </footer>
-  );
-} 
+  )
+}
+
+export default Footer
