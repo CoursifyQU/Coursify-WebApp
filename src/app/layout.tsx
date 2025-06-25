@@ -10,7 +10,7 @@ import { AuthProvider } from "@/lib/auth/auth-context"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "CourseCentral - Queen's University Course Platform",
+  title: "Coursify - Queen's University Course Platform",
   description: "Comprehensive course information for Queen's University students",
     generator: 'v0.dev'
 }

@@ -101,9 +101,9 @@ export default function Home() {
 
   const faqs = [
     {
-      question: "Is CourseCentral connected to SOLUS?",
-      answer:
-        "CourseCentral is not officially connected to SOLUS, but we've collected grade distribution data from multiple reliable sources. You'll need to register for courses through SOLUS after researching them on our platform.",
+                  question: "Is Coursify connected to SOLUS?",
+            answer:
+              "Coursify is not officially connected to SOLUS, but we've collected grade distribution data from multiple reliable sources. You'll need to register for courses through SOLUS after researching them on our platform.",
     },
     {
       question: "Where does the chatbot get its information?",
@@ -117,13 +117,13 @@ export default function Home() {
     },
     {
       question: "Is this tool free?",
-      answer:
-        "Yes, CourseCentral is completely free for all Queen's University students. We believe in making data-driven course selection accessible to everyone.",
+                  answer:
+              "Yes, Coursify is completely free for all Queen's University students. We believe in making data-driven course selection accessible to everyone.",
     },
     {
       question: "What courses are supported?",
-      answer:
-        "Currently, CourseCentral only supports on-campus courses at Queen's University. We're working on adding support for online courses in the future, but for now, our data and AI assistant focus exclusively on in-person course offerings.",
+                  answer:
+              "Currently, Coursify only supports on-campus courses at Queen's University. We're working on adding support for online courses in the future, but for now, our data and AI assistant focus exclusively on in-person course offerings.",
     },
   ]
 
@@ -511,7 +511,7 @@ export default function Home() {
               <span className="gradient-text">smarter course decisions</span>
             </h2>
             <p className="text-sm text-gray-600 max-w-2xl mx-auto">
-              CourseCentral combines powerful data analytics with AI to help Queen's students make informed academic choices.
+              Coursify combines powerful data analytics with AI to help Queen's students make informed academic choices.
             </p>
           </div>
 
@@ -571,7 +571,7 @@ export default function Home() {
             </div>
             <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[#00305f]">Your path to <span className="moving-gradient">academic success</span></h2>
             <p className="text-sm text-gray-600 max-w-2xl mx-auto">
-              CourseCentral makes it easy to research courses, compare options, and make informed decisions.
+              Coursify makes it easy to research courses, compare options, and make informed decisions.
             </p>
           </div>
 
@@ -688,7 +688,7 @@ export default function Home() {
             </div>
             <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[#00305f]">Trusted by <span className="moving-gradient">Queen's students</span></h2>
             <p className="text-sm text-gray-600 max-w-2xl mx-auto">
-              See how CourseCentral has helped students make better academic decisions.
+              See how Coursify has helped students make better academic decisions.
             </p>
           </div>
 
@@ -766,7 +766,7 @@ export default function Home() {
               <Info className="h-3 w-3 text-[#d62839]" />
             </div>
             <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[#00305f]">Frequently Asked <span className="moving-gradient">Questions</span></h2>
-            <p className="text-sm text-gray-600 max-w-2xl mx-auto">Find answers to common questions about CourseCentral.</p>
+                          <p className="text-sm text-gray-600 max-w-2xl mx-auto">Find answers to common questions about Coursify.</p>
           </div>
 
           <div className="space-y-3">
@@ -850,7 +850,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-xl sm:text-2xl font-bold mb-3 text-white">Ready to make smarter course decisions?</h2>
             <p className="text-sm text-white/80 mb-6 max-w-2xl mx-auto">
-              Join thousands of Queen's students who are using CourseCentral to plan their academic journey.
+              Join thousands of Queen's students who are using Coursify to plan their academic journey.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Button
@@ -899,7 +899,7 @@ export default function Home() {
             </div>
             
             <div className="text-xs text-gray-600">
-              <span className="moving-gradient font-medium">© 2025 CourseCentral</span>
+              <span className="moving-gradient font-medium">© 2025 Coursify</span>
               <span className="mx-2">•</span>
               <Link href="/about" className="text-[#00305f] hover:text-[#d62839] transition-colors duration-200">
                 About Us

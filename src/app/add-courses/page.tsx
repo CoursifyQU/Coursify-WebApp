@@ -191,7 +191,7 @@ export default function AddCoursesPage() {
                   </div>
                   <h3 className="text-xl font-bold text-[#00305f] mb-2">Upload Successful!</h3>
                   <p className="text-gray-600 mb-4">
-                    Thank you for contributing to CourseCentral. Your data will help other students make better course
+                    Thank you for contributing to Coursify. Your data will help other students make better course
                     decisions.
                   </p>
                   <Button onClick={() => setUploadSuccess(false)} className="bg-[#00305f] hover:bg-[#00305f]/90">
