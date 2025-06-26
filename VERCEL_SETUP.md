@@ -1,6 +1,6 @@
 # Vercel Deployment Setup
 
-This guide explains how to deploy CourseCentral to Vercel.
+This guide explains how to deploy Coursify to Vercel.
 
 ## Option 1: Deploy via Vercel Dashboard (Recommended)
 
@@ -10,7 +10,7 @@ This guide explains how to deploy CourseCentral to Vercel.
 4. Configure the project:
 
    - Framework Preset: Next.js
-   - Root Directory: `CourseCentral-WebApp/`
+   - Root Directory: `Coursify-WebApp/`
    - Build Command: `npm run build`
    - Output Directory: `.next`
    - Install Command: `npm install`

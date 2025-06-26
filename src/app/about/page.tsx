@@ -141,7 +141,7 @@ export default function About() {
             </span>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            <span className="text-[#00305f]">About</span> <span className="gradient-text">CourseCentral</span>
+            <span className="text-[#00305f]">About</span> <span className="gradient-text">Coursify</span>
           </h1>
           <p className="text-xl text-muted-foreground">
             Helping Queen's University students make informed academic decisions through data and AI.
@@ -161,7 +161,7 @@ export default function About() {
             </div>
             <div className="space-y-4">
               <p className="text-gray-700">
-                CourseCentral was created to address a critical gap in the Queen's University student experience: the
+                Coursify was created to address a critical gap in the Queen's University student experience: the
                 lack of comprehensive, accessible data about courses and their historical performance.
               </p>
               <p className="text-gray-700">
@@ -347,9 +347,9 @@ export default function About() {
           <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-[#efb215]/10 mb-4">
             <span className="text-[#efb215] text-sm font-medium">Features</span>
           </div>
-          <h2 className="text-3xl font-bold mb-6 text-[#00305f]">How CourseCentral Helps</h2>
+          <h2 className="text-3xl font-bold mb-6 text-[#00305f]">How Coursify Helps</h2>
           <p className="mb-10 text-gray-600 max-w-3xl mx-auto">
-            CourseCentral provides Queen's students with tools and insights that were previously unavailable:
+            Coursify provides Queen's students with tools and insights that were previously unavailable:
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -417,13 +417,13 @@ export default function About() {
             <div className="relative z-10 text-center">
               <h2 className="text-3xl font-bold mb-4">Get Involved</h2>
               <p className="mb-8 text-white/80 max-w-2xl mx-auto">
-                We're always looking for passionate Queen's students to help improve CourseCentral. Whether you're
+                We're always looking for passionate Queen's students to help improve Coursify. Whether you're
                 interested in data analysis, software development, or user experience, we'd love to hear from you.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
                 <Button asChild className="bg-[#d62839] hover:bg-[#d62839]/90 text-white">
-                  <Link href="mailto:info@coursecentral.ca">
+                  <Link href="mailto:info@coursify.ca">
                     <span className="flex items-center">
                       <Mail className="mr-2 h-5 w-5" />
                       Contact Us
