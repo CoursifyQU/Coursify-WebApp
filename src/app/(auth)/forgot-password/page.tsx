@@ -65,7 +65,7 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md border border-gray-200 shadow-lg">
         <CardHeader className="space-y-2 bg-[#003B71] text-white rounded-t-xl px-6 py-5">
           <CardTitle className="text-2xl font-bold text-center">Reset Password</CardTitle>
