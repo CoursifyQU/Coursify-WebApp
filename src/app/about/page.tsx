@@ -43,6 +43,7 @@ export default function About() {
         title: "Email copied!",
         description: `${name}'s email has been copied to your clipboard.`,
         duration: 3000,
+        variant: "success",
       })
     })
   }

@@ -90,6 +90,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    // Force a hard reload to clear all client state
+    window.location.href = '/';
   };
 
   const resetPassword = async (email: string) => {

@@ -52,6 +52,7 @@ export default function ForgotPassword() {
       toast({
         title: "Reset email sent",
         description: "Please check your email for password reset instructions",
+        variant: "success",
       });
     } catch (error: any) {
       toast({

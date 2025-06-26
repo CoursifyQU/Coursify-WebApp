@@ -25,12 +25,13 @@ const Navigation = () => {
   }
 
   const handleSignOut = async () => {
-    await signOut()
     toast({
-      title: "Signed out",
-      description: "You have been signed out successfully",
+      title: "Signing out...",
+      description: "You will be redirected to the home page",
+      variant: "success",
     })
-    router.refresh()
+    await signOut()
+    // No need for router.refresh() as we're doing a full page reload in the signOut function
   }
 
   return (
