@@ -40,6 +40,7 @@ export default function SignIn() {
       toast({
         title: "Success",
         description: "You have been signed in successfully",
+        variant: "success",
       });
     } catch (error: any) {
       toast({

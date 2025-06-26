@@ -54,6 +54,7 @@ export default function SignUp() {
       toast({
         title: "Account reset",
         description: "You can now try to sign up again",
+        variant: "success",
       });
       
     } catch (error: any) {
@@ -187,6 +188,7 @@ export default function SignUp() {
       toast({
         title: "Verification email sent",
         description: "Please check your Queen's email to verify your account",
+        variant: "success",
       });
     } catch (error: any) {
       toast({
