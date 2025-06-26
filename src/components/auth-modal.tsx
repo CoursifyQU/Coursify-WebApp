@@ -1,17 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -33,57 +23,58 @@ export function AuthModal({
     onClose();
   };
 
-  const handleSignUp = () => {
-    router.push("/sign-up");
-    onClose();
-  };
-
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md border border-gray-200 shadow-lg">
-        <DialogClose className="absolute right-4 top-4 rounded-full w-6 h-6 flex items-center justify-center z-10 bg-[#d62839] text-white hover:bg-[#a31e36] focus:outline-none transition-colors">
-          <X className="h-4 w-4 text-white" />
-          <span className="sr-only">Close</span>
-        </DialogClose>
-        
-        <DialogHeader className="bg-[#003B71] text-white px-6 py-4 -mx-6 -mt-6 rounded-t-lg">
-          <DialogTitle className="text-xl font-bold">{title}</DialogTitle>
-          <DialogDescription className="text-gray-200 mt-1">
-            {description}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col space-y-3 py-4">
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md">
-            <p className="text-sm text-blue-700">
-              Only Queen's University students with a valid @queensu.ca email address can access this feature.
-            </p>
-          </div>
-        </div>
-        <DialogFooter className="sm:justify-between flex-col sm:flex-row gap-2">
-          <Button 
-            variant="outline" 
-            onClick={onClose}
-            className="border-gray-300 text-gray-700"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-[2px]"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) onClose();
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-0 relative border border-gray-200 overflow-hidden"
           >
-            Cancel
-          </Button>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={handleSignUp}
-              className="border-[#003B71] text-[#003B71]"
+            <button
+              className="absolute top-4 right-4 text-gray-400 hover:text-[#d62839] text-2xl font-bold z-10"
+              onClick={onClose}
+              aria-label="Close"
             >
-              Sign Up
-            </Button>
-            <Button 
-              onClick={handleSignIn}
-              className="bg-[#d62839] hover:bg-[#a31e36] text-white"
-            >
-              Sign In
-            </Button>
-          </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+              &times;
+            </button>
+            
+            <div className="bg-[#00305f] text-white p-6">
+              <h2 className="text-2xl font-bold">{title}</h2>
+              <p className="mt-1 text-gray-200">{description}</p>
+            </div>
+            
+            <div className="p-6">
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md mb-6">
+                <p className="text-blue-700">
+                  Only Queen's University students with a valid @queensu.ca email address can access this feature.
+                </p>
+              </div>
+              
+              <div className="flex justify-center mt-6">
+                <button
+                  onClick={handleSignIn}
+                  className="px-8 py-3 bg-[#d62839] text-white rounded-lg font-medium hover:bg-[#a31e36] transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl hover:scale-105"
+                >
+                  Sign In
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 } 
