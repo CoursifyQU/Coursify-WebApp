@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { motion, useAnimation } from "framer-motion"
+import { motion, useAnimation, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/lib/auth/auth-context"
 import { AuthModal } from "@/components/auth-modal"
 
@@ -9,6 +9,7 @@ export default function AIFeatures() {
   const [question, setQuestion] = useState("")
   const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [showComingSoon, setShowComingSoon] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
   const controls = useAnimation()
   const { user } = useAuth()
@@ -85,6 +86,11 @@ export default function AIFeatures() {
     // Implement your actual submission logic here
   };
 
+  // Function to handle input focus
+  const handleInputFocus = () => {
+    setShowComingSoon(true);
+  };
+
   return (
     <div className="h-screen overflow-hidden bg-white">
       <div className="h-full flex flex-col items-center justify-center px-4 overflow-hidden">
@@ -148,73 +154,87 @@ export default function AIFeatures() {
           </button>
 
           {/* How it works modal */}
-          {showHowItWorks && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 modal-backdrop"
-              onClick={(e) => {
-                if (e.target === e.currentTarget) setShowHowItWorks(false)
-              }}
-            >
-              <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative modal-content">
-                <button
-                  className="absolute top-4 right-4 text-gray-400 hover:text-[#d62839] text-2xl font-bold"
-                  onClick={() => setShowHowItWorks(false)}
-                  aria-label="Close"
+          <AnimatePresence>
+            {showHowItWorks && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-[2px] modal-backdrop"
+                onClick={(e) => {
+                  if (e.target === e.currentTarget) setShowHowItWorks(false)
+                }}
+              >
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative modal-content border border-gray-200"
                 >
-                  &times;
-                </button>
-                <h2 className="text-2xl font-bold text-[#d62839] mb-4 text-center">How Queen's Answers Works</h2>
-                <ul className="space-y-5 mt-6">
-                  <li className="flex items-start">
-                    <span className="text-2xl mr-3">🔎</span>
-                    <div>
-                      <span className="font-semibold text-[#00305f]">
-                        Ask anything about Queen's courses or professors.
-                      </span>
-                      <div className="text-gray-600 text-sm">
-                        Type your question in the box below—no question is too specific!
+                  <button
+                    className="absolute top-4 right-4 text-gray-400 hover:text-[#d62839] text-2xl font-bold"
+                    onClick={() => setShowHowItWorks(false)}
+                    aria-label="Close"
+                  >
+                    &times;
+                  </button>
+                  <h2 className="text-3xl font-bold mb-4 text-center">
+                    How <span className="gradient-text">Queen's Answers</span> Works
+                  </h2>
+                  <ul className="space-y-5 mt-6">
+                    <li className="flex items-start">
+                      <span className="text-2xl mr-3">🔎</span>
+                      <div>
+                        <span className="font-semibold text-[#00305f]">
+                          Ask anything about Queen's courses or professors.
+                        </span>
+                        <div className="text-gray-700 text-sm">
+                          Type your question in the box below—no question is too specific!
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-2xl mr-3">🤖</span>
-                    <div>
-                      <span className="font-semibold text-[#00305f]">Get instant, AI-powered answers.</span>
-                      <div className="text-gray-600 text-sm">
-                        Our system searches real student reviews, grade data, and more to give you the best info.
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-2xl mr-3">🤖</span>
+                      <div>
+                        <span className="font-semibold text-[#00305f]">Get instant, AI-powered answers.</span>
+                        <div className="text-gray-700 text-sm">
+                          Our system searches real student reviews, grade data, and more to give you the best info.
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-2xl mr-3">💬</span>
-                    <div>
-                      <span className="font-semibold text-[#00305f]">See perspectives from Reddit and RateMyProf.</span>
-                      <div className="text-gray-600 text-sm">
-                        We pull in the most relevant, up-to-date student experiences for Queen's.
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-2xl mr-3">💬</span>
+                      <div>
+                        <span className="font-semibold text-[#00305f]">See perspectives from Reddit and RateMyProf.</span>
+                        <div className="text-gray-700 text-sm">
+                          We pull in the most relevant, up-to-date student experiences for Queen's.
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-2xl mr-3">🎯</span>
-                    <div>
-                      <span className="font-semibold text-[#00305f]">Make smarter course decisions.</span>
-                      <div className="text-gray-600 text-sm">
-                        Use what you learn to pick the best courses and professors for you!
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-2xl mr-3">🎯</span>
+                      <div>
+                        <span className="font-semibold text-[#00305f]">Make smarter course decisions.</span>
+                        <div className="text-gray-700 text-sm">
+                          Use what you learn to pick the best courses and professors for you!
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          )}
+                    </li>
+                  </ul>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Ask a Question Input at the bottom */}
         <div
-          className={`fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-xl flex items-center bg-[#f5f6f7] rounded-full px-4 py-3 shadow-lg transition-all duration-300 ${
-            showHowItWorks ? "opacity-30 pointer-events-none" : "opacity-100 hover:shadow-xl"
+          className={`fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-xl flex items-center bg-[#f5f6f7] rounded-full px-4 py-3 shadow-lg transition-all duration-500 ${
+            showHowItWorks || showComingSoon ? "opacity-30 pointer-events-none filter blur-[1px]" : "opacity-100 hover:shadow-xl"
           }`}
-          style={{ zIndex: 50 }}
+          style={{ zIndex: 30 }}
         >
           <input
             type="text"
@@ -222,6 +242,7 @@ export default function AIFeatures() {
             placeholder="Ask a question"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
+            onFocus={handleInputFocus}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
@@ -248,6 +269,68 @@ export default function AIFeatures() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#d62839]/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#00305f]/5 rounded-full blur-3xl"></div>
       </div>
+
+      {/* Coming Soon Overlay */}
+      <AnimatePresence>
+        {showComingSoon && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-40 flex flex-col items-center justify-center backdrop-blur-[2px] bg-white/60"
+          >
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="bg-white/90 p-8 rounded-2xl shadow-2xl max-w-lg w-full border border-[#00305f]/20 relative"
+            >
+              <button
+                className="absolute top-4 right-4 text-gray-400 hover:text-[#d62839] text-2xl font-bold"
+                onClick={() => setShowComingSoon(false)}
+                aria-label="Close"
+              >
+                &times;
+              </button>
+              <div className="flex flex-col items-center">
+                <div className="mb-4 text-5xl">✨</div>
+                <h2 className="text-3xl font-bold text-[#00305f] mb-2 text-center">Coming Soon!</h2>
+                <p className="text-lg text-center text-gray-700 mb-4">
+                  We're working hard to bring Queen's Answers to life. This feature will be available in the near future.
+                </p>
+                <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden mb-6">
+                  <motion.div 
+                    className="h-full bg-gradient-to-r from-[#00305f] via-[#d62839] to-[#efb215]"
+                    initial={{ width: "0%" }}
+                    animate={{ width: "75%" }}
+                    transition={{ duration: 1.5, ease: "easeInOut" }}
+                  />
+                </div>
+                <p className="text-sm text-center text-gray-500 italic">
+                  Queen's Answers will provide AI-powered insights on courses, professors, and more!
+                </p>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ delay: 0.2, duration: 0.25 }}
+              className="mt-8 text-center"
+            >
+              <a 
+                href="/" 
+                className="inline-flex items-center justify-center px-6 py-3 bg-[#00305f] text-white rounded-lg font-medium hover:bg-[#00305f]/90 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl hover:scale-105"
+              >
+                <span className="mr-2">🏠</span> Return to Home
+              </a>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Auth Modal */}
       <AuthModal 
