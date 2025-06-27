@@ -195,10 +195,10 @@ export default function Home() {
   ]
 
   const stats = [
-    { value: "500+", label: "Courses Tracked", icon: <BookOpen className="h-5 w-5" /> },
-    { value: "10+", label: "Semesters of Data", icon: <Clock className="h-5 w-5" /> },
-    { value: "50+", label: "Departments", icon: <GraduationCap className="h-5 w-5" /> },
-    { value: "1000s", label: "Students Helped", icon: <Users className="h-5 w-5" /> },
+    { value: "Queen's", label: "University Focus", icon: <GraduationCap className="h-5 w-5" /> },
+    { value: "Real", label: "Grade Data", icon: <BarChart className="h-5 w-5" /> },
+    { value: "AI", label: "Powered Assistant", icon: <Brain className="h-5 w-5" /> },
+    { value: "Free", label: "For Students", icon: <Users className="h-5 w-5" /> },
   ]
 
   // Scroll to features section
@@ -426,54 +426,80 @@ export default function Home() {
           <div className="dot-pattern absolute inset-0 opacity-[0.08]" />
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 relative z-10 -mt-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center max-w-4xl mx-auto"
-          >
-            <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#00305f]/10 mb-4">
-              <span className="text-[#00305f] text-xs font-medium mr-2">Queen's University</span>
-              <span className="flex h-1 w-1 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d62839] opacity-75" />
-                <span className="relative inline-flex rounded-full h-1 w-1 bg-[#d62839]" />
-              </span>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
-              <span className="gradient-text">Course selection,</span>
-              <br />
-              <span className="text-[#00305f]">powered by AI</span>
-            </h1>
-
-            <p className="text-base sm:text-lg text-gray-700 mb-6 max-w-3xl mx-auto">
-              Make data-driven decisions with comprehensive grade distributions and AI-powered insights for all Queen's University courses.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3">
-              <Link 
-                href="/queens-answers" 
-                className="relative group bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white px-6 py-2.5 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
-              >
-                <span className="relative z-10 flex items-center justify-center h-full">
-                  <Brain className="mr-2 h-4 w-4" />
-                  <span className="text-sm">Ask AI Assistant</span>
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="flex flex-col items-center justify-center">
+            {/* Main content */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center max-w-2xl"
+            >
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#00305f]/10 mb-4">
+                <span className="text-[#00305f] text-xs font-medium mr-2">Queen's University</span>
+                <span className="flex h-1 w-1 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d62839] opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1 w-1 bg-[#d62839]" />
                 </span>
-              </Link>
+              </div>
 
-              <Link 
-                href="/schools/queens" 
-                className="relative group bg-gradient-to-r from-[#00305f] to-[#00305f]/90 text-white px-6 py-2.5 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
-              >
-                <span className="relative z-10 flex items-center justify-center h-full">
-                  <BarChart className="mr-2 h-4 w-4" />
-                  <span className="text-sm">Browse Courses</span>
-                </span>
-              </Link>
-            </div>
-          </motion.div>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-2 leading-tight">
+                <span className="gradient-text">Coursify</span>
+              </h1>
+              
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+                <span className="gradient-text">Course selection</span>
+                <span className="text-[#00305f]"> powered by AI</span>
+              </h2>
+
+              <p className="text-base sm:text-lg text-gray-700 mb-6">
+                Make data-driven decisions with comprehensive insights for all Queen's University courses.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3 mb-8">
+                <Link 
+                  href="/queens-answers" 
+                  className="relative group bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white px-6 py-2.5 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
+                >
+                  <span className="relative z-10 flex items-center justify-center h-full">
+                    <Brain className="mr-2 h-4 w-4" />
+                    <span className="text-sm">Ask AI Assistant</span>
+                  </span>
+                </Link>
+
+                <Link 
+                  href="/schools/queens" 
+                  className="relative group bg-gradient-to-r from-[#00305f] to-[#00305f]/90 text-white px-6 py-2.5 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
+                >
+                  <span className="relative z-10 flex items-center justify-center h-full">
+                    <BarChart className="mr-2 h-4 w-4" />
+                    <span className="text-sm">Browse Courses</span>
+                  </span>
+                </Link>
+              </div>
+
+              {/* Key benefits */}
+              <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-[#00305f] rounded-full mr-2"></div>
+                  <span>Real grade distributions</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-[#d62839] rounded-full mr-2"></div>
+                  <span>AI-powered insights</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-[#efb215] rounded-full mr-2"></div>
+                  <span>Queen's focused</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-[#00305f] rounded-full mr-2"></div>
+                  <span>Completely free</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
 
         <div 
