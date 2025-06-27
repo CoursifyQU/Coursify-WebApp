@@ -249,29 +249,29 @@ export default function About() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <Card className="team-card-gradient card-hover-effect border-gray-100">
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-24 h-24 bg-gradient-to-br from-[#00305f]/80 to-[#00305f] rounded-full flex items-center justify-center mb-4 shadow-lg">
-                      <span className="text-2xl font-bold text-white">AJ</span>
+              <Card className="team-card-gradient card-hover-effect border-gray-100 h-full">
+                <CardContent className="p-6 h-full">
+                  <div className="flex flex-col items-center text-center h-full">
+                    <div className="w-20 h-20 bg-gradient-to-br from-[#00305f]/80 to-[#00305f] rounded-full flex items-center justify-center mb-4 shadow-lg">
+                      <span className="text-xl font-bold text-white">AJ</span>
                     </div>
-                    <h3 className="text-xl font-bold text-[#00305f]">Amaan Javed</h3>
-                    <p className="text-[#d62839] mb-4">Software Engineer</p>
-                    <p className="mb-6 text-gray-600">Queen's Computing '26</p>
-                    <div className="flex space-x-4">
+                    <h3 className="text-lg font-bold text-[#00305f]">Amaan Javed</h3>
+                    <p className="text-[#d62839] mb-3">Team Lead</p>
+                    <p className="mb-4 text-gray-600 text-sm flex-grow">Queen's Computing '26</p>
+                    <div className="flex space-x-3 mt-auto">
                       <a 
                         href="https://github.com/amaanjaved1" 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
                       >
-                        <Github className="h-5 w-5" />
+                        <Github className="h-4 w-4" />
                       </a>
                       <a 
                         href="https://www.linkedin.com/in/amaan-javed/" 
@@ -279,13 +279,13 @@ export default function About() {
                         rel="noopener noreferrer"
                         className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
                       >
-                        <Linkedin className="h-5 w-5" />
+                        <Linkedin className="h-4 w-4" />
                       </a>
                       <button 
-                        onClick={() => copyToClipboard("amaanjaved2004@gmail.com", "Amaan")}
+                        onClick={() => copyToClipboard("amaan.javed@queensu.ca", "Amaan")}
                         className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
                       >
-                        <Mail className="h-5 w-5" />
+                        <Mail className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
@@ -298,23 +298,23 @@ export default function About() {
               animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <Card className="team-card-gradient card-hover-effect border-gray-100">
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-24 h-24 bg-gradient-to-br from-[#d62839]/80 to-[#d62839] rounded-full flex items-center justify-center mb-4 shadow-lg">
-                      <span className="text-2xl font-bold text-white">AA</span>
+              <Card className="team-card-gradient card-hover-effect border-gray-100 h-full">
+                <CardContent className="p-6 h-full">
+                  <div className="flex flex-col items-center text-center h-full">
+                    <div className="w-20 h-20 bg-gradient-to-br from-[#d62839]/80 to-[#d62839] rounded-full flex items-center justify-center mb-4 shadow-lg">
+                      <span className="text-xl font-bold text-white">AA</span>
                     </div>
-                    <h3 className="text-xl font-bold text-[#00305f]">Aayush Aryal</h3>
-                    <p className="text-[#d62839] mb-4">Software Engineer</p>
-                    <p className="mb-6 text-gray-600">Queen's Computing '28.</p>
-                    <div className="flex space-x-4">
+                    <h3 className="text-lg font-bold text-[#00305f]">Aayush Aryal</h3>
+                    <p className="text-[#d62839] mb-3">Lead Web Developer</p>
+                    <p className="mb-4 text-gray-600 text-sm flex-grow">Queen's Computing '28</p>
+                    <div className="flex space-x-3 mt-auto">
                       <a 
                         href="https://github.com/aayusha59" 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
                       >
-                        <Github className="h-5 w-5" />
+                        <Github className="h-4 w-4" />
                       </a>
                       <a 
                         href="https://www.linkedin.com/in/aayush-aryal1/" 
@@ -322,14 +322,74 @@ export default function About() {
                         rel="noopener noreferrer"
                         className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
                       >
-                        <Linkedin className="h-5 w-5" />
+                        <Linkedin className="h-4 w-4" />
                       </a>
                       <button 
-                        onClick={() => copyToClipboard("1aryalaayush@gmail.com", "Aayush")}
+                        onClick={() => copyToClipboard("23wv35@queensu.ca", "Aayush")}
                         className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
                       >
-                        <Mail className="h-5 w-5" />
+                        <Mail className="h-4 w-4" />
                       </button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <Card className="team-card-gradient card-hover-effect border-gray-100 h-full">
+                <CardContent className="p-6 h-full">
+                  <div className="flex flex-col items-center text-center h-full">
+                    <div className="w-20 h-20 bg-gradient-to-br from-[#efb215]/80 to-[#efb215] rounded-full flex items-center justify-center mb-4 shadow-lg">
+                      <span className="text-xl font-bold text-white">ZA</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-[#00305f]">Zaid Alam</h3>
+                    <p className="text-[#d62839] mb-3">Outreach and Web Developer</p>
+                    <p className="mb-4 text-gray-600 text-sm flex-grow">Queen's Computing '28</p>
+                    <div className="flex space-x-3 mt-auto">
+                      <div className="text-gray-400">
+                        <Github className="h-4 w-4" />
+                      </div>
+                      <div className="text-gray-400">
+                        <Linkedin className="h-4 w-4" />
+                      </div>
+                      <div className="text-gray-400">
+                        <Mail className="h-4 w-4" />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              <Card className="team-card-gradient card-hover-effect border-gray-100 h-full">
+                <CardContent className="p-6 h-full">
+                  <div className="flex flex-col items-center text-center h-full">
+                    <div className="w-20 h-20 bg-gradient-to-br from-[#00305f]/80 to-[#00305f] rounded-full flex items-center justify-center mb-4 shadow-lg">
+                      <span className="text-xl font-bold text-white">AI</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-[#00305f]">Ayaan Iqbal</h3>
+                    <p className="text-[#d62839] mb-3">AI Engineer</p>
+                    <p className="mb-4 text-gray-600 text-sm flex-grow">Waterloo Biomedical Engineering '27</p>
+                    <div className="flex space-x-3 mt-auto">
+                      <div className="text-gray-400">
+                        <Github className="h-4 w-4" />
+                      </div>
+                      <div className="text-gray-400">
+                        <Linkedin className="h-4 w-4" />
+                      </div>
+                      <div className="text-gray-400">
+                        <Mail className="h-4 w-4" />
+                      </div>
                     </div>
                   </div>
                 </CardContent>
