@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import Link from "next/link"
-import { motion, useInView } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { FloatingElements } from "@/components/floating-elements"
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { motion, useInView } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { FloatingElements } from "@/components/floating-elements";
 import {
   BookOpen,
   BarChart3,
@@ -25,60 +25,63 @@ import {
   Users,
   Award,
   BarChart,
-} from "lucide-react"
+} from "lucide-react";
 
 export default function Home() {
-  const [hasSeenAnimation, setHasSeenAnimation] = useState(true)
-  const [shouldAnimate, setShouldAnimate] = useState(false)
-  const [activeAccordion, setActiveAccordion] = useState<number | null>(null)
-  const [isVisible, setIsVisible] = useState(false)
-  const [scrollY, setScrollY] = useState(0)
+  const [hasSeenAnimation, setHasSeenAnimation] = useState(true);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+  const [activeAccordion, setActiveAccordion] = useState<number | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
 
   // Refs for scroll animations
-  const heroRef = useRef<HTMLDivElement>(null)
-  const featuresRef = useRef<HTMLDivElement>(null)
-  const statsRef = useRef<HTMLDivElement>(null)
-  const testimonialsRef = useRef<HTMLDivElement>(null)
-  const faqRef = useRef<HTMLDivElement>(null)
+  const heroRef = useRef<HTMLDivElement>(null);
+  const featuresRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const testimonialsRef = useRef<HTMLDivElement>(null);
+  const faqRef = useRef<HTMLDivElement>(null);
 
-  const isHeroInView = useInView(heroRef, { once: false, amount: 0.5 })
-  const isFeaturesInView = useInView(featuresRef, { once: false, amount: 0.2 })
-  const isStatsInView = useInView(statsRef, { once: true, amount: 0.5 })
-  const isTestimonialsInView = useInView(testimonialsRef, { once: false, amount: 0.3 })
-  const isFaqInView = useInView(faqRef, { once: false, amount: 0.3 })
+  const isHeroInView = useInView(heroRef, { once: false, amount: 0.5 });
+  const isFeaturesInView = useInView(featuresRef, { once: false, amount: 0.2 });
+  const isStatsInView = useInView(statsRef, { once: true, amount: 0.5 });
+  const isTestimonialsInView = useInView(testimonialsRef, {
+    once: false,
+    amount: 0.3,
+  });
+  const isFaqInView = useInView(faqRef, { once: false, amount: 0.3 });
 
   useEffect(() => {
     // Scroll to top on page load
-    window.scrollTo(0, 0)
-    
+    window.scrollTo(0, 0);
+
     // Check if the user has seen the animation before
-    const hasVisited = localStorage.getItem("hasSeenAIButtonAnimation")
+    const hasVisited = localStorage.getItem("hasSeenAIButtonAnimation");
     if (!hasVisited) {
-      setHasSeenAnimation(false)
+      setHasSeenAnimation(false);
       // Set the flag in localStorage so animation only plays once
-      localStorage.setItem("hasSeenAIButtonAnimation", "true")
+      localStorage.setItem("hasSeenAIButtonAnimation", "true");
     }
 
-    setIsVisible(true)
+    setIsVisible(true);
 
     const handleScroll = () => {
-      setScrollY(window.scrollY)
-    }
+      setScrollY(window.scrollY);
+    };
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleButtonHover = () => {
     if (!hasSeenAnimation) {
-      setShouldAnimate(true)
-      setHasSeenAnimation(true)
+      setShouldAnimate(true);
+      setHasSeenAnimation(true);
     }
-  }
+  };
 
   const toggleAccordion = (index: number) => {
-    setActiveAccordion(activeAccordion === index ? null : index)
-  }
+    setActiveAccordion(activeAccordion === index ? null : index);
+  };
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
@@ -87,7 +90,7 @@ export default function Home() {
       y: 0,
       transition: { duration: 0.6 },
     },
-  }
+  };
 
   const staggerContainer = {
     hidden: { opacity: 0 },
@@ -97,13 +100,13 @@ export default function Home() {
         staggerChildren: 0.2,
       },
     },
-  }
+  };
 
   const faqs = [
     {
-                  question: "Is Coursify connected to SOLUS?",
-            answer:
-              "Coursify is not officially connected to SOLUS, but we've collected grade distribution data from multiple reliable sources. You'll need to register for courses through SOLUS after researching them on our platform.",
+      question: "Is Coursify connected to SOLUS?",
+      answer:
+        "Coursify is not officially connected to SOLUS, but we've collected grade distribution data from multiple reliable sources. You'll need to register for courses through SOLUS after researching them on our platform.",
     },
     {
       question: "Where does the chatbot get its information?",
@@ -117,15 +120,15 @@ export default function Home() {
     },
     {
       question: "Is this tool free?",
-                  answer:
-              "Yes, Coursify is completely free for all Queen's University students. We believe in making data-driven course selection accessible to everyone.",
+      answer:
+        "Yes, Coursify is completely free for all Queen's University students. We believe in making data-driven course selection accessible to everyone.",
     },
     {
       question: "What courses are supported?",
-                  answer:
-              "Currently, Coursify only supports on-campus courses at Queen's University. We're working on adding support for online courses in the future, but for now, our data and AI assistant focus exclusively on in-person course offerings.",
+      answer:
+        "Currently, Coursify only supports on-campus courses at Queen's University. We're working on adding support for online courses in the future, but for now, our data and AI assistant focus exclusively on in-person course offerings.",
     },
-  ]
+  ];
 
   const testimonials = [
     {
@@ -136,7 +139,8 @@ export default function Home() {
       initial: "E",
     },
     {
-      quote: "The AI chatbot gave me insights about my professor's teaching style that I couldn't find anywhere else.",
+      quote:
+        "The AI chatbot gave me insights about my professor's teaching style that I couldn't find anywhere else.",
       name: "Queen's Arts Student",
       program: "Class of 2026",
       initial: "A",
@@ -148,7 +152,7 @@ export default function Home() {
       program: "Class of 2025",
       initial: "S",
     },
-  ]
+  ];
 
   const features = [
     {
@@ -175,7 +179,8 @@ export default function Home() {
     {
       icon: <RotateCcw className="h-7 w-7" />,
       title: "Semester Tracking",
-      description: "Compare how courses have evolved over time with historical course data going back to 2015.",
+      description:
+        "Compare how courses have evolved over time with historical course data going back to 2015.",
       color: "d62839",
     },
     {
@@ -192,22 +197,39 @@ export default function Home() {
         "See feedback based on student experiences pulled from Reddit and RateMyProfessor — filtered to be relevant to Queen's courses and instructors.",
       color: "efb215",
     },
-  ]
+  ];
 
   const stats = [
-    { value: "Queen's", label: "University Focus", icon: <GraduationCap className="h-5 w-5" /> },
-    { value: "Real", label: "Grade Data", icon: <BarChart className="h-5 w-5" /> },
-    { value: "AI", label: "Powered Assistant", icon: <Brain className="h-5 w-5" /> },
-    { value: "Free", label: "For Students", icon: <Users className="h-5 w-5" /> },
-  ]
+    {
+      value: "Queen's",
+      label: "University Focus",
+      icon: <GraduationCap className="h-5 w-5" />,
+    },
+    {
+      value: "Real",
+      label: "Grade Data",
+      icon: <BarChart className="h-5 w-5" />,
+    },
+    {
+      value: "AI",
+      label: "Powered Assistant",
+      icon: <Brain className="h-5 w-5" />,
+    },
+    {
+      value: "Free",
+      label: "For Students",
+      icon: <Users className="h-5 w-5" />,
+    },
+  ];
 
   // Scroll to features section
   const handleScrollClick = () => {
     if (featuresRef.current) {
       const yOffset = -60;
       const element = featuresRef.current;
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
     }
   };
 
@@ -215,40 +237,66 @@ export default function Home() {
     <div className="relative overflow-hidden">
       <style jsx global>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
+          0%,
+          100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
         }
-        
+
         @keyframes pulse-glow {
-          0%, 100% { filter: drop-shadow(0 0 5px rgba(214, 40, 57, 0.4)); }
-          50% { filter: drop-shadow(0 0 20px rgba(214, 40, 57, 0.7)); }
+          0%,
+          100% {
+            filter: drop-shadow(0 0 5px rgba(214, 40, 57, 0.4));
+          }
+          50% {
+            filter: drop-shadow(0 0 20px rgba(214, 40, 57, 0.7));
+          }
         }
-        
+
         @keyframes rotate-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
         }
-        
+
         @keyframes gradient-shift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
         }
-        
+
         .animate-float {
           animation: float 6s ease-in-out infinite;
         }
-        
+
         .animate-pulse-glow {
           animation: pulse-glow 3s ease-in-out infinite;
         }
-        
+
         .animate-rotate-slow {
           animation: rotate-slow 12s linear infinite;
         }
-        
+
         .gradient-text {
-          background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
+          background: linear-gradient(
+            -45deg,
+            #00305f,
+            #d62839,
+            #efb215,
+            #00305f
+          );
           background-size: 300% 300%;
           animation: gradient-shift 6s ease infinite;
           -webkit-background-clip: text;
@@ -258,7 +306,13 @@ export default function Home() {
         }
 
         .moving-gradient {
-          background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
+          background: linear-gradient(
+            -45deg,
+            #00305f,
+            #d62839,
+            #efb215,
+            #00305f
+          );
           background-size: 300% 300%;
           animation: gradient-shift 6s ease infinite;
           -webkit-background-clip: text;
@@ -267,41 +321,63 @@ export default function Home() {
           color: transparent;
           display: inline-block;
         }
-        
+
         .gradient-border {
           position: relative;
         }
-        
+
         .gradient-border::before {
           content: "";
           position: absolute;
           inset: -2px;
           z-index: -1;
-          background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
+          background: linear-gradient(
+            -45deg,
+            #00305f,
+            #d62839,
+            #efb215,
+            #00305f
+          );
           background-size: 400% 400%;
           animation: gradient-shift 6s ease infinite;
           border-radius: inherit;
         }
-        
+
         .mesh-gradient {
           background-color: hsla(0, 0%, 100%, 1);
-          background-image:
-            radial-gradient(at 21% 33%, hsla(225, 100%, 19%, 0.1) 0px, transparent 50%),
-            radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.1) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.1) 0px, transparent 50%);
+          background-image: radial-gradient(
+              at 21% 33%,
+              hsla(225, 100%, 19%, 0.1) 0px,
+              transparent 50%
+            ),
+            radial-gradient(
+              at 79% 76%,
+              hsla(352, 71%, 54%, 0.1) 0px,
+              transparent 50%
+            ),
+            radial-gradient(
+              at 96% 10%,
+              hsla(43, 83%, 51%, 0.1) 0px,
+              transparent 50%
+            );
         }
-        
+
         .card-hover-effect {
           transition: all 0.3s ease;
         }
-        
+
         .card-hover-effect:hover {
           transform: translateY(-5px);
-          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+            0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-        
+
         .dot-pattern {
-          background-image: radial-gradient(circle, #00305f 1px, transparent 1px);
+          background-image: radial-gradient(
+            circle,
+            #00305f 1px,
+            transparent 1px
+          );
           background-size: 20px 20px;
         }
 
@@ -331,16 +407,21 @@ export default function Home() {
           animation: border-travel 3s linear infinite;
           filter: drop-shadow(0 0 3px #efb215);
         }
-        
+
         @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-5px); }
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-5px);
+          }
         }
-        
+
         .animate-bounce-slow {
           animation: bounce-slow 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
-        
+
         @keyframes ripple {
           0% {
             transform: scale(0.8);
@@ -355,11 +436,11 @@ export default function Home() {
             opacity: 0;
           }
         }
-        
+
         .animate-ripple {
           animation: ripple 2s ease-out infinite;
         }
-        
+
         @keyframes shine {
           0% {
             background-position: -100% 0;
@@ -368,7 +449,7 @@ export default function Home() {
             background-position: 200% 0;
           }
         }
-        
+
         .animate-shine {
           background: linear-gradient(
             90deg,
@@ -379,7 +460,7 @@ export default function Home() {
           background-size: 200% 100%;
           animation: shine 2s infinite;
         }
-        
+
         @keyframes circle-pulse {
           0% {
             box-shadow: 0 0 0 0 rgba(239, 178, 21, 0.4);
@@ -391,35 +472,50 @@ export default function Home() {
             box-shadow: 0 0 0 0 rgba(239, 178, 21, 0);
           }
         }
-        
+
         .animate-circle-pulse {
           animation: circle-pulse 2s infinite cubic-bezier(0.66, 0, 0, 1);
         }
 
         @keyframes pop-out {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.04); }
-          100% { transform: scale(1); }
+          0% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.04);
+          }
+          100% {
+            transform: scale(1);
+          }
         }
-        
+
         .animate-pop {
           animation: pop-out 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
         }
-        
+
         @keyframes pop-hover {
-          0% { transform: scale(1); }
-          100% { transform: scale(1.03); }
+          0% {
+            transform: scale(1);
+          }
+          100% {
+            transform: scale(1.03);
+          }
         }
-        
+
         .pop-on-hover:hover {
-          animation: pop-hover 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
-          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+          animation: pop-hover 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97)
+            forwards;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+            0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
       `}</style>
 
       <FloatingElements />
 
-      <section ref={heroRef} className="relative bg-white h-[93vh] flex items-center justify-center overflow-hidden mesh-gradient">
+      <section
+        ref={heroRef}
+        className="relative bg-white h-[65vh] flex items-center justify-center overflow-hidden mesh-gradient"
+      >
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute w-64 h-64 bg-[#d62839]/5 rounded-full blur-2xl -top-10 -right-20" />
           <div className="absolute w-64 h-64 bg-[#00305f]/5 rounded-full blur-2xl -bottom-10 -left-20" />
@@ -427,7 +523,7 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center">
             {/* Main content */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -437,7 +533,9 @@ export default function Home() {
               className="text-center max-w-2xl"
             >
               <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#00305f]/10 mb-4">
-                <span className="text-[#00305f] text-xs font-medium mr-2">Queen's University</span>
+                <span className="text-[#00305f] text-xs font-medium mr-2">
+                  Queen's University
+                </span>
                 <span className="flex h-1 w-1 relative">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d62839] opacity-75" />
                   <span className="relative inline-flex rounded-full h-1 w-1 bg-[#d62839]" />
@@ -447,19 +545,20 @@ export default function Home() {
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-2 leading-tight">
                 <span className="gradient-text">Coursify</span>
               </h1>
-              
+
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
                 <span className="gradient-text">Course selection</span>
                 <span className="text-[#00305f]"> powered by AI</span>
               </h2>
 
               <p className="text-base sm:text-lg text-gray-700 mb-6">
-                Make data-driven decisions with comprehensive insights for all Queen's University courses.
+                Make data-driven decisions with comprehensive insights for all
+                Queen's University courses.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3 mb-8">
-                <Link 
-                  href="/queens-answers" 
+                <Link
+                  href="/queens-answers"
                   className="relative group bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white px-6 py-2.5 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
                 >
                   <span className="relative z-10 flex items-center justify-center h-full">
@@ -468,8 +567,8 @@ export default function Home() {
                   </span>
                 </Link>
 
-                <Link 
-                  href="/schools/queens" 
+                <Link
+                  href="/schools/queens"
                   className="relative group bg-gradient-to-r from-[#00305f] to-[#00305f]/90 text-white px-6 py-2.5 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
                 >
                   <span className="relative z-10 flex items-center justify-center h-full">
@@ -502,7 +601,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div 
+        <div
           className="absolute bottom-8 left-0 right-0 flex justify-center cursor-pointer"
           onClick={handleScrollClick}
         >
@@ -517,15 +616,20 @@ export default function Home() {
         </div>
       </section>
 
-      <section ref={featuresRef} className="bg-gray-50 py-8 sm:py-10 relative overflow-hidden">
+      <section
+        ref={featuresRef}
+        className="bg-gray-50 py-8 sm:py-10 relative overflow-hidden"
+      >
         <div className="absolute inset-0 bg-gradient-to-b from-white via-gray-50 to-white" />
         <div className="absolute top-0 right-0 w-48 h-48 bg-[#efb215]/5 rounded-full blur-2xl" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#d62839]/5 rounded-full blur-2xl" />
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#d62839]/10 mb-3">
-              <span className="text-[#d62839] text-xs font-medium mr-2">Features</span>
+              <span className="text-[#d62839] text-xs font-medium mr-2">
+                Features
+              </span>
               <span className="flex h-1 w-1 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d62839] opacity-75" />
                 <span className="relative inline-flex rounded-full h-1 w-1 bg-[#d62839]" />
@@ -537,7 +641,8 @@ export default function Home() {
               <span className="gradient-text">smarter course decisions</span>
             </h2>
             <p className="text-sm text-gray-600 max-w-2xl mx-auto">
-              Coursify combines powerful data analytics with AI to help Queen's students make informed academic choices.
+              Coursify combines powerful data analytics with AI to help Queen's
+              students make informed academic choices.
             </p>
           </div>
 
@@ -546,18 +651,18 @@ export default function Home() {
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ 
-                  opacity: 1, 
+                whileInView={{
+                  opacity: 1,
                   y: 0,
-                  transition: { 
+                  transition: {
                     duration: 0.4,
-                    delay: index * 0.2 + 0.1
-                  }
+                    delay: index * 0.2 + 0.1,
+                  },
                 }}
                 viewport={{ once: true }}
                 className="group relative bg-white p-0.5 rounded-xl transform shadow-sm hover:shadow-md pop-on-hover"
               >
-                <motion.div 
+                <motion.div
                   className="bg-white rounded-xl p-4 sm:p-6 h-full"
                   initial={{ scale: 1 }}
                   whileInView={{
@@ -565,22 +670,26 @@ export default function Home() {
                     transition: {
                       duration: 0.6,
                       delay: index * 0.2 + 0.3,
-                      ease: [0.36, 0.07, 0.19, 0.97]
-                    }
+                      ease: [0.36, 0.07, 0.19, 0.97],
+                    },
                   }}
                   viewport={{ once: true }}
                 >
-                  <div className={`bg-[#${feature.color}]/10 h-10 w-10 rounded-xl flex items-center justify-center mb-3 group-hover:bg-[#${feature.color}] group-hover:shadow-md transition-all duration-300`}>
-                    <div className={`text-[#${feature.color}] group-hover:text-white transition-all duration-300`}>
+                  <div
+                    className={`bg-[#${feature.color}]/10 h-10 w-10 rounded-xl flex items-center justify-center mb-3 group-hover:bg-[#${feature.color}] group-hover:shadow-md transition-all duration-300`}
+                  >
+                    <div
+                      className={`text-[#${feature.color}] group-hover:text-white transition-all duration-300`}
+                    >
                       {feature.icon}
                     </div>
                   </div>
-                  <h3 className={`font-bold text-base mb-2 group-hover:text-[#${feature.color}] transition-colors duration-300`}>
+                  <h3
+                    className={`font-bold text-base mb-2 group-hover:text-[#${feature.color}] transition-colors duration-300`}
+                  >
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-gray-600">
-                    {feature.description}
-                  </p>
+                  <p className="text-sm text-gray-600">{feature.description}</p>
                 </motion.div>
               </motion.div>
             ))}
@@ -592,112 +701,129 @@ export default function Home() {
         <div className="container mx-auto relative z-10">
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#efb215]/10 mb-3">
-              <span className="text-[#efb215] text-xs font-medium mr-2">How It Works</span>
+              <span className="text-[#efb215] text-xs font-medium mr-2">
+                How It Works
+              </span>
               <Lightbulb className="h-3 w-3 text-[#efb215]" />
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[#00305f]">Your path to <span className="moving-gradient">academic success</span></h2>
+            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[#00305f]">
+              Your path to{" "}
+              <span className="moving-gradient">academic success</span>
+            </h2>
             <p className="text-sm text-gray-600 max-w-2xl mx-auto">
-              Coursify makes it easy to research courses, compare options, and make informed decisions.
+              Coursify makes it easy to research courses, compare options, and
+              make informed decisions.
             </p>
           </div>
 
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <motion.div 
+              <motion.div
                 className="relative"
                 initial={{ opacity: 0 }}
-                whileInView={{ 
+                whileInView={{
                   opacity: 1,
-                  transition: { duration: 0.5, delay: 0.1 }
+                  transition: { duration: 0.5, delay: 0.1 },
                 }}
                 viewport={{ once: true }}
               >
                 <div className="absolute top-0 left-1/2 w-px h-full bg-gradient-to-b from-[#d62839] to-transparent md:hidden"></div>
                 <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#d62839] to-transparent hidden md:block"></div>
 
-                <motion.div 
+                <motion.div
                   className="relative z-10 bg-white rounded-xl border border-gray-100 shadow-sm p-6 text-center pop-on-hover h-[220px] flex flex-col items-center justify-center"
                   initial={{ scale: 1 }}
-                  whileInView={{ 
+                  whileInView={{
                     scale: [1, 1.04, 1],
-                    transition: { 
-                      duration: 0.8, 
+                    transition: {
+                      duration: 0.8,
                       delay: 0.2,
-                      ease: [0.36, 0.07, 0.19, 0.97]
-                    }
+                      ease: [0.36, 0.07, 0.19, 0.97],
+                    },
                   }}
                   viewport={{ once: true }}
                 >
                   <div className="w-12 h-12 bg-[#d62839]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Search className="h-5 w-5 text-[#d62839]" />
                   </div>
-                  <h3 className="text-xl font-bold text-[#00305f] mb-3">1. Search Courses</h3>
+                  <h3 className="text-xl font-bold text-[#00305f] mb-3">
+                    1. Search Courses
+                  </h3>
                   <p className="text-gray-600">
-                    Find any Queen's course and see detailed grade distributions and reviews.
+                    Find any Queen's course and see detailed grade distributions
+                    and reviews.
                   </p>
                 </motion.div>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="relative"
                 initial={{ opacity: 0 }}
-                whileInView={{ 
+                whileInView={{
                   opacity: 1,
-                  transition: { duration: 0.5, delay: 0.4 }
+                  transition: { duration: 0.5, delay: 0.4 },
                 }}
                 viewport={{ once: true }}
               >
                 <div className="absolute top-0 left-1/2 w-px h-full bg-gradient-to-b from-[#d62839] to-transparent md:hidden"></div>
-                <motion.div 
+                <motion.div
                   className="relative z-10 bg-white rounded-xl border border-gray-100 shadow-sm p-6 text-center pop-on-hover h-[220px] flex flex-col items-center justify-center"
                   initial={{ scale: 1 }}
-                  whileInView={{ 
+                  whileInView={{
                     scale: [1, 1.04, 1],
-                    transition: { 
-                      duration: 0.8, 
+                    transition: {
+                      duration: 0.8,
                       delay: 0.5,
-                      ease: [0.36, 0.07, 0.19, 0.97]
-                    }
+                      ease: [0.36, 0.07, 0.19, 0.97],
+                    },
                   }}
                   viewport={{ once: true }}
                 >
                   <div className="w-12 h-12 bg-[#00305f]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <MessageSquare className="h-5 w-5 text-[#00305f]" />
                   </div>
-                  <h3 className="text-xl font-bold text-[#00305f] mb-3">2. Ask AI Assistant</h3>
+                  <h3 className="text-xl font-bold text-[#00305f] mb-3">
+                    2. Ask AI Assistant
+                  </h3>
                   <p className="text-gray-600">
-                    Get personalized answers about professors, workload, and teaching styles.
+                    Get personalized answers about professors, workload, and
+                    teaching styles.
                   </p>
                 </motion.div>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="relative"
                 initial={{ opacity: 0 }}
-                whileInView={{ 
+                whileInView={{
                   opacity: 1,
-                  transition: { duration: 0.5, delay: 0.7 }
+                  transition: { duration: 0.5, delay: 0.7 },
                 }}
                 viewport={{ once: true }}
               >
-                <motion.div 
+                <motion.div
                   className="relative z-10 bg-white rounded-xl border border-gray-100 shadow-sm p-6 text-center pop-on-hover h-[220px] flex flex-col items-center justify-center"
                   initial={{ scale: 1 }}
-                  whileInView={{ 
+                  whileInView={{
                     scale: [1, 1.04, 1],
-                    transition: { 
-                      duration: 0.8, 
+                    transition: {
+                      duration: 0.8,
                       delay: 0.8,
-                      ease: [0.36, 0.07, 0.19, 0.97]
-                    }
+                      ease: [0.36, 0.07, 0.19, 0.97],
+                    },
                   }}
                   viewport={{ once: true }}
                 >
                   <div className="w-12 h-12 bg-[#efb215]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Award className="h-5 w-5 text-[#efb215]" />
                   </div>
-                  <h3 className="text-xl font-bold text-[#00305f] mb-3">3. Make Better Choices</h3>
-                  <p className="text-gray-600">Select courses that match your learning style and academic goals.</p>
+                  <h3 className="text-xl font-bold text-[#00305f] mb-3">
+                    3. Make Better Choices
+                  </h3>
+                  <p className="text-gray-600">
+                    Select courses that match your learning style and academic
+                    goals.
+                  </p>
                 </motion.div>
               </motion.div>
             </div>
@@ -705,39 +831,51 @@ export default function Home() {
         </div>
       </section>
 
-      <section ref={testimonialsRef} className="bg-gray-50 py-6 sm:py-8 px-4 relative overflow-hidden">
+      <section
+        ref={testimonialsRef}
+        className="bg-gray-50 py-6 sm:py-8 px-4 relative overflow-hidden"
+      >
         <div className="container mx-auto relative z-10">
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#00305f]/10 mb-3">
-              <span className="text-[#00305f] text-xs font-medium mr-2">Student Success Stories</span>
+              <span className="text-[#00305f] text-xs font-medium mr-2">
+                Student Success Stories
+              </span>
               <Star className="h-3 w-3 text-[#00305f]" />
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[#00305f]">Trusted by <span className="moving-gradient">Queen's students</span></h2>
+            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[#00305f]">
+              Trusted by{" "}
+              <span className="moving-gradient">Queen's students</span>
+            </h2>
             <p className="text-sm text-gray-600 max-w-2xl mx-auto">
-              See how Coursify has helped students make better academic decisions.
+              See how Coursify has helped students make better academic
+              decisions.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto">
             {testimonials.map((testimonial, index) => {
               const colorClasses = {
-                topBorder: testimonial.initial === 'A' 
-                  ? "group-hover:bg-[#00305f]"
-                  : testimonial.initial === 'S'
-                  ? "group-hover:bg-[#efb215]"
-                  : "group-hover:bg-[#d62839]",
-                circle: testimonial.initial === 'A'
-                  ? "bg-gradient-to-br from-[#00305f] to-[#00305f]/80"
-                  : testimonial.initial === 'S'
-                  ? "bg-gradient-to-br from-[#efb215] to-[#efb215]/80"
-                  : "bg-gradient-to-br from-[#d62839] to-[#d62839]/80",
-                text: testimonial.initial === 'A'
-                  ? "text-[#00305f]"
-                  : testimonial.initial === 'S'
-                  ? "text-[#efb215]"
-                  : "text-[#d62839]"
+                topBorder:
+                  testimonial.initial === "A"
+                    ? "group-hover:bg-[#00305f]"
+                    : testimonial.initial === "S"
+                    ? "group-hover:bg-[#efb215]"
+                    : "group-hover:bg-[#d62839]",
+                circle:
+                  testimonial.initial === "A"
+                    ? "bg-gradient-to-br from-[#00305f] to-[#00305f]/80"
+                    : testimonial.initial === "S"
+                    ? "bg-gradient-to-br from-[#efb215] to-[#efb215]/80"
+                    : "bg-gradient-to-br from-[#d62839] to-[#d62839]/80",
+                text:
+                  testimonial.initial === "A"
+                    ? "text-[#00305f]"
+                    : testimonial.initial === "S"
+                    ? "text-[#efb215]"
+                    : "text-[#d62839]",
               };
-              
+
               return (
                 <motion.div
                   key={index}
@@ -747,7 +885,9 @@ export default function Home() {
                   viewport={{ once: true }}
                   className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transform transition-all duration-300 group relative pop-on-hover"
                 >
-                  <div className={`absolute top-0 left-0 w-full h-1 bg-transparent ${colorClasses.topBorder} rounded-t-xl transition-colors duration-300`}></div>
+                  <div
+                    className={`absolute top-0 left-0 w-full h-1 bg-transparent ${colorClasses.topBorder} rounded-t-xl transition-colors duration-300`}
+                  ></div>
                   <div className="flex items-center mb-3">
                     <div className="flex text-[#efb215]">
                       {[...Array(5)].map((_, i) => (
@@ -756,7 +896,9 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="relative mb-6">
-                    <p className="text-gray-600 italic mb-4 relative z-10">"{testimonial.quote}"</p>
+                    <p className="text-gray-600 italic mb-4 relative z-10">
+                      "{testimonial.quote}"
+                    </p>
                     <svg
                       className="absolute text-[#00305f]/5 h-12 w-12 -top-4 -left-2 transform -rotate-12"
                       fill="currentColor"
@@ -767,14 +909,22 @@ export default function Home() {
                   </div>
                   <div className="flex items-center">
                     <div className="relative h-12 w-12 mr-4">
-                      <div className={`absolute inset-0 rounded-full ${colorClasses.circle} animate-pulse-slow`}></div>
+                      <div
+                        className={`absolute inset-0 rounded-full ${colorClasses.circle} animate-pulse-slow`}
+                      ></div>
                       <div className="absolute inset-0.5 rounded-full bg-white flex items-center justify-center">
-                        <span className={`${colorClasses.text} font-bold`}>{testimonial.initial}</span>
+                        <span className={`${colorClasses.text} font-bold`}>
+                          {testimonial.initial}
+                        </span>
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">{testimonial.name}</p>
-                      <p className="text-xs text-gray-500">{testimonial.program}</p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {testimonial.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {testimonial.program}
+                      </p>
                     </div>
                   </div>
                 </motion.div>
@@ -784,44 +934,55 @@ export default function Home() {
         </div>
       </section>
 
-      <section ref={faqRef} className="py-6 sm:py-8 px-4 relative overflow-hidden">
+      <section
+        ref={faqRef}
+        className="py-6 sm:py-8 px-4 relative overflow-hidden"
+      >
         <div className="container max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#d62839]/10 mb-3">
-              <span className="text-[#d62839] text-xs font-medium mr-2">FAQs</span>
+              <span className="text-[#d62839] text-xs font-medium mr-2">
+                FAQs
+              </span>
               <Info className="h-3 w-3 text-[#d62839]" />
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[#00305f]">Frequently Asked <span className="moving-gradient">Questions</span></h2>
-                          <p className="text-sm text-gray-600 max-w-2xl mx-auto">Find answers to common questions about Coursify.</p>
+            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[#00305f]">
+              Frequently Asked{" "}
+              <span className="moving-gradient">Questions</span>
+            </h2>
+            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+              Find answers to common questions about Coursify.
+            </p>
           </div>
 
           <div className="space-y-3">
             {faqs.map((faq, index) => {
               // Determine color based on index (0 = red, 1 = navy, 2 = gold, repeat)
-              const colorClasses = index % 3 === 0 
-                ? {
-                    hoverBorder: "hover:border-[#d62839]/30",
-                    iconBg: "bg-[#d62839]/10",
-                    iconText: "text-[#d62839]",
-                    iconHoverBg: "group-hover:bg-[#d62839]",
-                    titleHover: "group-hover:text-[#d62839]"
-                  }
-                : index % 3 === 1
-                ? {
-                    hoverBorder: "hover:border-[#00305f]/30",
-                    iconBg: "bg-[#00305f]/10",
-                    iconText: "text-[#00305f]",
-                    iconHoverBg: "group-hover:bg-[#00305f]",
-                    titleHover: "group-hover:text-[#00305f]"
-                  }
-                : {
-                    hoverBorder: "hover:border-[#efb215]/30",
-                    iconBg: "bg-[#efb215]/10",
-                    iconText: "text-[#efb215]",
-                    iconHoverBg: "group-hover:bg-[#efb215]",
-                    titleHover: "group-hover:text-[#efb215]"
-                  };
-                
+              const colorClasses =
+                index % 3 === 0
+                  ? {
+                      hoverBorder: "hover:border-[#d62839]/30",
+                      iconBg: "bg-[#d62839]/10",
+                      iconText: "text-[#d62839]",
+                      iconHoverBg: "group-hover:bg-[#d62839]",
+                      titleHover: "group-hover:text-[#d62839]",
+                    }
+                  : index % 3 === 1
+                  ? {
+                      hoverBorder: "hover:border-[#00305f]/30",
+                      iconBg: "bg-[#00305f]/10",
+                      iconText: "text-[#00305f]",
+                      iconHoverBg: "group-hover:bg-[#00305f]",
+                      titleHover: "group-hover:text-[#00305f]",
+                    }
+                  : {
+                      hoverBorder: "hover:border-[#efb215]/30",
+                      iconBg: "bg-[#efb215]/10",
+                      iconText: "text-[#efb215]",
+                      iconHoverBg: "group-hover:bg-[#efb215]",
+                      titleHover: "group-hover:text-[#efb215]",
+                    };
+
               return (
                 <motion.div
                   key={index}
@@ -834,7 +995,9 @@ export default function Home() {
                 >
                   <div className="flex items-start cursor-pointer">
                     <div className="mr-4 mt-1">
-                      <div className={`flex items-center justify-center w-6 h-6 rounded-full ${colorClasses.iconBg} ${colorClasses.iconText} ${colorClasses.iconHoverBg} group-hover:text-white transition-colors duration-300`}>
+                      <div
+                        className={`flex items-center justify-center w-6 h-6 rounded-full ${colorClasses.iconBg} ${colorClasses.iconText} ${colorClasses.iconHoverBg} group-hover:text-white transition-colors duration-300`}
+                      >
                         {activeAccordion === index ? (
                           <ChevronUp className="h-3.5 w-3.5" />
                         ) : (
@@ -843,18 +1006,20 @@ export default function Home() {
                       </div>
                     </div>
                     <div>
-                      <h3 className={`font-bold text-lg text-[#00305f] ${colorClasses.titleHover} transition-colors duration-300 mb-2`}>
+                      <h3
+                        className={`font-bold text-lg text-[#00305f] ${colorClasses.titleHover} transition-colors duration-300 mb-2`}
+                      >
                         {faq.question}
                       </h3>
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
-                        animate={{ 
+                        animate={{
                           opacity: activeAccordion === index ? 1 : 0,
-                          height: activeAccordion === index ? "auto" : 0
+                          height: activeAccordion === index ? "auto" : 0,
                         }}
-                        transition={{ 
+                        transition={{
                           duration: 0.3,
-                          ease: "easeInOut"
+                          ease: "easeInOut",
                         }}
                         className="overflow-hidden"
                       >
@@ -874,9 +1039,12 @@ export default function Home() {
       <section className="bg-[#00305f] py-4 sm:py-6 px-4 relative overflow-hidden">
         <div className="container mx-auto relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-xl sm:text-2xl font-bold mb-3 text-white">Ready to make smarter course decisions?</h2>
+            <h2 className="text-xl sm:text-2xl font-bold mb-3 text-white">
+              Ready to make smarter course decisions?
+            </h2>
             <p className="text-sm text-white/80 mb-6 max-w-2xl mx-auto">
-              Join thousands of Queen's students who are using Coursify to plan their academic journey.
+              Join thousands of Queen's students who are using Coursify to plan
+              their academic journey.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Button
@@ -892,14 +1060,27 @@ export default function Home() {
                 </Link>
               </Button>
 
-              <Link 
-                href="/schools/queens" 
+              <Link
+                href="/schools/queens"
                 className="group relative bg-gradient-to-r from-[#00305f] to-[#00305f]/90 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center overflow-hidden hover:scale-105 shadow-md hover:shadow-lg"
               >
                 <span className="relative z-10 flex items-center justify-center">
-                  <span className="group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#efb215] group-hover:to-[#ff8a00] transition-all duration-500 ease-in-out">Browse Courses</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-500 ease-in-out group-hover:text-[#efb215]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  <span className="group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#efb215] group-hover:to-[#ff8a00] transition-all duration-500 ease-in-out">
+                    Browse Courses
+                  </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-500 ease-in-out group-hover:text-[#efb215]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
                   </svg>
                 </span>
               </Link>
@@ -913,21 +1094,33 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-3 md:mb-0">
               <div className="inline-block mb-1">
-                <span className="font-bold text-[#00305f] text-sm">Course</span>
-                <span className="font-bold text-[#d62839] text-sm">Central</span>
+                <span className="font-bold text-[#00305f] text-sm">Cours</span>
+                <span className="font-bold text-[#d62839] text-sm">ify</span>
               </div>
               <p className="text-xs text-gray-600">
-                Platform for <span className="moving-gradient font-medium">Queen's Students</span> by <span className="moving-gradient font-medium">Queen's Students</span> 
+                Platform for{" "}
+                <span className="moving-gradient font-medium">
+                  Queen's Students
+                </span>{" "}
+                by{" "}
+                <span className="moving-gradient font-medium">
+                  Queen's Students
+                </span>
               </p>
               <p className="text-xs text-gray-500 mt-1 italic">
                 Not affiliated with or endorsed by Queen's University
               </p>
             </div>
-            
+
             <div className="text-xs text-gray-600">
-              <span className="moving-gradient font-medium">© 2025 Coursify</span>
+              <span className="moving-gradient font-medium">
+                © 2025 Coursify
+              </span>
               <span className="mx-2">•</span>
-              <Link href="/about" className="text-[#00305f] hover:text-[#d62839] transition-colors duration-200">
+              <Link
+                href="/about"
+                className="text-[#00305f] hover:text-[#d62839] transition-colors duration-200"
+              >
                 About Us
               </Link>
             </div>
