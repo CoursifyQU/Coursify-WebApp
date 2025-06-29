@@ -19,6 +19,7 @@ const config: Config = {
     extend: {
       screens: {
         'lg-filters': '1060px',
+        'nav': '850px',
       },
       colors: {
         border: "hsl(var(--border))",
