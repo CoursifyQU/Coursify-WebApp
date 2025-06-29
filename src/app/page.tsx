@@ -621,9 +621,6 @@ export default function Home() {
           onClick={handleScrollClick}
         >
           <div className="flex flex-col items-center">
-            <p className="text-sm text-gray-600 mb-2 font-medium hover:text-[#d62839] transition-colors duration-300">
-              Scroll to learn more
-            </p>
             <div className="animate-bounce-slow bg-[#d62839]/10 rounded-full p-1.5 hover:bg-[#d62839]/20 transition-colors duration-300">
               <ChevronDown className="h-4 w-4 text-[#d62839]" />
             </div>
