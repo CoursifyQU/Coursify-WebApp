@@ -263,7 +263,7 @@ export default function About() {
                     </div>
                     <h3 className="text-lg font-bold text-[#00305f]">Amaan Javed</h3>
                     <p className="text-[#d62839] mb-3">Team Lead</p>
-                    <p className="mb-4 text-gray-600 text-sm flex-grow">Queen's Computing '26</p>
+                    <p className="mb-4 text-gray-600 text-sm flex-grow">Queen's Computing '27</p>
                     <div className="flex space-x-3 mt-auto">
                       <a 
                         href="https://github.com/amaanjaved1" 
