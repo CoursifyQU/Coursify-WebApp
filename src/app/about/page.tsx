@@ -84,6 +84,32 @@ export default function About() {
           color: transparent;
         }
         
+        .moving-gradient {
+          background: linear-gradient(
+            -45deg,
+            #00305f,
+            #d62839,
+            #efb215,
+            #00305f
+          );
+          background-size: 300% 300%;
+          animation: gradient-shift 6s ease infinite;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          color: transparent;
+          display: inline-block;
+        }
+        
+        @keyframes shine {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 200% 0;
+          }
+        }
+        
         @keyframes gradient-shift {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
@@ -534,7 +560,7 @@ export default function About() {
       </div>
       
       {/* Footer */}
-      <footer className="bg-white border-t py-3 relative overflow-hidden mt-20">
+      <footer className="bg-white border-t py-3 relative overflow-hidden">
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-3 md:mb-0">
@@ -559,7 +585,7 @@ export default function About() {
 
             <div className="text-xs text-gray-600">
               <span className="moving-gradient font-medium">
-                © 2025 Coursify
+                © {new Date().getFullYear()} Coursify
               </span>
               <span className="mx-2">•</span>
               <Link
