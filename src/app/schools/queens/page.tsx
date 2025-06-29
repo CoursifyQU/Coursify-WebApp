@@ -260,13 +260,13 @@ export default function QueensCourses() {
         <div className="dot-pattern absolute inset-0 opacity-[0.08]"></div>
       </div>
 
-      <div className="container py-12 px-4 md:px-6 relative z-10">
+      <div className="container py-12 px-4 lg-filters:px-6 relative z-10">
         <motion.div
           ref={headerRef}
           initial={{ opacity: 0, y: 20 }}
           animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8 }}
-          className="mb-12 text-center md:text-left"
+          className="mb-12 text-center lg-filters:text-left"
         >
           <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-[#00305f]/10 mb-4">
             <span className="text-[#00305f] text-sm font-medium mr-2">Course Explorer</span>
@@ -275,10 +275,10 @@ export default function QueensCourses() {
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#d62839]"></span>
             </span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
+          <h1 className="text-3xl lg-filters:text-4xl font-bold mb-4">
             <span className="text-[#00305f]">Queen's University</span> <span className="gradient-text">Courses</span>
           </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto md:mx-0">
+          <p className="text-muted-foreground max-w-2xl mx-auto lg-filters:mx-0">
             Browse and filter through all courses offered at Queen's University. View grade distributions, enrollment
             data, and more to help you make informed course decisions.
           </p>
@@ -289,7 +289,7 @@ export default function QueensCourses() {
           initial={{ opacity: 0, y: 20 }}
           animate={isFiltersInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col md:flex-row gap-6 mb-8"
+          className="flex flex-col lg-filters:flex-row gap-6 mb-8"
         >
           <div className="flex-1">
             <div className="relative">
@@ -306,7 +306,7 @@ export default function QueensCourses() {
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className="md:hidden border-[#00305f] text-[#00305f] hover:bg-[#00305f]/10"
+              className="lg-filters:hidden border-[#00305f] text-[#00305f] hover:bg-[#00305f]/10"
             >
               <Filter className="h-4 w-4 mr-2" />
               Filters
@@ -326,12 +326,12 @@ export default function QueensCourses() {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg-filters:grid-cols-4 gap-6 mb-8">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={isFiltersInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className={`md:col-span-1 ${showFilters ? "block" : "hidden md:block"}`}
+            className={`lg-filters:col-span-1 ${showFilters ? "block" : "hidden lg-filters:block"}`}
           >
             <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm card-hover-effect">
               <div className="flex items-center justify-between mb-6">
@@ -339,7 +339,7 @@ export default function QueensCourses() {
                   <SlidersHorizontal className="h-4 w-4 mr-2" />
                   Filters
                 </h3>
-                <Button variant="ghost" size="sm" onClick={() => setShowFilters(false)} className="md:hidden">
+                <Button variant="ghost" size="sm" onClick={() => setShowFilters(false)} className="lg-filters:hidden">
                   <X className="h-4 w-4" />
                 </Button>
               </div>
@@ -500,7 +500,7 @@ export default function QueensCourses() {
             initial={{ opacity: 0, x: 20 }}
             animate={isTableInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="md:col-span-3"
+            className="lg-filters:col-span-3"
           >
             {loading ? (
               <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8 flex items-center justify-center">
@@ -592,7 +592,7 @@ export default function QueensCourses() {
                   </table>
                 </div>
 
-                <div className="bg-[#00305f]/5 px-6 py-4 text-sm text-muted-foreground border-t flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="bg-[#00305f]/5 px-6 py-4 text-sm text-muted-foreground border-t flex flex-col lg-filters:flex-row justify-between items-center gap-4">
                   <div>
                     Showing {Math.min(currentPage * coursesPerPage, sortedCourses.length)} of {sortedCourses.length} filtered courses (from total {courses.length})
                   </div>
