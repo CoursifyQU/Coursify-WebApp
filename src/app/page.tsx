@@ -620,7 +620,7 @@ export default function Home() {
           className="absolute bottom-8 left-0 right-0 flex justify-center cursor-pointer"
           onClick={handleScrollClick}
         >
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center mt-8">
             <div className="animate-bounce-slow bg-[#d62839]/10 rounded-full p-1.5 hover:bg-[#d62839]/20 transition-colors duration-300">
               <ChevronDown className="h-4 w-4 text-[#d62839]" />
             </div>
