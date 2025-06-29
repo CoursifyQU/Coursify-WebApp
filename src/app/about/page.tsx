@@ -49,7 +49,7 @@ export default function About() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden mesh-gradient">
+    <div className="relative min-h-screen overflow-hidden mesh-gradient max-w-[100vw]">
       {/* Custom animations */}
       <style jsx global>{`
         .mesh-gradient {
@@ -126,7 +126,7 @@ export default function About() {
         <div className="dot-pattern absolute inset-0 opacity-[0.08]"></div>
       </div>
 
-      <div className="container py-12 px-4 md:px-6 relative z-10">
+      <div className="container py-12 px-4 md:px-6 lg:px-8 relative z-10">
         <motion.div
           ref={headerRef}
           initial={{ opacity: 0, y: 20 }}
@@ -466,49 +466,112 @@ export default function About() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInvolvedInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.6 }}
-          className="max-w-4xl mx-auto"
+          className="w-full"
         >
-          <div className="bg-gradient-to-r from-[#00305f] to-[#00305f]/90 rounded-2xl p-10 text-white relative overflow-hidden">
+          <div className="bg-white py-8 relative overflow-hidden mesh-gradient w-screen ml-[calc(-50vw+50%)] mr-[calc(-50vw+50%)]">
             <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute w-96 h-96 bg-[#d62839]/20 rounded-full blur-3xl top-10 right-10"></div>
-              <div className="absolute w-80 h-80 bg-[#efb215]/20 rounded-full blur-3xl -bottom-10 -left-10"></div>
-              <div className="dot-pattern absolute inset-0 opacity-[0.1]"></div>
+              <div className="absolute w-64 h-64 bg-[#d62839]/5 rounded-full blur-2xl -top-10 -right-20" />
+              <div className="absolute w-64 h-64 bg-[#00305f]/5 rounded-full blur-2xl -bottom-10 -left-20" />
+              <div className="dot-pattern absolute inset-0 opacity-[0.08]" />
             </div>
 
-            <div className="relative z-10 text-center">
-              <h2 className="text-3xl font-bold mb-4">Get Involved</h2>
-              <p className="mb-8 text-white/80 max-w-2xl mx-auto">
-                We're always looking for passionate Queen's students to help improve Coursify. Whether you're
-                interested in data analysis, software development, or user experience, we'd love to hear from you.
-              </p>
+            <div className="container mx-auto px-4 sm:px-6 md:px-8 relative z-10">
+              <div className="max-w-3xl mx-auto text-center">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-3">
+                  <span className="gradient-text">Get Involved</span>
+                </h2>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <Button asChild className="bg-[#d62839] hover:bg-[#d62839]/90 text-white">
-                  <Link href="mailto:info@coursify.ca">
-                    <span className="flex items-center">
-                      <Mail className="mr-2 h-5 w-5" />
-                      Contact Us
+                <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
+                  We're always looking for passionate Queen's students to help improve Coursify. Whether you're
+                  interested in data analysis, software development, or user experience, we'd love to hear from you.
+                </p>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3 mb-6">
+                  <Link
+                    href="mailto:info@coursify.ca"
+                    className="relative bg-[#d62839] text-white px-6 py-2 rounded-md inline-block font-medium w-full sm:w-auto text-center"
+                  >
+                    <span className="flex items-center justify-center">
+                      <Mail className="mr-2 h-4 w-4" />
+                      <span>Contact Us</span>
                     </span>
                   </Link>
-                </Button>
 
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-[#00305f]"
-                >
-                  <Link href="/queens-answers">
-                    <span className="flex items-center">
-                      <MessageSquare className="mr-2 h-5 w-5" />
-                      Try AI Assistant
+                  <Link
+                    href="/queens-answers"
+                    className="relative bg-[#00305f] text-white px-6 py-2 rounded-md inline-block font-medium w-full sm:w-auto text-center"
+                  >
+                    <span className="flex items-center justify-center">
+                      <MessageSquare className="mr-2 h-4 w-4" />
+                      <span>Try AI Assistant</span>
                     </span>
                   </Link>
-                </Button>
+                </div>
+
+                {/* Key benefits */}
+                <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-600">
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 bg-[#00305f] rounded-full mr-2"></div>
+                    <span>Real grade distributions</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 bg-[#d62839] rounded-full mr-2"></div>
+                    <span>AI-powered insights</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 bg-[#efb215] rounded-full mr-2"></div>
+                    <span>Queen's focused</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 bg-[#00305f] rounded-full mr-2"></div>
+                    <span>Completely free</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </motion.div>
       </div>
+      
+      {/* Footer */}
+      <footer className="bg-white border-t py-3 relative overflow-hidden mt-20">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-3 md:mb-0">
+              <div className="inline-block mb-1">
+                <span className="font-bold text-[#00305f] text-sm">Cours</span>
+                <span className="font-bold text-[#d62839] text-sm">ify</span>
+              </div>
+              <p className="text-xs text-gray-600">
+                Platform for{" "}
+                <span className="moving-gradient font-medium">
+                  Queen's Students
+                </span>{" "}
+                by{" "}
+                <span className="moving-gradient font-medium">
+                  Queen's Students
+                </span>
+              </p>
+              <p className="text-xs text-gray-500 mt-1 italic">
+                Not affiliated with or endorsed by Queen's University
+              </p>
+            </div>
+
+            <div className="text-xs text-gray-600">
+              <span className="moving-gradient font-medium">
+                © 2025 Coursify
+              </span>
+              <span className="mx-2">•</span>
+              <Link
+                href="/about"
+                className="text-[#00305f] hover:text-[#d62839] transition-colors duration-200"
+              >
+                About Us
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
