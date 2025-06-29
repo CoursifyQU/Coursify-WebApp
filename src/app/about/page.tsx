@@ -515,21 +515,21 @@ export default function About() {
                 <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3 mb-6">
                   <Link
                     href="mailto:info@coursify.ca"
-                    className="relative bg-[#d62839] text-white px-6 py-2 rounded-md inline-block font-medium w-full sm:w-auto text-center"
+                    className="relative group bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white px-6 py-2.5 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
                   >
-                    <span className="flex items-center justify-center">
+                    <span className="relative z-10 flex items-center justify-center h-full">
                       <Mail className="mr-2 h-4 w-4" />
-                      <span>Contact Us</span>
+                      <span className="text-sm">Contact Us</span>
                     </span>
                   </Link>
 
                   <Link
                     href="/queens-answers"
-                    className="relative bg-[#00305f] text-white px-6 py-2 rounded-md inline-block font-medium w-full sm:w-auto text-center"
+                    className="relative group bg-gradient-to-r from-[#00305f] to-[#00305f]/90 text-white px-6 py-2.5 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
                   >
-                    <span className="flex items-center justify-center">
+                    <span className="relative z-10 flex items-center justify-center h-full">
                       <MessageSquare className="mr-2 h-4 w-4" />
-                      <span>Try AI Assistant</span>
+                      <span className="text-sm">Try AI Assistant</span>
                     </span>
                   </Link>
                 </div>
