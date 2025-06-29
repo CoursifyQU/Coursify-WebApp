@@ -17,6 +17,9 @@ const config: Config = {
       },
     },
     extend: {
+      screens: {
+        'lg-filters': '1060px',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

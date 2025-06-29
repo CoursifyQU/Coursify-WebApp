@@ -2,69 +2,65 @@ import Link from "next/link"
 
 const Footer = () => {
   return (
-    <footer className="w-full border-t bg-gradient-to-r from-[#00305f] via-[#d62839] to-[#efb215] text-white">
-      <div className="container py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-3">
-            <h3 className="text-lg font-bold">Coursify</h3>
-            <p className="text-sm text-white/80">Helping Queen's University students make informed course decisions.</p>
+    <footer className="bg-white border-t py-3 relative overflow-hidden">
+      <style jsx global>{`
+        .moving-gradient {
+          background: linear-gradient(
+            90deg, 
+            #00305f 0%, 
+            #d62839 30%, 
+            #efb215 60%, 
+            #00305f 100%
+          );
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          color: transparent;
+          animation: shine 8s linear infinite;
+          display: inline-block;
+        }
+        
+        @keyframes shine {
+          to {
+            background-position: 200% center;
+          }
+        }
+      `}</style>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="mb-3 md:mb-0">
+            <div className="inline-block mb-1">
+              <span className="font-bold text-[#00305f] text-sm">Cours</span>
+              <span className="font-bold text-[#d62839] text-sm">ify</span>
+            </div>
+            <p className="text-xs text-gray-600">
+              Platform for{" "}
+              <span className="moving-gradient font-medium">
+                Queen's Students
+              </span>{" "}
+              by{" "}
+              <span className="moving-gradient font-medium">
+                Queen's Students
+              </span>
+            </p>
+            <p className="text-xs text-gray-500 mt-1 italic">
+              Not affiliated with or endorsed by Queen's University
+            </p>
           </div>
-          <div className="space-y-3">
-            <h3 className="text-sm font-bold">Navigation</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/" className="hover:underline">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/schools/queens" className="hover:underline">
-                  Queen's Courses
-                </Link>
-              </li>
-              <li>
-                <Link href="/queens-answers" className="hover:underline">
-                  AI Assistant
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:underline">
-                  About
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div className="space-y-3">
-            <h3 className="text-sm font-bold">Resources</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="#" className="hover:underline">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:underline">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:underline">
-                  Terms of Service
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div className="space-y-3">
-            <h3 className="text-sm font-bold">Contact</h3>
-            <p className="text-sm text-white/80">Have questions or feedback? Reach out to us.</p>
-            <Link href="mailto:info@coursify.ca" className="text-sm hover:underline">
-              info@coursify.ca
+
+          <div className="text-xs text-gray-600">
+            <span className="moving-gradient font-medium">
+              © {new Date().getFullYear()} Coursify
+            </span>
+            <span className="mx-2">•</span>
+            <Link
+              href="/about"
+              className="text-[#00305f] hover:text-[#d62839] transition-colors duration-200"
+            >
+              About Us
             </Link>
           </div>
-        </div>
-        <div className="mt-8 pt-4 border-t border-white/20 text-center text-sm text-white/80">
-          <p>© {new Date().getFullYear()} Coursify. All rights reserved.</p>
-          <p className="mt-2">Not officially affiliated with Queen's University.</p>
         </div>
       </div>
     </footer>
