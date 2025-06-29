@@ -236,24 +236,30 @@ export default function SignIn() {
       <style jsx global>{`
         .coursify-gradient-text {
           background: linear-gradient(
-            90deg, 
-            #00305f 0%, 
-            #d62839 30%, 
-            #efb215 60%, 
-            #00305f 100%
+            -45deg,
+            #00305f,
+            #d62839,
+            #efb215,
+            #00305f
           );
-          background-size: 200% auto;
+          background-size: 300% 300%;
+          animation: gradient-shift 6s ease infinite;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          text-fill-color: transparent;
-          animation: shine 8s linear infinite;
+          color: transparent;
           display: inline-block;
         }
         
-        @keyframes shine {
-          to {
-            background-position: 200% center;
+        @keyframes gradient-shift {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
           }
         }
       `}</style>
