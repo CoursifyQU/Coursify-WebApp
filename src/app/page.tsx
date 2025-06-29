@@ -508,6 +508,21 @@ export default function Home() {
           box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
             0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
+
+        @keyframes pulse-slow {
+          0%, 100% {
+            opacity: 0.6;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.05);
+          }
+        }
+
+        .animate-pulse-slow {
+          animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
       `}</style>
 
       <FloatingElements />
@@ -1036,55 +1051,74 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-[#00305f] py-4 sm:py-6 px-4 relative overflow-hidden">
-        <div className="container mx-auto relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-xl sm:text-2xl font-bold mb-3 text-white">
-              Ready to make smarter course decisions?
-            </h2>
-            <p className="text-sm text-white/80 mb-6 max-w-2xl mx-auto">
-              Join thousands of Queen's students who are using Coursify to plan
-              their academic journey.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Button
-                asChild
-                size="lg"
-                className="bg-[#d62839] hover:bg-[#c61e29] text-white px-8 py-6 rounded-xl font-medium transition-all duration-300 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg"
-              >
-                <Link href="/queens-answers">
-                  <span className="flex items-center text-lg">
-                    <Brain className="mr-2 h-5 w-5" />
-                    Try AI Assistant
+      <section className="bg-white py-10 sm:py-12 px-4 relative overflow-hidden mesh-gradient">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute w-64 h-64 bg-[#d62839]/5 rounded-full blur-2xl -top-10 -right-20" />
+          <div className="absolute w-64 h-64 bg-[#00305f]/5 rounded-full blur-2xl -bottom-10 -left-20" />
+          <div className="dot-pattern absolute inset-0 opacity-[0.08]" />
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="flex flex-col items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center max-w-2xl"
+            >
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 leading-tight">
+                <span className="gradient-text">Ready to make smarter</span>
+                <br />
+                <span className="text-[#00305f]">course decisions?</span>
+              </h2>
+
+              <p className="text-sm sm:text-base text-gray-700 mb-6">
+                Join thousands of Queen's students who are using Coursify to plan their academic journey.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3 mb-6">
+                <Link
+                  href="/queens-answers"
+                  className="relative group bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white px-6 py-2.5 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
+                >
+                  <span className="relative z-10 flex items-center justify-center h-full">
+                    <Brain className="mr-2 h-4 w-4" />
+                    <span className="text-sm">Try AI Assistant</span>
                   </span>
                 </Link>
-              </Button>
 
-              <Link
-                href="/schools/queens"
-                className="group relative bg-gradient-to-r from-[#00305f] to-[#00305f]/90 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center overflow-hidden hover:scale-105 shadow-md hover:shadow-lg"
-              >
-                <span className="relative z-10 flex items-center justify-center">
-                  <span className="group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#efb215] group-hover:to-[#ff8a00] transition-all duration-500 ease-in-out">
-                    Browse Courses
+                <Link
+                  href="/schools/queens"
+                  className="relative group bg-gradient-to-r from-[#00305f] to-[#00305f]/90 text-white px-6 py-2.5 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
+                >
+                  <span className="relative z-10 flex items-center justify-center h-full">
+                    <BarChart className="mr-2 h-4 w-4" />
+                    <span className="text-sm">Browse Courses</span>
                   </span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-500 ease-in-out group-hover:text-[#efb215]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    />
-                  </svg>
-                </span>
-              </Link>
-            </div>
+                </Link>
+              </div>
+
+              {/* Key benefits */}
+              <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-600">
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-[#00305f] rounded-full mr-2"></div>
+                  <span>Real grade distributions</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-[#d62839] rounded-full mr-2"></div>
+                  <span>AI-powered insights</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-[#efb215] rounded-full mr-2"></div>
+                  <span>Queen's focused</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-[#00305f] rounded-full mr-2"></div>
+                  <span>Completely free</span>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
