@@ -42,7 +42,7 @@ const Navigation = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden nav:flex items-center gap-6">
           <Link href="/" className="text-sm font-medium hover:text-primary">
             Home
           </Link>
@@ -93,14 +93,14 @@ const Navigation = () => {
         </nav>
 
         {/* Mobile Menu Button */}
-        <button className="md:hidden p-2 rounded-md" onClick={toggleMenu} aria-label="Toggle menu">
+        <button className="nav:hidden p-2 rounded-md" onClick={toggleMenu} aria-label="Toggle menu">
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden container py-4 pb-6 border-b">
+        <div className="nav:hidden container py-4 pb-6 border-b">
           <nav className="flex flex-col space-y-4">
             <Link href="/" className="text-sm font-medium hover:text-primary" onClick={toggleMenu}>
               Home
