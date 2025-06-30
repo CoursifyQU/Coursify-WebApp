@@ -63,18 +63,24 @@ export async function getAllCourses(): Promise<CourseWithStats[]> {
       const courseDistributionsData = distributionsByCourseId.get(courseId) || [];
       const courseDistributions = courseDistributionsData.map(toGradeDistribution);
         
+      // Filter out duplicate distributions by term to ensure consistency
+      const uniqueDistributions = Array.from(
+        new Map(courseDistributions.map(dist => [dist.term, dist]))
+        .values()
+      );
+        
       // Calculate average GPA and enrollment
-      const totalGPA = courseDistributions.reduce(
+      const totalGPA = uniqueDistributions.reduce(
         (sum, dist) => sum + dist.average_gpa, 
         0
       );
-      const totalEnrollment = courseDistributions.reduce(
+      const totalEnrollment = uniqueDistributions.reduce(
         (sum, dist) => sum + dist.enrollment, 
         0
       );
       
-      const averageGPA = courseDistributions.length > 0 ? totalGPA / courseDistributions.length : 0;
-      const avgEnrollment = courseDistributions.length > 0 ? totalEnrollment / courseDistributions.length : 0;
+      const averageGPA = uniqueDistributions.length > 0 ? totalGPA / uniqueDistributions.length : 0;
+      const avgEnrollment = uniqueDistributions.length > 0 ? totalEnrollment / uniqueDistributions.length : 0;
 
       return {
         id: String(course.id || ""),
@@ -143,17 +149,23 @@ export async function getCourseByCode(courseCode: string): Promise<CourseWithSta
     // Convert distributions to the correct type
     const distributions = (distributionsData || []).map(toGradeDistribution);
 
-    // Calculate averages
-    const totalGPA = distributions.reduce(
+    // Filter out duplicate distributions by term to ensure consistency
+    const uniqueDistributions = Array.from(
+      new Map(distributions.map(dist => [dist.term, dist]))
+      .values()
+    );
+
+    // Calculate averages using the filtered distributions
+    const totalGPA = uniqueDistributions.reduce(
       (sum, dist) => sum + dist.average_gpa, 
       0
     );
-    const totalEnrollment = distributions.reduce(
+    const totalEnrollment = uniqueDistributions.reduce(
       (sum, dist) => sum + dist.enrollment, 
       0
     );
-    const averageGPA = distributions.length > 0 ? totalGPA / distributions.length : 0;
-    const avgEnrollment = distributions.length > 0 ? totalEnrollment / distributions.length : 0;
+    const averageGPA = uniqueDistributions.length > 0 ? totalGPA / uniqueDistributions.length : 0;
+    const avgEnrollment = uniqueDistributions.length > 0 ? totalEnrollment / uniqueDistributions.length : 0;
 
     // Combine into a CourseWithStats object
     const courseWithStats: CourseWithStats = {
