@@ -84,12 +84,14 @@ export default function QueensCourses() {
     const level = getCourseLevel(course.course_code)
     const matchesDepartment = selectedDepartments.length === 0 || selectedDepartments.includes(course.department)
     const matchesLevel = selectedLevels.length === 0 || selectedLevels.includes(level)
-    const matchesGpa = course.averageGPA >= gpaRange[0] && course.averageGPA <= gpaRange[1]
     
-    // Only show courses with valid GPA and distribution data
-    const hasValidData = course.distributions.length > 0 && course.averageGPA > 0
-
-    return matchesSearch && matchesDepartment && matchesLevel && matchesGpa && hasValidData
+    // Allow courses with no GPA data
+    const matchesGpa = gpaRange[0] === 0 && gpaRange[1] === 4.3 ? 
+      true : // If full range is selected, show all courses
+      (course.averageGPA > 0 && course.averageGPA >= gpaRange[0] && course.averageGPA <= gpaRange[1])
+    
+    // Don't filter out courses without distribution data
+    return matchesSearch && matchesDepartment && matchesLevel && matchesGpa
   })
 
   // Sort courses
