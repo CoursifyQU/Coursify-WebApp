@@ -95,14 +95,9 @@ export async function getAllCourses(): Promise<CourseWithStats[]> {
       };
     });
     
-    // Filter out courses with no valid data (no distributions or GPA <= 0)
-    const validCourses = coursesWithStats.filter(course => 
-      course.distributions.length > 0 && course.averageGPA > 0
-    );
+    console.log(`Returning ${coursesWithStats.length} courses`);
     
-    console.log(`Filtered to ${validCourses.length} courses with valid GPA data`);
-    
-    return validCourses;
+    return coursesWithStats;
   } catch (error) {
     console.error('Error in getAllCourses:', error);
     return [];
@@ -228,6 +223,85 @@ export async function searchCourses(query: string): Promise<CourseWithStats[]> {
   } catch (error) {
     console.error("Error in searchCourses:", error);
     return [];
+  }
+}
+
+export interface RedditComment {
+  text: string;
+  course_code: string;
+  professor_name: string;
+  source_url: string;
+  tags: string[];
+  upvotes: number;
+  sentiment_label: string;
+}
+
+export interface RmpComment {
+  text: string;
+  course_code: string;
+  professor_name: string;
+  source_url: string;
+  tags: string[];
+  quality_rating: number;
+  difficulty_rating: number;
+  sentiment_label: string;
+}
+
+export async function getCommentsForCourse(courseCode: string): Promise<{
+  redditComments: RedditComment[];
+  rmpComments: RmpComment[];
+}> {
+  try {
+    const supabase = getSupabaseClient();
+
+    const { data: redditData, error: redditError } = await supabase
+      .from('rag_chunks')
+      .select('text, course_code, professor_name, source_url, tags, upvotes, sentiment_label')
+      .eq('course_code', courseCode)
+      .eq('source', 'reddit')
+      .order('upvotes', { ascending: false })
+      .limit(20);
+
+    if (redditError) {
+      console.error('Error fetching reddit comments:', redditError);
+    }
+
+    const { data: rmpData, error: rmpError } = await supabase
+      .from('rag_chunks')
+      .select('text, course_code, professor_name, source_url, tags, quality_rating, difficulty_rating, sentiment_label')
+      .eq('course_code', courseCode)
+      .eq('source', 'ratemyprofessors')
+      .order('quality_rating', { ascending: false })
+      .limit(20);
+
+    if (rmpError) {
+      console.error('Error fetching RMP comments:', rmpError);
+    }
+
+    return {
+      redditComments: (redditData || []).map((row: any) => ({
+        text: String(row.text || ''),
+        course_code: String(row.course_code || ''),
+        professor_name: String(row.professor_name || ''),
+        source_url: String(row.source_url || ''),
+        tags: Array.isArray(row.tags) ? row.tags : [],
+        upvotes: Number(row.upvotes) || 0,
+        sentiment_label: String(row.sentiment_label || 'neutral'),
+      })),
+      rmpComments: (rmpData || []).map((row: any) => ({
+        text: String(row.text || ''),
+        course_code: String(row.course_code || ''),
+        professor_name: String(row.professor_name || ''),
+        source_url: String(row.source_url || ''),
+        tags: Array.isArray(row.tags) ? row.tags : [],
+        quality_rating: Number(row.quality_rating) || 0,
+        difficulty_rating: Number(row.difficulty_rating) || 0,
+        sentiment_label: String(row.sentiment_label || 'neutral'),
+      })),
+    };
+  } catch (error) {
+    console.error('Error in getCommentsForCourse:', error);
+    return { redditComments: [], rmpComments: [] };
   }
 }
 
