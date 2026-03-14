@@ -71,29 +71,30 @@ export default function AuthRequired({
         )}
 
         <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
-          <DialogContent className="sm:max-w-md border border-gray-200 shadow-lg">
-            <DialogClose className="absolute right-4 top-4 rounded-full w-6 h-6 flex items-center justify-center z-10 bg-[#d62839] text-white hover:bg-[#a31e36] focus:outline-none transition-colors">
-              <X className="h-4 w-4 text-white" />
+          <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+            <DialogClose className="glass-modal-close absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-[#00305f]/55 hover:text-[#d62839] focus:outline-none transition-colors">
+              <X className="h-4 w-4" />
               <span className="sr-only">Close</span>
             </DialogClose>
-            <DialogHeader className="bg-[#003B71] text-white px-6 py-4 -mx-6 -mt-6 rounded-t-lg">
-              <DialogTitle className="text-xl font-bold">Authentication Required</DialogTitle>
-              <DialogDescription className="text-gray-200 mt-1">
+            <DialogHeader className="px-6 pt-6 pb-5">
+              <div className="glass-modal-accent h-1.5 w-24 rounded-full mb-5 opacity-90" />
+              <DialogTitle className="text-xl font-bold text-[#003B71]">Authentication Required</DialogTitle>
+              <DialogDescription className="mt-2 text-sm leading-6 text-[#003B71]/70">
                 You need to sign in with your Queen's University account to access this feature.
               </DialogDescription>
             </DialogHeader>
-            <div className="flex flex-col space-y-3 py-4">
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md">
-                <p className="text-sm text-blue-700">
+            <div className="px-6 pb-2">
+              <div className="glass-card rounded-2xl p-4">
+                <p className="text-sm leading-6 text-[#003B71]/78">
                   Only Queen's University students with a valid @queensu.ca email address can access this feature.
                 </p>
               </div>
             </div>
-            <DialogFooter className="sm:justify-between flex-col sm:flex-row gap-2">
+            <DialogFooter className="px-6 pb-6 sm:justify-between flex-col sm:flex-row gap-2">
               <Button 
                 variant="outline" 
                 onClick={() => setShowAuthDialog(false)}
-                className="border-gray-300 text-gray-700"
+                className="glass-btn border-0 text-gray-700 rounded-2xl"
               >
                 Cancel
               </Button>
@@ -101,13 +102,13 @@ export default function AuthRequired({
                 <Button 
                   variant="outline" 
                   onClick={() => router.push("/sign-up")}
-                  className="border-[#003B71] text-[#003B71]"
+                  className="glass-btn border-0 rounded-2xl text-[#003B71]"
                 >
                   Sign Up
                 </Button>
                 <Button 
                   onClick={() => router.push("/sign-in")}
-                  className="bg-[#d62839] hover:bg-[#a31e36] text-white"
+                  className="liquid-btn-red rounded-2xl text-white"
                 >
                   Sign In
                 </Button>
