@@ -210,7 +210,7 @@ export default function About() {
               animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <Card className="glass-card glass-shine rounded-2xl border-0 h-full overflow-hidden">
+              <Card className="glass-card rounded-2xl border-0 h-full overflow-hidden">
                 <CardContent className="p-6 h-full">
                   <div className="flex flex-col items-center text-center h-full">
                     <div className="w-20 h-20 bg-gradient-to-br from-[#00305f]/80 to-[#00305f] rounded-full flex items-center justify-center mb-4 shadow-lg">
@@ -253,7 +253,7 @@ export default function About() {
               animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <Card className="glass-card glass-shine rounded-2xl border-0 h-full overflow-hidden">
+              <Card className="glass-card rounded-2xl border-0 h-full overflow-hidden">
                 <CardContent className="p-6 h-full">
                   <div className="flex flex-col items-center text-center h-full">
                     <div className="w-20 h-20 bg-gradient-to-br from-[#d62839]/80 to-[#d62839] rounded-full flex items-center justify-center mb-4 shadow-lg">
@@ -296,7 +296,7 @@ export default function About() {
               animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              <Card className="glass-card glass-shine rounded-2xl border-0 h-full overflow-hidden">
+              <Card className="glass-card rounded-2xl border-0 h-full overflow-hidden">
                 <CardContent className="p-6 h-full">
                   <div className="flex flex-col items-center text-center h-full">
                     <div className="w-20 h-20 bg-gradient-to-br from-[#efb215]/80 to-[#efb215] rounded-full flex items-center justify-center mb-4 shadow-lg">
@@ -326,7 +326,7 @@ export default function About() {
               animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.8 }}
             >
-              <Card className="glass-card glass-shine rounded-2xl border-0 h-full overflow-hidden">
+              <Card className="glass-card rounded-2xl border-0 h-full overflow-hidden">
                 <CardContent className="p-6 h-full">
                   <div className="flex flex-col items-center text-center h-full">
                     <div className="w-20 h-20 bg-gradient-to-br from-[#00305f]/80 to-[#00305f] rounded-full flex items-center justify-center mb-4 shadow-lg">
@@ -373,7 +373,7 @@ export default function About() {
               initial={{ opacity: 0, y: 20 }}
               animate={isHelpInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="glass-card glass-shine rounded-2xl p-6"
+              className="glass-card rounded-2xl p-6"
             >
               <div className="w-12 h-12 bg-[#00305f]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="h-5 w-5 text-[#00305f]" />
@@ -388,7 +388,7 @@ export default function About() {
               initial={{ opacity: 0, y: 20 }}
               animate={isHelpInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="glass-card glass-shine rounded-2xl p-6"
+              className="glass-card rounded-2xl p-6"
             >
               <div className="w-12 h-12 bg-[#d62839]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Brain className="h-5 w-5 text-[#d62839]" />
@@ -403,7 +403,7 @@ export default function About() {
               initial={{ opacity: 0, y: 20 }}
               animate={isHelpInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="glass-card glass-shine rounded-2xl p-6"
+              className="glass-card rounded-2xl p-6"
             >
               <div className="w-12 h-12 bg-[#efb215]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <GraduationCap className="h-5 w-5 text-[#efb215]" />
