@@ -31,7 +31,7 @@ export function AuthModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-[2px]"
+          className="glass-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4"
           onClick={(e) => {
             if (e.target === e.currentTarget) onClose();
           }}
@@ -41,32 +41,33 @@ export function AuthModal({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-0 relative border border-gray-200 overflow-hidden"
+            className="glass-modal-panel max-w-md w-full rounded-[1.75rem] p-0 relative"
           >
             <button
-              className="absolute top-4 right-4 text-gray-400 hover:text-[#d62839] text-2xl font-bold z-10"
+              className="glass-modal-close absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-xl font-bold text-[#00305f]/55 hover:text-[#d62839]"
               onClick={onClose}
               aria-label="Close"
             >
               &times;
             </button>
-            
-            <div className="bg-[#00305f] text-white p-6">
-              <h2 className="text-2xl font-bold">{title}</h2>
-              <p className="mt-1 text-gray-200">{description}</p>
+
+            <div className="p-6 pb-5">
+              <div className="glass-modal-accent h-1.5 w-24 rounded-full mb-5 opacity-90" />
+              <h2 className="text-2xl font-bold text-[#00305f]">{title}</h2>
+              <p className="mt-2 text-sm leading-6 text-[#00305f]/70">{description}</p>
             </div>
-            
-            <div className="p-6">
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md mb-6">
-                <p className="text-blue-700">
+
+            <div className="px-6 pb-6">
+              <div className="glass-card rounded-2xl p-4 mb-6">
+                <p className="text-sm leading-6 text-[#00305f]/78">
                   Only Queen's University students with a valid @queensu.ca email address can access this feature.
                 </p>
               </div>
-              
-              <div className="flex justify-center mt-6">
+
+              <div className="flex justify-end">
                 <button
                   onClick={handleSignIn}
-                  className="px-8 py-3 bg-[#d62839] text-white rounded-lg font-medium hover:bg-[#a31e36] transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl hover:scale-105"
+                  className="liquid-btn-red rounded-2xl px-6 py-3 text-sm font-medium text-white"
                 >
                   Sign In
                 </button>
