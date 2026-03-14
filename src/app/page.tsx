@@ -31,10 +31,10 @@ const revealEase = [0.22, 1, 0.36, 1] as const;
 
 const sectionRevealVariants = {
   hidden: {
-    opacity: 0,
-    y: 36,
-    scale: 0.985,
-    filter: "blur(18px)",
+    opacity: 0.18,
+    y: 24,
+    scale: 0.992,
+    filter: "blur(10px)",
   },
   visible: {
     opacity: 1,
@@ -53,9 +53,9 @@ const sectionRevealVariants = {
 
 const sectionChildVariants = {
   hidden: {
-    opacity: 0,
-    y: 24,
-    filter: "blur(12px)",
+    opacity: 0.12,
+    y: 18,
+    filter: "blur(8px)",
   },
   visible: {
     opacity: 1,
@@ -63,6 +63,40 @@ const sectionChildVariants = {
     filter: "blur(0px)",
     transition: {
       duration: 0.72,
+      ease: revealEase,
+    },
+  },
+};
+
+const heroRevealVariants = {
+  hidden: {
+    opacity: 0.88,
+    y: 10,
+    scale: 0.998,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.42,
+      ease: revealEase,
+      staggerChildren: 0.05,
+      delayChildren: 0.02,
+    },
+  },
+};
+
+const heroChildVariants = {
+  hidden: {
+    opacity: 0.82,
+    y: 8,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.36,
       ease: revealEase,
     },
   },
@@ -81,10 +115,10 @@ const sectionCollectionVariants = {
 
 const sectionCardVariants = {
   hidden: {
-    opacity: 0,
-    y: 30,
-    scale: 0.975,
-    filter: "blur(16px)",
+    opacity: 0.12,
+    y: 20,
+    scale: 0.985,
+    filter: "blur(10px)",
   },
   visible: {
     opacity: 1,
@@ -119,17 +153,24 @@ function SectionGlow({
 function SectionReveal({
   children,
   className,
-  amount = 0.24,
+  amount = 0.01,
+  initial = "hidden",
+  margin = "0px 0px 28% 0px",
+  trigger = "inView",
 }: {
   children: ReactNode;
   className?: string;
   amount?: number;
+  initial?: "hidden" | "visible";
+  margin?: string;
+  trigger?: "inView" | "mount";
 }) {
   return (
     <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount }}
+      initial={initial}
+      animate={trigger === "mount" ? "visible" : undefined}
+      whileInView={trigger === "inView" ? "visible" : undefined}
+      viewport={trigger === "inView" ? { once: true, amount, margin } : undefined}
       variants={sectionRevealVariants}
       className={className}
     >
@@ -708,30 +749,27 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 relative z-10 min-h-[calc(100svh-6rem)] sm:min-h-[calc(100svh-7rem)] flex items-center justify-center">
           <div className="flex flex-col items-center w-full">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
+              initial={false}
               style={{ y: heroContentY, opacity: heroContentOpacity, willChange: "transform" }}
               className="text-center max-w-2xl"
             >
-              <SectionReveal amount={0.4}>
-                <motion.h1 variants={sectionChildVariants} className="text-4xl sm:text-5xl md:text-6xl font-bold mb-2 leading-tight">
+              <motion.div initial="hidden" animate="visible" variants={heroRevealVariants}>
+                <motion.h1 variants={heroChildVariants} className="text-4xl sm:text-5xl md:text-6xl font-bold mb-2 leading-tight">
                   <span className="gradient-text">Coursify</span>
                 </motion.h1>
 
-                <motion.h2 variants={sectionChildVariants} className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+                <motion.h2 variants={heroChildVariants} className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
                   <span className="gradient-text">Course selection</span>
                   <span className="text-[#00305f]"> powered by AI</span>
                 </motion.h2>
 
-                <motion.p variants={sectionChildVariants} className="text-base sm:text-lg text-gray-700 mb-6">
+                <motion.p variants={heroChildVariants} className="text-base sm:text-lg text-gray-700 mb-6">
                   Make data-driven decisions with comprehensive insights for all
                   Queen&apos;s University courses.
                 </motion.p>
 
                 <motion.div
-                  variants={sectionChildVariants}
+                  variants={heroChildVariants}
                   className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3 mb-8"
                 >
                   <Link
@@ -755,7 +793,7 @@ export default function Home() {
                   </Link>
                 </motion.div>
 
-                <motion.div variants={sectionChildVariants} className="flex flex-wrap justify-center gap-3 text-sm text-gray-600">
+                <motion.div variants={heroChildVariants} className="flex flex-wrap justify-center gap-3 text-sm text-gray-600">
                   {[
                     { color: "#00305f", label: "Real grade distributions" },
                     { color: "#d62839", label: "AI-powered insights" },
@@ -771,7 +809,7 @@ export default function Home() {
                     </div>
                   ))}
                 </motion.div>
-              </SectionReveal>
+              </motion.div>
             </motion.div>
           </div>
         </div>
@@ -862,7 +900,7 @@ export default function Home() {
           className="right-0 bottom-6 h-72 w-72 blur-[145px] opacity-70"
           gradient="radial-gradient(circle, rgba(0,48,95,0.14) 0%, rgba(0,48,95,0.04) 46%, transparent 74%)"
         />
-        <SectionReveal className="container mx-auto relative z-10">
+        <SectionReveal className="container mx-auto relative z-10" amount={0} margin="0px 0px 40% 0px">
           <motion.div variants={sectionChildVariants} className="text-center mb-8">
             <div className="inline-flex items-center justify-center gap-2 rounded-full glass-pill px-4 py-2 mb-3">
               <Award className="h-3.5 w-3.5 text-[#efb215]" />
@@ -882,7 +920,16 @@ export default function Home() {
 
           <div className="max-w-5xl mx-auto">
             <motion.div
-              variants={sectionCollectionVariants}
+              variants={{
+                hidden: { opacity: 1 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.08,
+                    delayChildren: 0.04,
+                  },
+                },
+              }}
               className="grid grid-cols-1 md:grid-cols-3 gap-5"
             >
               {[
@@ -928,7 +975,7 @@ export default function Home() {
           className="right-[-2rem] top-28 h-80 w-80 blur-[145px] opacity-70"
           gradient="radial-gradient(circle, rgba(0,48,95,0.15) 0%, rgba(0,48,95,0.05) 46%, transparent 76%)"
         />
-        <SectionReveal className="container mx-auto relative z-10" amount={0.18}>
+        <SectionReveal className="container mx-auto relative z-10" amount={0.1}>
           <motion.div variants={sectionChildVariants} className="text-center mb-8">
             <div className="inline-flex items-center justify-center gap-2 rounded-full glass-pill px-4 py-2 mb-3">
               <Star className="h-3.5 w-3.5 text-[#00305f]" />
@@ -1126,7 +1173,7 @@ export default function Home() {
           className="right-[-2rem] bottom-10 h-72 w-72 blur-[140px] opacity-70"
           gradient="radial-gradient(circle, rgba(0,48,95,0.12) 0%, rgba(0,48,95,0.04) 46%, transparent 76%)"
         />
-        <SectionReveal className="container max-w-4xl mx-auto relative z-10">
+        <SectionReveal className="container max-w-4xl mx-auto relative z-10" amount={0} margin="0px 0px 40% 0px">
           <motion.div variants={sectionChildVariants} className="text-center mb-8">
             <div className="inline-flex items-center justify-center px-3 py-1.5 rounded-full glass-pill mb-3">
               <span className="text-[#d62839] text-xs font-semibold mr-2">
@@ -1143,7 +1190,19 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <motion.div variants={sectionCollectionVariants} className="space-y-3">
+          <motion.div
+            variants={{
+              hidden: { opacity: 1 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.08,
+                  delayChildren: 0.04,
+                },
+              },
+            }}
+            className="space-y-3"
+          >
             {faqs.map((faq, index) => {
               // Determine color based on index (0 = red, 1 = navy, 2 = gold, repeat)
               const colorClasses =
@@ -1234,7 +1293,7 @@ export default function Home() {
           className="right-[10%] bottom-6 h-80 w-80 blur-[155px] opacity-75"
           gradient="radial-gradient(circle, rgba(214,40,57,0.14) 0%, rgba(214,40,57,0.05) 44%, transparent 76%)"
         />
-        <SectionReveal className="container mx-auto px-4 sm:px-6 relative z-10">
+        <SectionReveal className="container mx-auto px-4 sm:px-6 relative z-10" amount={0} margin="0px 0px 40% 0px">
           <div className="flex flex-col items-center">
             <div className="text-center max-w-2xl">
               <motion.h2 variants={sectionChildVariants} className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 leading-tight">
