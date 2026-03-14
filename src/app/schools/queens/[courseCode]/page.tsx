@@ -202,7 +202,7 @@ export default function CourseDetailPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden pb-10">
+    <div className="relative min-h-screen overflow-hidden pb-10 pt-20">
       {/* Custom styling */}
       <style jsx global>{`
         .card-hover-effect {

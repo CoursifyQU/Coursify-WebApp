@@ -140,7 +140,7 @@ export default function AddCoursesPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden mesh-gradient">
+    <div className="relative min-h-screen overflow-hidden mesh-gradient pt-20">
       {/* Background elements */}
       <div className="absolute inset-0 -z-10 pointer-events-none">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#d62839]/5 rounded-full blur-3xl"></div>

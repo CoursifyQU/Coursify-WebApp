@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { motion, useAnimation, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/lib/auth/auth-context"
 import { AuthModal } from "@/components/auth-modal"
+import { Bot, Search, MessageSquare, Target, ArrowRight } from "lucide-react"
 
 export default function AIFeatures() {
   const [question, setQuestion] = useState("")
@@ -13,6 +14,28 @@ export default function AIFeatures() {
   const containerRef = useRef<HTMLDivElement>(null)
   const controls = useAnimation()
   const { user } = useAuth()
+  const howItWorksItems = [
+    {
+      icon: Search,
+      title: "Ask specific course or professor questions",
+      description: "Type anything you want to know about Queen's courses, workloads, grading, or teaching styles.",
+    },
+    {
+      icon: Bot,
+      title: "Get AI-assisted answers instantly",
+      description: "The system combines structured course data with AI reasoning to return useful, readable guidance.",
+    },
+    {
+      icon: MessageSquare,
+      title: "Pull in relevant student sentiment",
+      description: "Responses are informed by student discussions, review sources, and real course context where available.",
+    },
+    {
+      icon: Target,
+      title: "Make more confident decisions",
+      description: "Use the output to compare options and choose courses that better match your goals and learning style.",
+    },
+  ]
 
   // Disable scrolling on component mount
   useEffect(() => {
@@ -92,7 +115,7 @@ export default function AIFeatures() {
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-white">
+    <div className="h-screen overflow-hidden bg-white pt-20">
       <div className="h-full flex flex-col items-center justify-center px-4 overflow-hidden">
         <div className="w-full max-w-2xl flex flex-col items-center">
           {/* Header */}
@@ -161,7 +184,7 @@ export default function AIFeatures() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-[2px] modal-backdrop"
+                className="glass-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop"
                 onClick={(e) => {
                   if (e.target === e.currentTarget) setShowHowItWorks(false)
                 }}
@@ -171,57 +194,39 @@ export default function AIFeatures() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative modal-content border border-gray-200"
+                  className="glass-modal-panel modal-content relative max-w-xl w-full rounded-[1.75rem] p-6 sm:p-7"
                 >
                   <button
-                    className="absolute top-4 right-4 text-gray-400 hover:text-[#d62839] text-2xl font-bold"
+                    className="glass-modal-close absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full text-2xl font-bold text-[#00305f]/55 hover:text-[#d62839]"
                     onClick={() => setShowHowItWorks(false)}
                     aria-label="Close"
                   >
                     &times;
                   </button>
-                  <h2 className="text-3xl font-bold mb-4 text-center">
+                  <div className="glass-modal-accent h-1.5 w-24 rounded-full mb-5 mx-auto opacity-90" />
+                  <h2 className="text-3xl font-bold mb-3 text-center text-[#00305f]">
                     How <span className="gradient-text">Queen's Answers</span> Works
                   </h2>
-                  <ul className="space-y-5 mt-6">
-                    <li className="flex items-start">
-                      <span className="text-2xl mr-3">🔎</span>
-                      <div>
-                        <span className="font-semibold text-[#00305f]">
-                          Ask anything about Queen's courses or professors.
-                        </span>
-                        <div className="text-gray-700 text-sm">
-                          Type your question in the box below—no question is too specific!
-                        </div>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-2xl mr-3">🤖</span>
-                      <div>
-                        <span className="font-semibold text-[#00305f]">Get instant, AI-powered answers.</span>
-                        <div className="text-gray-700 text-sm">
-                          Our system searches real student reviews, grade data, and more to give you the best info.
-                        </div>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-2xl mr-3">💬</span>
-                      <div>
-                        <span className="font-semibold text-[#00305f]">See perspectives from Reddit and RateMyProf.</span>
-                        <div className="text-gray-700 text-sm">
-                          We pull in the most relevant, up-to-date student experiences for Queen's.
-                        </div>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-2xl mr-3">🎯</span>
-                      <div>
-                        <span className="font-semibold text-[#00305f]">Make smarter course decisions.</span>
-                        <div className="text-gray-700 text-sm">
-                          Use what you learn to pick the best courses and professors for you!
-                        </div>
-                      </div>
-                    </li>
+                  <p className="mx-auto max-w-md text-center text-sm leading-6 text-[#00305f]/68">
+                    A quick overview of how the feature is designed to turn scattered course information into practical recommendations.
+                  </p>
+                  <ul className="space-y-3 mt-6">
+                    {howItWorksItems.map((item) => {
+                      const Icon = item.icon
+                      return (
+                        <li key={item.title} className="glass-card rounded-2xl p-4 flex items-start gap-4">
+                          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/55 ring-1 ring-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+                            <Icon className="h-4.5 w-4.5 text-[#00305f]" strokeWidth={1.9} />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-[#00305f]">{item.title}</div>
+                            <div className="text-[#00305f]/70 text-sm mt-1 leading-6">
+                              {item.description}
+                            </div>
+                          </div>
+                        </li>
+                      )
+                    })}
                   </ul>
                 </motion.div>
               </motion.div>
@@ -278,37 +283,37 @@ export default function AIFeatures() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 flex flex-col items-center justify-center backdrop-blur-[2px] bg-white/60"
+            className="glass-modal-overlay fixed inset-0 z-40 flex flex-col items-center justify-center p-4"
           >
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="bg-white/90 p-8 rounded-2xl shadow-2xl max-w-lg w-full border border-[#00305f]/20 relative"
+              className="glass-modal-panel relative max-w-xl w-full rounded-[1.75rem] p-6 sm:p-7"
             >
               <button
-                className="absolute top-4 right-4 text-gray-400 hover:text-[#d62839] text-2xl font-bold"
+                className="glass-modal-close absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full text-2xl font-bold text-[#00305f]/55 hover:text-[#d62839]"
                 onClick={() => setShowComingSoon(false)}
                 aria-label="Close"
               >
                 &times;
               </button>
               <div className="flex flex-col items-center">
-                <div className="mb-4 text-5xl">✨</div>
-                <h2 className="text-3xl font-bold text-[#00305f] mb-2 text-center">Coming Soon!</h2>
-                <p className="text-lg text-center text-gray-700 mb-4">
+                <div className="glass-modal-accent h-1.5 w-24 rounded-full mb-5 opacity-90" />
+                <h2 className="text-3xl font-bold text-[#00305f] mb-2 text-center">Coming Soon</h2>
+                <p className="text-lg text-center text-[#00305f]/72 mb-5 leading-8">
                   We're working hard to bring Queen's Answers to life. This feature will be available in the near future.
                 </p>
-                <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden mb-6">
+                <div className="glass-card w-full h-3 rounded-full overflow-hidden mb-6 p-0.5">
                   <motion.div 
-                    className="h-full bg-gradient-to-r from-[#00305f] via-[#d62839] to-[#efb215]"
+                    className="glass-modal-accent h-full rounded-full"
                     initial={{ width: "0%" }}
                     animate={{ width: "75%" }}
                     transition={{ duration: 1.5, ease: "easeInOut" }}
                   />
                 </div>
-                <p className="text-sm text-center text-gray-500 italic">
+                <p className="text-sm text-center text-[#00305f]/60 italic">
                   Queen's Answers will provide AI-powered insights on courses, professors, and more!
                 </p>
               </div>
@@ -323,9 +328,10 @@ export default function AIFeatures() {
             >
               <a 
                 href="/" 
-                className="inline-flex items-center justify-center px-6 py-3 bg-[#00305f] text-white rounded-lg font-medium hover:bg-[#00305f]/90 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl hover:scale-105"
+                className="liquid-btn-blue inline-flex items-center justify-center rounded-2xl px-6 py-3 font-medium text-white"
               >
-                <span className="mr-2">🏠</span> Return to Home
+                Return to Home
+                <ArrowRight className="ml-2 h-4 w-4" strokeWidth={1.8} />
               </a>
             </motion.div>
           </motion.div>

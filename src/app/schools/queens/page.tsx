@@ -173,8 +173,7 @@ export default function QueensCourses() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden mesh-gradient">
-      {/* Custom animations */}
+    <div className="relative min-h-screen overflow-hidden mesh-gradient pt-20">
       <style jsx global>{`
         .mesh-gradient {
           background-color: hsla(0, 0%, 100%, 1);
