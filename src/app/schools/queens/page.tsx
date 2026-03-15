@@ -178,20 +178,11 @@ export default function QueensCourses() {
         .mesh-gradient {
           background-color: hsla(0, 0%, 100%, 1);
           background-image:
-            radial-gradient(at 21% 33%, hsla(225, 100%, 19%, 0.05) 0px, transparent 50%),
-            radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.05) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.05) 0px, transparent 50%);
+            radial-gradient(at 21% 33%, hsla(225, 100%, 19%, 0.09) 0px, transparent 50%),
+            radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.08) 0px, transparent 50%),
+            radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.07) 0px, transparent 50%);
         }
-        
-        .card-hover-effect {
-          transition: all 0.3s ease;
-        }
-        
-        .card-hover-effect:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
+
         .dot-pattern {
           background-image: radial-gradient(circle, #00305f 1px, transparent 1px);
           background-size: 20px 20px;
@@ -211,6 +202,57 @@ export default function QueensCourses() {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
+        }
+
+        .glass-card-deep {
+          background: rgba(255, 255, 255, 0.72);
+          backdrop-filter: blur(28px) saturate(170%);
+          -webkit-backdrop-filter: blur(28px) saturate(170%);
+          border: 1px solid rgba(255, 255, 255, 0.82);
+          box-shadow:
+            0 8px 32px rgba(0, 48, 95, 0.13),
+            0 2px 8px rgba(0, 48, 95, 0.07),
+            inset 0 1px 0 rgba(255, 255, 255, 0.95),
+            inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card-deep:hover {
+          transform: translateY(-3px);
+          box-shadow:
+            0 16px 48px rgba(0, 48, 95, 0.17),
+            0 4px 14px rgba(0, 48, 95, 0.09),
+            inset 0 1px 0 rgba(255, 255, 255, 0.98),
+            inset 0 -1px 0 rgba(255, 255, 255, 0.35);
+        }
+
+        /* Override shadcn ghost variant accent hover on all glass buttons */
+        .glass-btn:hover,
+        .glass-btn:focus {
+          background: rgba(255, 255, 255, 0.55) !important;
+          box-shadow: 0 4px 20px rgba(0, 48, 95, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+          color: inherit !important;
+        }
+
+        /* Override CommandItem yellow highlight */
+        [cmdk-item][data-selected="true"],
+        [cmdk-item][aria-selected="true"],
+        [role="option"][data-selected="true"],
+        [role="option"][aria-selected="true"] {
+          background-color: rgba(0, 48, 95, 0.08) !important;
+          color: #00305f !important;
+        }
+
+        .search-glass {
+          background: rgba(255, 255, 255, 0.72);
+          backdrop-filter: blur(20px) saturate(160%);
+          -webkit-backdrop-filter: blur(20px) saturate(160%);
+          border: 1px solid rgba(255, 255, 255, 0.82);
+          box-shadow:
+            0 4px 20px rgba(0, 48, 95, 0.09),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
+          border-radius: 0.75rem;
+          padding: 0.5rem;
         }
       `}</style>
 
@@ -248,17 +290,17 @@ export default function QueensCourses() {
         </div>
       )}
 
-      {/* Simple background elements instead of FloatingElements */}
+      {/* Background elements */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#d62839]/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#00305f]/5 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-[#efb215]/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#d62839]/8 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#00305f]/8 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-[#efb215]/7 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute w-96 h-96 bg-[#d62839]/5 rounded-full blur-3xl -top-10 -right-20"></div>
-        <div className="absolute w-80 h-80 bg-[#00305f]/5 rounded-full blur-3xl -bottom-10 -left-20"></div>
-        <div className="dot-pattern absolute inset-0 opacity-[0.08]"></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="liquid-blob w-[420px] h-[320px] bg-[#d62839] -top-10 -right-20"></div>
+        <div className="liquid-blob-alt w-[360px] h-[280px] bg-[#00305f] -bottom-10 -left-20"></div>
+        <div className="dot-pattern absolute inset-0 opacity-[0.06]"></div>
       </div>
 
       <div className="container py-12 px-4 lg-filters:px-6 relative z-10">
@@ -269,7 +311,7 @@ export default function QueensCourses() {
           transition={{ duration: 0.8 }}
           className="mb-12 text-center lg-filters:text-left"
         >
-          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-[#00305f]/10 mb-4">
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full glass-pill mb-4">
             <span className="text-[#00305f] text-sm font-medium mr-2">Course Explorer</span>
             <span className="flex h-1.5 w-1.5 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d62839] opacity-75"></span>
@@ -293,32 +335,36 @@ export default function QueensCourses() {
           className="flex flex-col lg-filters:flex-row gap-6 mb-8"
         >
           <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by course code or name..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 border-[#00305f]/20 focus:border-[#00305f] focus:ring-[#00305f]/20 transition-all duration-300"
-              />
+            <div className="search-glass">
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-7 h-7 rounded-lg bg-[#00305f]/10">
+                  <Search className="h-3.5 w-3.5 text-[#00305f]" />
+                </div>
+                <Input
+                  placeholder="Search by course code or name..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-12 bg-transparent border-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none text-[#00305f] placeholder:text-[#00305f]/40"
+                />
+              </div>
             </div>
           </div>
           <div className="flex gap-2">
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={() => setShowFilters(!showFilters)}
-              className="lg-filters:hidden border-[#00305f] text-[#00305f] hover:bg-[#00305f]/10"
+              className="lg-filters:hidden glass-btn border-0 text-[#00305f] hover:bg-white/30"
             >
               <Filter className="h-4 w-4 mr-2" />
               Filters
             </Button>
             <Button
-              variant={filteredCourses.length < courses.length ? "default" : "outline"}
+              variant="ghost"
               onClick={resetFilters}
               className={`whitespace-nowrap ${
                 filteredCourses.length < courses.length
-                  ? "bg-[#d62839] hover:bg-[#d62839]/90"
-                  : "border-[#d62839] text-[#d62839] hover:bg-[#d62839]/10"
+                  ? "liquid-btn-red border-0 text-white hover:bg-transparent"
+                  : "glass-btn border-0 text-[#d62839] hover:bg-white/30"
               }`}
             >
               <X className="h-4 w-4 mr-2" />
@@ -334,7 +380,7 @@ export default function QueensCourses() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className={`lg-filters:col-span-1 ${showFilters ? "block" : "hidden lg-filters:block"}`}
           >
-            <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm card-hover-effect">
+            <div className="glass-card-deep rounded-xl p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-medium flex items-center text-[#00305f]">
                   <SlidersHorizontal className="h-4 w-4 mr-2" />
@@ -352,10 +398,10 @@ export default function QueensCourses() {
                   <Popover open={departmentOpen} onOpenChange={setDepartmentOpen}>
                     <PopoverTrigger asChild>
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         role="combobox"
                         aria-expanded={departmentOpen}
-                        className="w-full justify-between border-gray-200 hover:border-[#00305f] transition-colors duration-300"
+                        className="w-full justify-between glass-btn border-0 text-[#00305f] hover:bg-white/30 transition-colors duration-300"
                       >
                         {selectedDepartments.length > 0
                           ? `${selectedDepartments.length} selected`
@@ -395,10 +441,10 @@ export default function QueensCourses() {
                   <Popover open={levelOpen} onOpenChange={setLevelOpen}>
                     <PopoverTrigger asChild>
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         role="combobox"
                         aria-expanded={levelOpen}
-                        className="w-full justify-between border-gray-200 hover:border-[#00305f] transition-colors duration-300"
+                        className="w-full justify-between glass-btn border-0 text-[#00305f] hover:bg-white/30 transition-colors duration-300"
                       >
                         {selectedLevels.length > 0 ? `${selectedLevels.length} selected` : "Select levels"}
                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -451,7 +497,7 @@ export default function QueensCourses() {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-gray-100">
+                <div className="pt-4 border-t border-white/60">
                   <div className="text-xs text-muted-foreground mb-2">Active Filters:</div>
                   <div className="flex flex-wrap gap-2">
                     {selectedDepartments.map((dept) => (
@@ -504,14 +550,14 @@ export default function QueensCourses() {
             className="lg-filters:col-span-3"
           >
             {loading ? (
-              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8 flex items-center justify-center">
+              <div className="glass-card-deep rounded-xl p-8 flex items-center justify-center">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00305f] mx-auto"></div>
                   <p className="mt-4 text-gray-600">Loading course data...</p>
                 </div>
               </div>
             ) : (
-              <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+              <div className="glass-card-deep rounded-xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
@@ -593,7 +639,7 @@ export default function QueensCourses() {
                   </table>
                 </div>
 
-                <div className="bg-[#00305f]/5 px-6 py-4 text-sm text-muted-foreground border-t flex flex-col lg-filters:flex-row justify-between items-center gap-4">
+                <div className="bg-white/40 backdrop-blur-sm px-6 py-4 text-sm text-muted-foreground border-t border-white/60 flex flex-col lg-filters:flex-row justify-between items-center gap-4">
                   <div>
                     Showing {Math.min(currentPage * coursesPerPage, sortedCourses.length)} of {sortedCourses.length} filtered courses (from total {courses.length})
                   </div>
@@ -602,11 +648,11 @@ export default function QueensCourses() {
                   {sortedCourses.length > coursesPerPage && (
                     <div className="flex items-center gap-2">
                       <Button 
-                        variant="outline" 
+                        variant="ghost"
                         size="sm"
                         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                         disabled={currentPage === 1}
-                        className="border-[#00305f] text-[#00305f] hover:bg-[#00305f]/10"
+                        className="glass-btn border-0 text-[#00305f] hover:bg-white/30"
                       >
                         Previous
                       </Button>
@@ -614,11 +660,11 @@ export default function QueensCourses() {
                         Page {currentPage} of {Math.ceil(sortedCourses.length / coursesPerPage)}
                       </span>
                       <Button 
-                        variant="outline" 
+                        variant="ghost"
                         size="sm"
                         onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(sortedCourses.length / coursesPerPage)))}
                         disabled={currentPage >= Math.ceil(sortedCourses.length / coursesPerPage)}
-                        className="border-[#00305f] text-[#00305f] hover:bg-[#00305f]/10"
+                        className="glass-btn border-0 text-[#00305f] hover:bg-white/30"
                       >
                         Next
                       </Button>
@@ -632,7 +678,7 @@ export default function QueensCourses() {
               </div>
             )}
 
-            <div className="mt-6 p-6 bg-white rounded-xl border border-gray-100 shadow-sm">
+            <div className="mt-6 p-6 glass-card-deep glass-shine rounded-xl relative overflow-hidden">
               <h3 className="text-lg font-bold text-[#00305f] mb-3">Need Help Choosing?</h3>
               <p className="text-gray-600 mb-4">
                 Our AI assistant can provide personalized course recommendations based on your interests, learning
@@ -640,7 +686,7 @@ export default function QueensCourses() {
               </p>
               <Button
                 asChild
-                className="bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white"
+                className="liquid-btn-red border-0 text-white"
               >
                 <a href="/queens-answers">Ask AI Assistant</a>
               </Button>
