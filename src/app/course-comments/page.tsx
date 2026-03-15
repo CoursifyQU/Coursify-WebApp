@@ -2,56 +2,50 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, ExternalLink, MessageSquare, User } from 'lucide-react';
 import { getCommentsForCourse } from '@/lib/db';
 import type { RedditComment, RmpComment } from '@/lib/db';
 
-const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.5 } }
-};
+type CommentItem = (RedditComment & { _type: 'reddit' }) | (RmpComment & { _type: 'rmp' });
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  }
+  visible: { opacity: 1, transition: { staggerChildren: 0.07 } }
 };
 
-const commentVariant = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4 }
-  }
+const cardVariant = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' as const } }
 };
+
+const RedditIcon = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" className={className}>
+    <circle fill="#FF4500" cx="10" cy="10" r="10" />
+    <path fill="#fff" d="M16.67,10A1.46,1.46,0,0,0,14.2,9a7.12,7.12,0,0,0-3.85-1.23L11,4.65,13.14,5.1a1,1,0,1,0,.13-.61L10.82,4a.31.31,0,0,0-.37.24L9.71,7.71a7.14,7.14,0,0,0-3.9,1.23A1.46,1.46,0,1,0,4.2,11.33a2.87,2.87,0,0,0,0,.44c0,2.24,2.61,4.06,5.83,4.06s5.83-1.82,5.83-4.06a2.87,2.87,0,0,0,0-.44A1.46,1.46,0,0,0,16.67,10Zm-10,1a1,1,0,1,1,1,1A1,1,0,0,1,6.67,11Zm5.81,2.75a3.84,3.84,0,0,1-2.47.77,3.84,3.84,0,0,1-2.47-.77.27.27,0,0,1,.38-.38A3.27,3.27,0,0,0,10,14a3.28,3.28,0,0,0,2.09-.61.27.27,0,1,1,.38.38Zm-.18-1.71a1,1,0,1,1,1-1A1,1,0,0,1,12.29,12.08Z" />
+  </svg>
+);
 
 export default function CourseCommentsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const courseCode = searchParams.get('courseCode') || '';
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'reddit' | 'rmp'>('all');
+  const [selectedProfessor, setSelectedProfessor] = useState<string | null>(null);
   const [redditComments, setRedditComments] = useState<RedditComment[]>([]);
   const [rmpComments, setRmpComments] = useState<RmpComment[]>([]);
 
   useEffect(() => {
     async function fetchComments() {
-      if (!courseCode) {
-        setLoading(false);
-        return;
-      }
+      if (!courseCode) { setLoading(false); return; }
       setLoading(true);
       try {
         const { redditComments: reddit, rmpComments: rmp } = await getCommentsForCourse(courseCode);
         setRedditComments(reddit);
         setRmpComments(rmp);
       } catch (err) {
-        console.error("Error fetching comments:", err);
+        console.error('Error fetching comments:', err);
       } finally {
         setLoading(false);
       }
@@ -59,249 +53,442 @@ export default function CourseCommentsPage() {
     fetchComments();
   }, [courseCode]);
 
-  const allComments: Array<(RedditComment & { _type: 'reddit' }) | (RmpComment & { _type: 'rmp' })> = [
+  const allComments: CommentItem[] = [
     ...redditComments.map(c => ({ ...c, _type: 'reddit' as const })),
     ...rmpComments.map(c => ({ ...c, _type: 'rmp' as const })),
   ];
 
-  const filteredComments = activeTab === 'all'
+  const tabFiltered = activeTab === 'all'
     ? allComments
     : activeTab === 'reddit'
       ? allComments.filter(c => c._type === 'reddit')
       : allComments.filter(c => c._type === 'rmp');
 
-  const sentimentColor = (label: string) => {
-    if (label === "positive") return "text-green-600";
-    if (label === "negative") return "text-red-600";
-    return "text-gray-500";
+  const filteredComments = selectedProfessor
+    ? tabFiltered.filter(c => c.professor_name === selectedProfessor)
+    : tabFiltered;
+
+  // Reset professor filter when tab changes if the professor isn't in the new tab's comments
+  const tabProfessors = Array.from(
+    new Set(tabFiltered.map(c => c.professor_name).filter((p): p is string => !!p && p !== 'general_prof'))
+  ).sort();
+
+  const sentimentBadge = (label: string) => {
+    if (label === 'positive') return 'bg-green-100/80 text-green-700 border border-green-200/60';
+    if (label === 'negative') return 'bg-red-100/80 text-red-600 border border-red-200/60';
+    return 'bg-gray-100/80 text-gray-500 border border-gray-200/60';
+  };
+
+  const tabs = [
+    { id: 'all' as const, label: 'All', count: allComments.length, accent: '#00305f' },
+    { id: 'reddit' as const, label: 'Reddit', count: redditComments.length, accent: '#FF4500' },
+    { id: 'rmp' as const, label: 'RateMyProf', count: rmpComments.length, accent: '#00305f' },
+  ];
+
+  const handleTabChange = (tab: 'all' | 'reddit' | 'rmp') => {
+    setActiveTab(tab);
+    // Clear professor filter if they don't appear in the new tab
+    if (selectedProfessor) {
+      const nextTabComments = tab === 'all' ? allComments : allComments.filter(c => c._type === tab);
+      const nextProfessors = nextTabComments.map(c => c.professor_name);
+      if (!nextProfessors.includes(selectedProfessor)) setSelectedProfessor(null);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-16">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
+    <div
+      className="min-h-screen pb-20 pt-20"
+      style={{
+        backgroundColor: 'hsla(0,0%,100%,1)',
+        backgroundImage: `
+          radial-gradient(at 21% 33%, hsla(225,100%,19%,0.09) 0px, transparent 50%),
+          radial-gradient(at 79% 76%, hsla(352,71%,54%,0.08) 0px, transparent 50%),
+          radial-gradient(at 96% 10%, hsla(43,83%,51%,0.07) 0px, transparent 50%)
+        `
+      }}
+    >
+      <style dangerouslySetInnerHTML={{ __html: `
+        .glass-card-deep {
+          background: rgba(255,255,255,0.72);
+          backdrop-filter: blur(28px) saturate(170%);
+          -webkit-backdrop-filter: blur(28px) saturate(170%);
+          border: 1px solid rgba(255,255,255,0.82);
+          box-shadow: 0 8px 32px rgba(0,48,95,0.10), 0 2px 8px rgba(0,48,95,0.06), inset 0 1px 0 rgba(255,255,255,0.95);
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .glass-card-deep:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 14px 40px rgba(0,48,95,0.14), 0 3px 10px rgba(0,48,95,0.08), inset 0 1px 0 rgba(255,255,255,0.98);
+        }
+        .glass-hero {
+          background: rgba(0,48,95,0.82);
+          backdrop-filter: blur(32px) saturate(180%);
+          -webkit-backdrop-filter: blur(32px) saturate(180%);
+          border: 1px solid rgba(255,255,255,0.12);
+          box-shadow: 0 24px 64px rgba(0,48,95,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+        .tab-pill {
+          background: rgba(255,255,255,0.55);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255,255,255,0.75);
+          transition: all 0.2s ease;
+        }
+        .tab-pill:hover { background: rgba(255,255,255,0.75); }
+        .tab-pill.active-all { background: rgba(0,48,95,0.9); border-color: rgba(0,48,95,0.3); color: white; }
+        .tab-pill.active-reddit { background: rgba(255,69,0,0.9); border-color: rgba(255,69,0,0.3); color: white; }
+        .tab-pill.active-rmp { background: rgba(0,48,95,0.9); border-color: rgba(0,48,95,0.3); color: white; }
+      ` }} />
+
+      {/* Background blobs */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#d62839]/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#00305f]/8 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-[#efb215]/6 rounded-full blur-3xl" />
+      </div>
+
+      <div className="container mx-auto px-6 md:px-10 lg:px-20 max-w-5xl">
+
+        {/* ── Hero Header ── */}
         <motion.div
-          className="mb-8"
-          initial="hidden"
-          animate="visible"
-          variants={fadeIn}
+          className="glass-hero rounded-2xl overflow-hidden relative mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          <div className="flex items-center mb-4">
-            <button onClick={() => router.back()} className="mr-4 text-gray-600 hover:text-gray-900">
-              <ArrowLeft className="h-5 w-5" />
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-[#d62839]/8 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#0066CC]/15 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+
+          <div className="relative px-8 py-7">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center gap-1.5 text-white/60 hover:text-white/90 text-sm mb-5 transition-colors group"
+            >
+              <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
+              Back to course
             </button>
-            <h1 className="text-2xl font-bold text-[#00305f]">
-              Student Comments for {courseCode || 'Unknown Course'}
-            </h1>
+
+            <div className="flex items-start justify-between flex-wrap gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <MessageSquare className="h-5 w-5 text-white/50" />
+                  <span className="text-white/60 text-sm font-medium uppercase tracking-wider">Student Comments</span>
+                </div>
+                <h1 className="text-3xl font-bold text-white">
+                  {courseCode || 'All Comments'}
+                </h1>
+                <p className="text-white/60 text-sm mt-1">
+                  Aggregated from Reddit and RateMyProfessor
+                </p>
+              </div>
+
+              {/* Stats pills */}
+              <div className="flex flex-wrap gap-2 self-end">
+                <div className="px-3.5 py-1.5 rounded-full text-sm font-medium text-white/80" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                  <span className="text-white font-semibold">{redditComments.length}</span> Reddit
+                </div>
+                <div className="px-3.5 py-1.5 rounded-full text-sm font-medium text-white/80" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                  <span className="text-white font-semibold">{rmpComments.length}</span> RMP
+                </div>
+                <div className="px-3.5 py-1.5 rounded-full text-sm font-medium text-white/80" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                  <span className="text-white font-semibold">{allComments.length}</span> total
+                </div>
+              </div>
+            </div>
           </div>
-          <p className="text-gray-600">
-            View all student feedback from Reddit and RateMyProfessor for this course.
-          </p>
         </motion.div>
 
-        {/* Tabs */}
+        {/* ── Tabs ── */}
         <motion.div
-          className="flex mb-6 border-b"
-          initial={{ opacity: 0, y: -10 }}
+          className="flex gap-2 mb-7"
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
-          <button
-            className={`px-4 py-2 font-medium ${activeTab === 'all' ? 'text-[#00305f] border-b-2 border-[#00305f]' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('all')}
-          >
-            All Comments
-          </button>
-          <button
-            className={`px-4 py-2 font-medium flex items-center ${activeTab === 'reddit' ? 'text-[#FF4500] border-b-2 border-[#FF4500]' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('reddit')}
-          >
-            <svg className="w-4 h-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <circle fill={activeTab === 'reddit' ? "#FF4500" : "currentColor"} cx="10" cy="10" r="10"/>
-              <path fill="white" d="M16.67,10A1.46,1.46,0,0,0,14.2,9a7.12,7.12,0,0,0-3.85-1.23L11,4.65,13.14,5.1a1,1,0,1,0,.13-0.61L10.82,4a0.31,0.31,0,0,0-.37.24L9.71,7.71a7.14,7.14,0,0,0-3.9,1.23,1.46,1.46,0,1,0-1.61,2.39,2.87,2.87,0,0,0,0,.44c0,2.24,2.61,4.06,5.83,4.06s5.83-1.82,5.83-4.06a2.87,2.87,0,0,0,0-.44A1.46,1.46,0,0,0,16.67,10Zm-10,1a1,1,0,1,1,1,1A1,1,0,0,1,6.67,11Zm5.81,2.75a3.84,3.84,0,0,1-2.47.77,3.84,3.84,0,0,1-2.47-.77,0.27,0.27,0,0,1,.38-0.38A3.27,3.27,0,0,0,10,14a3.28,3.28,0,0,0,2.09-.61A0.27,0.27,0,1,1,12.48,13.79Zm-0.18-1.71a1,1,0,1,1,1-1A1,1,0,0,1,12.29,12.08Z"/>
-            </svg>
-            Reddit ({redditComments.length})
-          </button>
-          <button
-            className={`px-4 py-2 font-medium flex items-center ${activeTab === 'rmp' ? 'text-[#00305f] border-b-2 border-[#00305f]' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('rmp')}
-          >
-            <svg className="w-4 h-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-            </svg>
-            RateMyProfessor ({rmpComments.length})
-          </button>
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => handleTabChange(tab.id)}
+              className={`tab-pill rounded-full px-4 py-2 text-sm font-medium flex items-center gap-2 ${
+                activeTab === tab.id ? `active-${tab.id}` : 'text-gray-600'
+              }`}
+            >
+              {tab.id === 'reddit' && (
+                <svg viewBox="0 0 20 20" className="w-4 h-4">
+                  <circle fill={activeTab === 'reddit' ? '#fff' : '#FF4500'} cx="10" cy="10" r="10" opacity={activeTab === 'reddit' ? 0.9 : 1} />
+                  <path fill={activeTab === 'reddit' ? '#FF4500' : '#fff'} d="M16.67,10A1.46,1.46,0,0,0,14.2,9a7.12,7.12,0,0,0-3.85-1.23L11,4.65,13.14,5.1a1,1,0,1,0,.13-.61L10.82,4a.31.31,0,0,0-.37.24L9.71,7.71a7.14,7.14,0,0,0-3.9,1.23A1.46,1.46,0,1,0,4.2,11.33a2.87,2.87,0,0,0,0,.44c0,2.24,2.61,4.06,5.83,4.06s5.83-1.82,5.83-4.06a2.87,2.87,0,0,0,0-.44A1.46,1.46,0,0,0,16.67,10Zm-10,1a1,1,0,1,1,1,1A1,1,0,0,1,6.67,11Zm5.81,2.75a3.84,3.84,0,0,1-2.47.77,3.84,3.84,0,0,1-2.47-.77.27.27,0,0,1,.38-.38A3.27,3.27,0,0,0,10,14a3.28,3.28,0,0,0,2.09-.61.27.27,0,1,1,.38.38Zm-.18-1.71a1,1,0,1,1,1-1A1,1,0,0,1,12.29,12.08Z" />
+                </svg>
+              )}
+              {tab.id === 'rmp' && (
+                <div className={`w-4 h-4 rounded-full flex items-center justify-center ${activeTab === 'rmp' ? 'bg-white/20' : 'bg-[#00305f]/10'}`}>
+                  <svg viewBox="0 0 20 20" fill={activeTab === 'rmp' ? 'white' : '#00305f'} className="w-3 h-3">
+                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              )}
+              {tab.label}
+              <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
+                activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-gray-200/70 text-gray-500'
+              }`}>
+                {tab.count}
+              </span>
+            </button>
+          ))}
         </motion.div>
 
-        {/* Comments List */}
-        {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00305f]"></div>
+        {/* ── Loading ── */}
+        {loading && (
+          <div className="flex justify-center items-center py-24">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#00305f]" />
+            <span className="ml-3 text-gray-500">Loading comments...</span>
           </div>
-        ) : (
-          <motion.div
-            className="grid grid-cols-1 gap-4"
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-          >
-            {filteredComments.map((comment, index) => {
-              const isReddit = comment._type === 'reddit';
+        )}
 
-              return (
-                <motion.div
-                  key={index}
-                  className="bg-white rounded-lg shadow-md p-4 border border-gray-100"
-                  variants={commentVariant}
-                >
-                  {isReddit ? (
-                    <>
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center">
-                          <div className="h-8 w-8 rounded-full mr-2 flex items-center justify-center overflow-hidden bg-[#FF4500]">
-                            <svg className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                              <path d="M16.67,10A1.46,1.46,0,0,0,14.2,9a7.12,7.12,0,0,0-3.85-1.23L11,4.65,13.14,5.1a1,1,0,1,0,.13-0.61L10.82,4a0.31,0.31,0,0,0-.37.24L9.71,7.71a7.14,7.14,0,0,0-3.9,1.23,1.46,1.46,0,1,0-1.61,2.39,2.87,2.87,0,0,0,0,.44c0,2.24,2.61,4.06,5.83,4.06s5.83-1.82,5.83-4.06a2.87,2.87,0,0,0,0-.44A1.46,1.46,0,0,0,16.67,10Z" />
+        {/* ── Content: sidebar + comments ── */}
+        {!loading && (
+          <div className={`flex gap-6 items-start ${activeTab === 'rmp' && tabProfessors.length > 0 ? '' : ''}`}>
+
+            {/* Professor sidebar — only on RMP tab */}
+            {activeTab === 'rmp' && tabProfessors.length > 0 && (
+              <motion.aside
+                className="w-52 flex-shrink-0 sticky top-24"
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.35, delay: 0.15 }}
+              >
+                <div className="glass-card-deep rounded-2xl px-4 py-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <User className="h-3.5 w-3.5 text-[#00305f]/60" />
+                    <span className="text-xs font-semibold text-[#00305f] uppercase tracking-wider">Professor</span>
+                    {selectedProfessor && (
+                      <button
+                        onClick={() => setSelectedProfessor(null)}
+                        className="ml-auto text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                        title="Clear filter"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    {tabProfessors.map(prof => {
+                      const commentCount = tabFiltered.filter(c => c.professor_name === prof).length;
+                      const isActive = selectedProfessor === prof;
+                      return (
+                        <button
+                          key={prof}
+                          onClick={() => setSelectedProfessor(isActive ? null : prof)}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 text-left ${
+                            isActive
+                              ? 'bg-[#00305f] text-white shadow-md shadow-[#00305f]/20'
+                              : 'bg-white/50 text-gray-700 hover:bg-white/90 border border-white/70'
+                          }`}
+                        >
+                          <span className="truncate mr-2">{prof}</span>
+                          <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold flex-shrink-0 ${
+                            isActive ? 'bg-white/20 text-white' : 'bg-gray-200/80 text-gray-500'
+                          }`}>
+                            {commentCount}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </motion.aside>
+            )}
+
+            {/* Comments list */}
+            <div className="flex-1 min-w-0">
+        {filteredComments.length > 0 && (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${activeTab}-${selectedProfessor ?? 'all'}`}
+              className="grid grid-cols-1 gap-4"
+              initial="hidden"
+              animate="visible"
+              variants={staggerContainer}
+            >
+              {filteredComments.map((comment, index) => {
+                const isReddit = comment._type === 'reddit';
+
+                return (
+                  <motion.div
+                    key={index}
+                    className="glass-card-deep rounded-2xl p-5"
+                    variants={cardVariant}
+                  >
+                    {/* Card Header */}
+                    <div className="flex items-start justify-between mb-3 gap-3">
+                      <div className="flex items-center gap-2.5">
+                        {isReddit ? (
+                          <RedditIcon className="w-8 h-8 flex-shrink-0" />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-[#00305f] flex items-center justify-center flex-shrink-0 shadow-sm">
+                            <svg viewBox="0 0 20 20" fill="white" className="w-4 h-4">
+                              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                             </svg>
                           </div>
-                          <div>
-                            <div className="text-sm font-medium">r/queensuniversity</div>
+                        )}
+                        <div>
+                          <div className="text-sm font-semibold text-gray-800">
+                            {isReddit ? 'r/queensuniversity' : 'Anonymous'}
                           </div>
+                          {!isReddit && (
+                            <div className="flex mt-0.5">
+                              {[...Array(5)].map((_, i) => (
+                                <svg
+                                  key={i}
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                  className={`h-3.5 w-3.5 ${
+                                    i < Math.floor((comment as RmpComment).quality_rating)
+                                      ? 'text-yellow-400'
+                                      : i < (comment as RmpComment).quality_rating
+                                        ? 'text-yellow-300'
+                                        : 'text-gray-200'
+                                  }`}
+                                >
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                        <span className={`text-xs capitalize ${sentimentColor(comment.sentiment_label)}`}>
-                          {comment.sentiment_label}
-                        </span>
                       </div>
 
-                      {comment.professor_name && comment.professor_name !== "general_prof" && (
-                        <div className="mb-2 flex items-center">
-                          <span className="text-xs font-medium text-gray-500 mr-1">Professor:</span>
+                      {/* Source badge + sentiment */}
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full capitalize ${sentimentBadge(comment.sentiment_label)}`}>
+                          {comment.sentiment_label}
+                        </span>
+                        <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
+                          isReddit
+                            ? 'bg-[#FF4500]/10 text-[#FF4500] border border-[#FF4500]/20'
+                            : 'bg-[#00305f]/10 text-[#00305f] border border-[#00305f]/20'
+                        }`}>
+                          {isReddit ? 'Reddit' : 'RMP'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Professor */}
+                    {comment.professor_name && comment.professor_name !== 'general_prof' && (
+                      <div className="flex items-center gap-1.5 mb-3">
+                        <span className="text-xs text-gray-400">Professor:</span>
+                        {isReddit ? (
                           <span className="text-xs text-[#00305f] font-medium">{comment.professor_name}</span>
-                        </div>
-                      )}
-
-                      <p className="text-sm text-gray-700 mb-3">{comment.text}</p>
-
-                      {comment.tags && comment.tags.length > 0 && (
-                        <div className="mb-3 flex flex-wrap gap-1">
-                          {comment.tags.map((tag, idx) => (
-                            <span key={idx} className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">{tag}</span>
-                          ))}
-                        </div>
-                      )}
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-xs text-gray-500">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-[#FF4500]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-                          </svg>
-                          <span>{(comment as RedditComment).upvotes} upvotes</span>
-                        </div>
-                        {comment.source_url && (
+                        ) : (
                           <a
                             href={comment.source_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-[#FF4500] hover:underline flex items-center"
+                            className="text-xs text-[#00305f] hover:underline font-medium flex items-center gap-0.5"
                           >
-                            View on Reddit
-                            <ExternalLink className="h-3 w-3 ml-1" />
+                            {comment.professor_name}
+                            <ExternalLink className="h-3 w-3" />
                           </a>
                         )}
                       </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center">
-                          <div className="text-sm font-medium text-gray-700">Anonymous</div>
-                          <div className="ml-2 flex">
-                            {[...Array(5)].map((_, i) => (
-                              <svg
-                                key={i}
-                                xmlns="http://www.w3.org/2000/svg"
-                                className={`h-4 w-4 ${i < Math.floor((comment as RmpComment).quality_rating) ? "text-yellow-400" : i < (comment as RmpComment).quality_rating ? "text-yellow-300" : "text-gray-300"}`}
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                              >
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                              </svg>
-                            ))}
+                    )}
+
+                    {/* Comment text */}
+                    <p className="text-sm text-gray-700 leading-relaxed mb-3">{comment.text}</p>
+
+                    {/* Tags */}
+                    {comment.tags && comment.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mb-3">
+                        {comment.tags.map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className={`text-xs px-2.5 py-0.5 rounded-full border ${
+                              isReddit
+                                ? 'bg-[#FF4500]/6 text-[#FF4500]/80 border-[#FF4500]/15'
+                                : 'bg-[#00305f]/6 text-[#00305f]/80 border-[#00305f]/15'
+                            }`}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between pt-3 border-t border-white/60">
+                      <div className="flex items-center gap-3">
+                        {isReddit && (
+                          <div className="flex items-center gap-1 text-xs text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-[#FF4500]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+                            </svg>
+                            {(comment as RedditComment).upvotes} upvotes
                           </div>
-                        </div>
-                        <span className={`text-xs capitalize ${sentimentColor(comment.sentiment_label)}`}>
-                          {comment.sentiment_label}
-                        </span>
+                        )}
+                        {!isReddit && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#00305f]/8 text-[#00305f] font-medium">
+                              Quality: {(comment as RmpComment).quality_rating}/5
+                            </span>
+                            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#d62839]/8 text-[#d62839] font-medium">
+                              Difficulty: {(comment as RmpComment).difficulty_rating}/5
+                            </span>
+                          </div>
+                        )}
                       </div>
 
-                      <div className="mb-2 flex items-center">
-                        <span className="text-xs font-medium text-gray-500 mr-1">Professor:</span>
+                      {comment.source_url && (
                         <a
                           href={comment.source_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-[#00305f] hover:underline font-medium flex items-center"
+                          className={`text-xs font-medium flex items-center gap-1 hover:underline ${
+                            isReddit ? 'text-[#FF4500]' : 'text-[#00305f]'
+                          }`}
                         >
-                          {comment.professor_name}
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
+                          {isReddit ? 'View on Reddit' : 'View on RMP'}
+                          <ExternalLink className="h-3 w-3" />
                         </a>
-                      </div>
-
-                      <p className="text-sm text-gray-700 mb-3">{comment.text}</p>
-
-                      {comment.tags && comment.tags.length > 0 && (
-                        <div className="mb-3 flex flex-wrap gap-1">
-                          {comment.tags.map((tag, idx) => (
-                            <span key={idx} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{tag}</span>
-                          ))}
-                        </div>
                       )}
-
-                      <div className="flex flex-wrap items-center gap-2 text-xs">
-                        <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
-                          Quality: {(comment as RmpComment).quality_rating}/5
-                        </span>
-                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                          Difficulty: {(comment as RmpComment).difficulty_rating}/5
-                        </span>
-                        <div className="flex-grow"></div>
-                        {comment.source_url && (
-                          <a
-                            href={comment.source_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-[#00305f] hover:underline flex items-center"
-                          >
-                            View on RMP
-                            <ExternalLink className="h-3 w-3 ml-1" />
-                          </a>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </motion.div>
-              );
-            })}
-          </motion.div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </AnimatePresence>
         )}
 
-        {!loading && filteredComments.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">
-              {courseCode ? "No comments found for this filter." : "No course code provided. Please navigate from a course page."}
+        {/* ── Empty State ── */}
+        {filteredComments.length === 0 && (
+          <motion.div
+            className="glass-card-deep rounded-2xl p-12 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 text-base mb-2">
+              {courseCode ? 'No comments found for this filter.' : 'No course code provided.'}
             </p>
-            {courseCode && (
-              <Button onClick={() => setActiveTab('all')} variant="outline">
-                View All Comments
-              </Button>
+            <p className="text-gray-400 text-sm">
+              {courseCode ? 'Try switching to a different tab.' : 'Navigate here from a course page.'}
+            </p>
+            {courseCode && activeTab !== 'all' && (
+              <button
+                onClick={() => handleTabChange('all')}
+                className="mt-5 px-5 py-2 rounded-full text-sm font-medium bg-[#00305f]/10 text-[#00305f] hover:bg-[#00305f]/15 transition-colors border border-[#00305f]/20"
+              >
+                View all comments
+              </button>
             )}
+          </motion.div>
+        )}
+            </div>
           </div>
         )}
 
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>Comments are aggregated from public sources and may not reflect current course structure.</p>
-        </div>
+        <p className="text-center text-xs text-gray-400 mt-8">
+          Comments are aggregated from public sources and may not reflect current course structure.
+        </p>
       </div>
     </div>
   );

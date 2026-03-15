@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { Brain } from "lucide-react";
+import { Brain, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { getCommentsForCourse } from "@/lib/db";
 import type { RedditComment, RmpComment } from "@/lib/db";
@@ -32,26 +32,18 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
     if (courseCode) fetchComments();
   }, [courseCode]);
 
-  const nextRedditComment = () => {
-    setRedditCommentIndex((prev) => (prev + 1) % Math.max(redditComments.length, 1));
-  };
-  const prevRedditComment = () => {
-    setRedditCommentIndex((prev) => (prev - 1 + redditComments.length) % Math.max(redditComments.length, 1));
-  };
-  const nextRmpComment = () => {
-    setRmpCommentIndex((prev) => (prev + 1) % Math.max(rmpComments.length, 1));
-  };
-  const prevRmpComment = () => {
-    setRmpCommentIndex((prev) => (prev - 1 + rmpComments.length) % Math.max(rmpComments.length, 1));
-  };
+  const nextRedditComment = () => setRedditCommentIndex((prev) => (prev + 1) % Math.max(redditComments.length, 1));
+  const prevRedditComment = () => setRedditCommentIndex((prev) => (prev - 1 + redditComments.length) % Math.max(redditComments.length, 1));
+  const nextRmpComment = () => setRmpCommentIndex((prev) => (prev + 1) % Math.max(rmpComments.length, 1));
+  const prevRmpComment = () => setRmpCommentIndex((prev) => (prev - 1 + rmpComments.length) % Math.max(rmpComments.length, 1));
 
   const currentRedditComment = redditComments[redditCommentIndex];
   const currentRmpComment = rmpComments[rmpCommentIndex];
 
   const sentimentColor = (label: string) => {
     if (label === "positive") return "text-green-600";
-    if (label === "negative") return "text-red-600";
-    return "text-gray-500";
+    if (label === "negative") return "text-red-500";
+    return "text-gray-400";
   };
 
   if (loading) {
@@ -76,20 +68,14 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
           </svg>
           Student Comments
         </h2>
-        <div className="bg-white rounded-xl shadow-md border border-gray-100 p-8 text-center">
+        <div className="glass-card-deep rounded-xl p-8 text-center">
           <p className="text-gray-500">No student comments found for this course yet.</p>
         </div>
-
         <div className="mt-10 flex flex-col items-center justify-center">
-          <p className="text-base font-medium mb-4 text-gray-800">Talk with our chatbot to get more insights!</p>
-          <Link
-            href="/queens-answers"
-            className="relative group bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white px-6 py-2.5 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
-          >
-            <span className="relative z-10 flex items-center justify-center h-full">
-              <Brain className="mr-2 h-4 w-4" />
-              <span className="text-sm">Try AI Assistant</span>
-            </span>
+          <p className="text-base font-medium mb-4 text-gray-700">Talk with our chatbot to get more insights!</p>
+          <Link href="/queens-answers" className="liquid-btn-red text-white px-6 py-2.5 rounded-xl inline-flex items-center font-medium">
+            <Brain className="mr-2 h-4 w-4" />
+            <span className="text-sm">Try AI Assistant</span>
           </Link>
         </div>
       </div>
@@ -97,9 +83,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
   }
 
   return (
-    <div
-      className="container mx-auto px-6 md:px-10 lg:px-20 max-w-full mt-6"
-    >
+    <div className="container mx-auto px-6 md:px-10 lg:px-20 max-w-full mt-6">
       <motion.h2
         className="text-xl font-bold text-[#00305f] mb-6 flex items-center justify-center"
         initial={{ opacity: 0, y: 20 }}
@@ -113,220 +97,205 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
       </motion.h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Reddit Comments */}
+
+        {/* ── Reddit Card ── */}
         <motion.div
-          className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden card-hover-effect relative"
+          className="glass-card-deep rounded-xl overflow-hidden flex flex-col"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.1, ease: "easeOut", opacity: { duration: 0.8 } }}
-          whileHover={{
-            y: -5,
-            transition: { duration: 0.2, ease: "easeOut" },
-            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-          }}
+          transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
         >
-          <div className="bg-[#FF4500]/10 p-4 border-b border-[#FF4500]/20">
-            <div className="flex items-center">
-              <div className="w-8 h-8 mr-2 flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" className="h-8 w-8 text-[#FF4500]">
-                  <g>
-                    <circle fill="#FF4500" cx="10" cy="10" r="10"/>
-                    <path fill="#FFFFFF" d="M16.67,10A1.46,1.46,0,0,0,14.2,9a7.12,7.12,0,0,0-3.85-1.23L11,4.65,13.14,5.1a1,1,0,1,0,.13-0.61L10.82,4a0.31,0.31,0,0,0-.37.24L9.71,7.71a7.14,7.14,0,0,0-3.9,1.23,1.46,1.46,0,1,0-1.61,2.39,2.87,2.87,0,0,0,0,.44c0,2.24,2.61,4.06,5.83,4.06s5.83-1.82,5.83-4.06a2.87,2.87,0,0,0,0-.44A1.46,1.46,0,0,0,16.67,10Zm-10,1a1,1,0,1,1,1,1A1,1,0,0,1,6.67,11Zm5.81,2.75a3.84,3.84,0,0,1-2.47.77,3.84,3.84,0,0,1-2.47-.77,0.27,0.27,0,0,1,.38-0.38A3.27,3.27,0,0,0,10,14a3.28,3.28,0,0,0,2.09-.61A0.27,0.27,0,1,1,12.48,13.79Zm-0.18-1.71a1,1,0,1,1,1-1A1,1,0,0,1,12.29,12.08Z"/>
-                  </g>
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-[#00305f]">Reddit Comments</h3>
-              <div className="ml-auto text-xs text-gray-500 bg-white/80 px-2 py-1 rounded-full">
-                {redditComments.length > 0 ? (
-                  <><span className="mr-1">{redditCommentIndex + 1}</span>/<span className="ml-1">{redditComments.length}</span></>
-                ) : "0"}
+          {/* Header with integrated nav */}
+          <div
+            className="px-4 py-3 flex-shrink-0"
+            style={{
+              background: "linear-gradient(135deg, rgba(255,69,0,0.22) 0%, rgba(255,120,50,0.10) 50%, rgba(255,255,255,0.60) 100%)",
+              backdropFilter: "blur(16px)",
+              borderBottom: "2.5px solid #FF4500",
+              boxShadow: "inset 0 -1px 0 rgba(255,69,0,0.15)"
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" className="h-7 w-7 flex-shrink-0">
+                <g>
+                  <circle fill="#FF4500" cx="10" cy="10" r="10"/>
+                  <path fill="#FFFFFF" d="M16.67,10A1.46,1.46,0,0,0,14.2,9a7.12,7.12,0,0,0-3.85-1.23L11,4.65,13.14,5.1a1,1,0,1,0,.13-0.61L10.82,4a0.31,0.31,0,0,0-.37.24L9.71,7.71a7.14,7.14,0,0,0-3.9,1.23,1.46,1.46,0,1,0-1.61,2.39,2.87,2.87,0,0,0,0,.44c0,2.24,2.61,4.06,5.83,4.06s5.83-1.82,5.83-4.06a2.87,2.87,0,0,0,0-.44A1.46,1.46,0,0,0,16.67,10Zm-10,1a1,1,0,1,1,1,1A1,1,0,0,1,6.67,11Zm5.81,2.75a3.84,3.84,0,0,1-2.47.77,3.84,3.84,0,0,1-2.47-.77,0.27,0.27,0,0,1,.38-0.38A3.27,3.27,0,0,0,10,14a3.28,3.28,0,0,0,2.09-.61A0.27,0.27,0,1,1,12.48,13.79Zm-0.18-1.71a1,1,0,1,1,1-1A1,1,0,0,1,12.29,12.08Z"/>
+                </g>
+              </svg>
+              <h3 className="text-sm font-semibold text-[#00305f]">Reddit Comments</h3>
+
+              {/* Nav controls in header */}
+              <div className="ml-auto flex items-center gap-1.5">
+                {redditComments.length > 1 && (
+                  <motion.button
+                    className="w-7 h-7 rounded-full flex items-center justify-center bg-white/50 hover:bg-white/80 border border-white/70 transition-colors"
+                    onClick={prevRedditComment}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5 text-[#FF4500]" />
+                  </motion.button>
+                )}
+                <span className="text-xs text-gray-500 font-medium px-1 min-w-[32px] text-center">
+                  {redditComments.length > 0 ? `${redditCommentIndex + 1}/${redditComments.length}` : "0"}
+                </span>
+                {redditComments.length > 1 && (
+                  <motion.button
+                    className="w-7 h-7 rounded-full flex items-center justify-center bg-white/50 hover:bg-white/80 border border-white/70 transition-colors"
+                    onClick={nextRedditComment}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <ChevronRight className="h-3.5 w-3.5 text-[#FF4500]" />
+                  </motion.button>
+                )}
               </div>
             </div>
           </div>
 
-          <div className="h-[220px] relative">
-            {redditComments.length > 1 && (
-              <div className="absolute bottom-2 left-0 right-0 flex justify-between px-6 z-10">
-                <motion.button
-                  className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center opacity-80 hover:opacity-100 border border-gray-100"
-                  onClick={prevRedditComment}
-                  whileHover={{ scale: 1.1, backgroundColor: "#fff" }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.1 }}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#FF4500]" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </motion.button>
-                <motion.button
-                  className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center opacity-80 hover:opacity-100 border border-gray-100"
-                  onClick={nextRedditComment}
-                  whileHover={{ scale: 1.1, backgroundColor: "#fff" }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.1 }}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#FF4500]" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                </motion.button>
-              </div>
-            )}
-
+          {/* Body — natural height, no fixed constraint */}
+          <div className="flex-1">
             {currentRedditComment ? (
               <motion.div
                 key={`reddit-${redditCommentIndex}`}
-                className="p-6 h-full"
+                className="p-5 flex flex-col gap-3"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
               >
-                <div className="flex items-center mb-3">
-                  <div className="h-10 w-10 rounded-full mr-2 flex items-center justify-center overflow-hidden">
+                <div className="flex items-center">
+                  <div className="h-8 w-8 rounded-full mr-2 overflow-hidden flex-shrink-0">
                     <img src="/queens_reddit_icon.png" alt="Queen's Reddit" className="h-full w-full object-cover" />
                   </div>
                   <div className="text-sm font-medium text-gray-700">r/queensuniversity</div>
-                  <div className={`ml-auto text-xs capitalize ${sentimentColor(currentRedditComment.sentiment_label)}`}>
+                  <div className={`ml-auto text-xs capitalize font-medium ${sentimentColor(currentRedditComment.sentiment_label)}`}>
                     {currentRedditComment.sentiment_label}
                   </div>
                 </div>
 
                 {currentRedditComment.professor_name && currentRedditComment.professor_name !== "general_prof" && (
-                  <div className="mb-3 flex items-center">
-                    <span className="text-xs font-medium text-gray-500 mr-1">Professor:</span>
+                  <div className="flex items-center">
+                    <span className="text-xs text-gray-400 mr-1">Professor:</span>
                     <span className="text-xs text-[#00305f] font-medium">{currentRedditComment.professor_name}</span>
                   </div>
                 )}
 
-                <p className="text-sm text-gray-700 mb-4 line-clamp-3">{currentRedditComment.text}</p>
+                <p className="text-sm text-gray-700 line-clamp-4">{currentRedditComment.text}</p>
 
                 {currentRedditComment.tags && currentRedditComment.tags.length > 0 && (
-                  <div className="mb-3 flex flex-wrap gap-1">
+                  <div className="flex flex-wrap gap-1">
                     {currentRedditComment.tags.map((tag, index) => (
-                      <span key={index} className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">{tag}</span>
+                      <span key={index} className="text-xs glass-pill px-2 py-0.5 rounded-full text-gray-600">{tag}</span>
                     ))}
                   </div>
                 )}
 
-                <div className="mt-auto flex items-center text-xs text-gray-500">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-[#FF4500]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <div className="flex items-center text-xs text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1 text-[#FF4500]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
                   </svg>
                   <span className="mr-3">{currentRedditComment.upvotes} upvotes</span>
                   {currentRedditComment.source_url && (
-                    <motion.a
-                      href={currentRedditComment.source_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#FF4500] hover:underline"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={{ duration: 0.1 }}
-                    >
-                      View
-                    </motion.a>
+                    <a href={currentRedditComment.source_url} target="_blank" rel="noopener noreferrer" className="text-[#FF4500] hover:underline ml-auto">
+                      View post
+                    </a>
                   )}
                 </div>
               </motion.div>
             ) : (
-              <div className="p-6 h-full flex items-center justify-center text-gray-400">
+              <div className="p-6 flex items-center justify-center text-gray-400 text-sm min-h-[160px]">
                 No Reddit comments for this course.
               </div>
             )}
           </div>
 
-          <div className="bg-gray-50 p-4 border-t border-gray-100 flex justify-center">
-            <motion.a
+          {/* Footer */}
+          <div className="px-5 py-3 border-t border-white/60 flex justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.35)", backdropFilter: "blur(12px)" }}>
+            <a
               href="https://www.reddit.com/r/queensuniversity/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#FF4500] text-sm font-medium hover:underline flex items-center"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ duration: 0.1 }}
+              className="text-[#FF4500] text-sm font-medium hover:underline flex items-center gap-1"
             >
               See more on Reddit
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
-            </motion.a>
+            </a>
           </div>
         </motion.div>
 
-        {/* RateMyProf Comments */}
+        {/* ── RateMyProf Card ── */}
         <motion.div
-          className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden card-hover-effect relative"
+          className="glass-card-deep rounded-xl overflow-hidden flex flex-col"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.1, ease: "easeOut", opacity: { duration: 0.8 } }}
-          whileHover={{
-            y: -5,
-            transition: { duration: 0.2, ease: "easeOut" },
-            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-          }}
+          transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
         >
-          <div className="bg-[#00305f]/10 p-4 border-b border-[#00305f]/20">
-            <div className="flex items-center">
-              <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#00305f] rounded-full flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+          {/* Header with integrated nav */}
+          <div
+            className="px-4 py-3 flex-shrink-0"
+            style={{
+              background: "linear-gradient(135deg, rgba(0,48,95,0.22) 0%, rgba(0,80,160,0.10) 50%, rgba(255,255,255,0.60) 100%)",
+              backdropFilter: "blur(16px)",
+              borderBottom: "2.5px solid #00305f",
+              boxShadow: "inset 0 -1px 0 rgba(0,48,95,0.15)"
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 flex-shrink-0 bg-[#00305f] rounded-full flex items-center justify-center shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-[#00305f]">RateMyProf Comments</h3>
-              <div className="ml-auto text-xs text-gray-500 bg-white/80 px-2 py-1 rounded-full">
-                {rmpComments.length > 0 ? (
-                  <><span className="mr-1">{rmpCommentIndex + 1}</span>/<span className="ml-1">{rmpComments.length}</span></>
-                ) : "0"}
+              <h3 className="text-sm font-semibold text-[#00305f]">RateMyProf Comments</h3>
+
+              {/* Nav controls in header */}
+              <div className="ml-auto flex items-center gap-1.5">
+                {rmpComments.length > 1 && (
+                  <motion.button
+                    className="w-7 h-7 rounded-full flex items-center justify-center bg-white/50 hover:bg-white/80 border border-white/70 transition-colors"
+                    onClick={prevRmpComment}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5 text-[#00305f]" />
+                  </motion.button>
+                )}
+                <span className="text-xs text-gray-500 font-medium px-1 min-w-[32px] text-center">
+                  {rmpComments.length > 0 ? `${rmpCommentIndex + 1}/${rmpComments.length}` : "0"}
+                </span>
+                {rmpComments.length > 1 && (
+                  <motion.button
+                    className="w-7 h-7 rounded-full flex items-center justify-center bg-white/50 hover:bg-white/80 border border-white/70 transition-colors"
+                    onClick={nextRmpComment}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <ChevronRight className="h-3.5 w-3.5 text-[#00305f]" />
+                  </motion.button>
+                )}
               </div>
             </div>
           </div>
 
-          <div className="h-[220px] relative">
-            {rmpComments.length > 1 && (
-              <div className="absolute bottom-2 left-0 right-0 flex justify-between px-6 z-10">
-                <motion.button
-                  className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center opacity-80 hover:opacity-100 border border-gray-100"
-                  onClick={prevRmpComment}
-                  whileHover={{ scale: 1.1, backgroundColor: "#fff" }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.1 }}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#00305f]" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </motion.button>
-                <motion.button
-                  className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center opacity-80 hover:opacity-100 border border-gray-100"
-                  onClick={nextRmpComment}
-                  whileHover={{ scale: 1.1, backgroundColor: "#fff" }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.1 }}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#00305f]" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                </motion.button>
-              </div>
-            )}
-
+          {/* Body — natural height, no fixed constraint */}
+          <div className="flex-1">
             {currentRmpComment ? (
               <motion.div
                 key={`rmp-${rmpCommentIndex}`}
-                className="p-6 h-full"
+                className="p-5 flex flex-col gap-3"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
               >
-                <div className="flex items-center mb-3">
-                  <div className="flex items-center">
+                <div className="flex items-center">
+                  <div className="flex items-center gap-2">
                     <div className="text-sm font-medium text-gray-700">Anonymous</div>
-                    <div className="ml-2 flex">
+                    <div className="flex">
                       {[...Array(5)].map((_, i) => (
                         <svg
                           key={i}
                           xmlns="http://www.w3.org/2000/svg"
-                          className={`h-4 w-4 ${i < Math.floor(currentRmpComment.quality_rating) ? "text-yellow-400" : i < currentRmpComment.quality_rating ? "text-yellow-300" : "text-gray-300"}`}
+                          className={`h-3.5 w-3.5 ${i < Math.floor(currentRmpComment.quality_rating) ? "text-yellow-400" : i < currentRmpComment.quality_rating ? "text-yellow-300" : "text-gray-200"}`}
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -335,13 +304,13 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                       ))}
                     </div>
                   </div>
-                  <div className={`ml-auto text-xs capitalize ${sentimentColor(currentRmpComment.sentiment_label)}`}>
+                  <div className={`ml-auto text-xs capitalize font-medium ${sentimentColor(currentRmpComment.sentiment_label)}`}>
                     {currentRmpComment.sentiment_label}
                   </div>
                 </div>
 
-                <div className="mb-3 flex items-center">
-                  <span className="text-xs font-medium text-gray-500 mr-1">Professor:</span>
+                <div className="flex items-center">
+                  <span className="text-xs text-gray-400 mr-1">Professor:</span>
                   <a
                     href={currentRmpComment.source_url}
                     target="_blank"
@@ -349,53 +318,51 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                     className="text-xs text-[#00305f] hover:underline font-medium flex items-center"
                   >
                     {currentRmpComment.professor_name}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </a>
                 </div>
 
-                <p className="text-sm text-gray-700 mb-2 line-clamp-3">{currentRmpComment.text}</p>
+                <p className="text-sm text-gray-700 line-clamp-4">{currentRmpComment.text}</p>
 
                 {currentRmpComment.tags && currentRmpComment.tags.length > 0 && (
-                  <div className="mb-3 flex flex-wrap gap-1">
+                  <div className="flex flex-wrap gap-1">
                     {currentRmpComment.tags.map((tag, index) => (
-                      <span key={index} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{tag}</span>
+                      <span key={index} className="text-xs glass-pill px-2 py-0.5 rounded-full text-[#00305f]">{tag}</span>
                     ))}
                   </div>
                 )}
 
-                <div className="mt-auto flex flex-wrap items-center gap-2 text-xs">
-                  <motion.span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full" whileHover={{ scale: 1.05 }} transition={{ duration: 0.1 }}>
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <span className="glass-pill px-2.5 py-1 rounded-full text-[#00305f] font-medium">
                     Quality: {currentRmpComment.quality_rating}/5
-                  </motion.span>
-                  <motion.span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full" whileHover={{ scale: 1.05 }} transition={{ duration: 0.1 }}>
+                  </span>
+                  <span className="glass-pill px-2.5 py-1 rounded-full text-[#d62839] font-medium">
                     Difficulty: {currentRmpComment.difficulty_rating}/5
-                  </motion.span>
+                  </span>
                 </div>
               </motion.div>
             ) : (
-              <div className="p-6 h-full flex items-center justify-center text-gray-400">
+              <div className="p-6 flex items-center justify-center text-gray-400 text-sm min-h-[160px]">
                 No RateMyProfessor comments for this course.
               </div>
             )}
           </div>
 
-          <div className="bg-gray-50 p-4 border-t border-gray-100 flex justify-center">
-            <motion.a
+          {/* Footer */}
+          <div className="px-5 py-3 border-t border-white/60 flex justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.35)", backdropFilter: "blur(12px)" }}>
+            <a
               href="https://www.ratemyprofessors.com/school/1466"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#00305f] text-sm font-medium hover:underline flex items-center"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ duration: 0.1 }}
+              className="text-[#00305f] text-sm font-medium hover:underline flex items-center gap-1"
             >
               See more on RateMyProfessor
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
-            </motion.a>
+            </a>
           </div>
         </motion.div>
       </div>
@@ -409,9 +376,9 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
       >
         <Link
           href={`/course-comments?courseCode=${encodeURIComponent(courseCode)}`}
-          className="bg-[#00305f] hover:bg-[#00305f]/90 text-white flex items-center gap-2 px-8 py-2 rounded-full shadow-md hover:shadow-lg transition-all duration-300"
+          className="liquid-btn-blue text-white flex items-center gap-2 px-8 py-2.5 rounded-full"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
           See All Comments
@@ -419,25 +386,20 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
       </motion.div>
 
       <motion.div
-        className="text-center text-sm text-gray-500"
+        className="text-center text-xs text-gray-400 mb-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
+        transition={{ duration: 0.7, delay: 0.4 }}
       >
-        <p>Comments are aggregated from public sources and may not reflect current course structure.</p>
+        Comments are aggregated from public sources and may not reflect current course structure.
       </motion.div>
 
       {/* Chatbot CTA */}
-      <div className="mt-10 flex flex-col items-center justify-center">
-        <p className="text-base font-medium mb-4 text-gray-800">Talk with our chatbot to get more insights!</p>
-        <Link
-          href="/queens-answers"
-          className="relative group bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white px-6 py-2.5 rounded-xl inline-block font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105"
-        >
-          <span className="relative z-10 flex items-center justify-center h-full">
-            <Brain className="mr-2 h-4 w-4" />
-            <span className="text-sm">Try AI Assistant</span>
-          </span>
+      <div className="mt-8 mb-4 flex flex-col items-center justify-center">
+        <p className="text-sm font-medium mb-3 text-gray-600">Talk with our chatbot to get more insights!</p>
+        <Link href="/queens-answers" className="liquid-btn-red text-white px-6 py-2.5 rounded-xl inline-flex items-center font-medium">
+          <Brain className="mr-2 h-4 w-4" />
+          <span className="text-sm">Try AI Assistant</span>
         </Link>
       </div>
     </div>
