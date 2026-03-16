@@ -46,4 +46,26 @@ export type CourseWithStats = Course & {
   distributions: GradeDistribution[];
   averageGPA: number;
   totalEnrollment: number;
+  hasComments?: boolean;
 };
+
+// Server-side pagination types
+export interface CoursePageParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  departments?: string[];
+  levels?: string[];
+  gpaMin?: number;
+  gpaMax?: number;
+  sortBy?: "code" | "name" | "gpa" | "enrollment";
+  sortDir?: "asc" | "desc";
+  hasData?: boolean;
+}
+
+export interface CoursePageResult {
+  courses: CourseWithStats[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
