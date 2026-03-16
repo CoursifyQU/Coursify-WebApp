@@ -1,5 +1,5 @@
 import { getSupabaseClient } from "./supabase/client"
-import type { Course, GradeDistribution, CourseWithStats } from "@/types"
+import type { Course, GradeDistribution, CourseWithStats, CoursePageParams, CoursePageResult } from "@/types"
 
 // Always use real Supabase data, never mock data
 export let isUsingMockData = false;
@@ -102,6 +102,40 @@ export async function getAllCourses(): Promise<CourseWithStats[]> {
     console.error('Error in getAllCourses:', error);
     return [];
   }
+}
+
+// Fetch paginated, filtered courses from the API route
+export async function fetchCoursesPage(params: CoursePageParams): Promise<CoursePageResult> {
+  const searchParams = new URLSearchParams()
+
+  if (params.page) searchParams.set("page", String(params.page))
+  if (params.limit) searchParams.set("limit", String(params.limit))
+  if (params.search) searchParams.set("search", params.search)
+  if (params.departments?.length) searchParams.set("departments", params.departments.join(","))
+  if (params.levels?.length) searchParams.set("levels", params.levels.join(","))
+  if (params.gpaMin !== undefined && params.gpaMin > 0) searchParams.set("gpa_min", String(params.gpaMin))
+  if (params.gpaMax !== undefined && params.gpaMax < 4.3) searchParams.set("gpa_max", String(params.gpaMax))
+  if (params.sortBy) searchParams.set("sort_by", params.sortBy)
+  if (params.sortDir) searchParams.set("sort_dir", params.sortDir)
+  if (params.hasData !== undefined) searchParams.set("has_data", String(params.hasData))
+
+  const res = await fetch(`/api/courses?${searchParams.toString()}`)
+  if (!res.ok) {
+    console.error("Failed to fetch courses page:", res.statusText)
+    return { courses: [], total: 0, page: 1, totalPages: 0 }
+  }
+  return res.json()
+}
+
+// Fetch departments list from API
+export async function fetchDepartments(): Promise<string[]> {
+  const res = await fetch("/api/courses/departments")
+  if (!res.ok) {
+    console.error("Failed to fetch departments:", res.statusText)
+    return []
+  }
+  const data = await res.json()
+  return data.departments || []
 }
 
 // Get a single course by code

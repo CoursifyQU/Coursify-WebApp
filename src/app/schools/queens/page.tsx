@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { motion, useInView } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,59 +9,54 @@ import { ChevronDown, ChevronUp, Filter, Search, SlidersHorizontal, X, Check } f
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Badge } from "@/components/ui/badge"
-import { getAllCourses } from "@/lib/db"
+import { fetchCoursesPage, fetchDepartments } from "@/lib/db"
 import type { CourseWithStats } from "@/types"
-import { isUsingMockData } from "@/lib/db"
+import { useSearchParams, useRouter } from "next/navigation"
 
 export default function QueensCourses() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Initialize state from URL params
   const [courses, setCourses] = useState<CourseWithStats[]>([])
+  const [total, setTotal] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([])
-  const [selectedLevels, setSelectedLevels] = useState<string[]>([])
-  const [gpaRange, setGpaRange] = useState([0, 4.3])
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "")
+  const [debouncedSearch, setDebouncedSearch] = useState(searchParams.get("search") || "")
+  const [selectedDepartments, setSelectedDepartments] = useState<string[]>(
+    searchParams.get("departments")?.split(",").filter(Boolean) || []
+  )
+  const [selectedLevels, setSelectedLevels] = useState<string[]>(
+    searchParams.get("levels")?.split(",").filter(Boolean) || []
+  )
+  const [gpaRange, setGpaRange] = useState([
+    parseFloat(searchParams.get("gpa_min") || "0"),
+    parseFloat(searchParams.get("gpa_max") || "4.3"),
+  ])
   const [sortConfig, setSortConfig] = useState<{
     key: string
     direction: "ascending" | "descending"
-  } | null>(null)
+  } | null>(() => {
+    const sortBy = searchParams.get("sort_by")
+    const sortDir = searchParams.get("sort_dir")
+    if (sortBy) {
+      return { key: sortBy, direction: sortDir === "desc" ? "descending" : "ascending" }
+    }
+    return null
+  })
   const [showFilters, setShowFilters] = useState(false)
   const [departmentOpen, setDepartmentOpen] = useState(false)
   const [levelOpen, setLevelOpen] = useState(false)
-  
+  const hasData = true // Always show only courses with data
+  const [departments, setDepartments] = useState<string[]>([])
+
   // Pagination state
-  const [currentPage, setCurrentPage] = useState(1)
-  const coursesPerPage = 50 // Show 50 courses per page
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(searchParams.get("page") || "1")
+  )
+  const coursesPerPage = 50
 
-  // Fetch courses
-  useEffect(() => {
-    async function fetchCourses() {
-      setLoading(true)
-      try {
-        const fetchedCourses = await getAllCourses()
-        setCourses(fetchedCourses)
-      } catch (error) {
-        console.error("Error fetching courses:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCourses()
-  }, [])
-
-  // Get unique departments for filter
-  const departments = [...new Set(courses.map(course => course.department))].sort()
-  
-  // Extract course level from course code (e.g. "CISC 121" -> "100")
-  const getCourseLevel = (courseCode: string) => {
-    const match = courseCode.match(/\d+/)
-    if (match && match[0]) {
-      const levelNum = parseInt(match[0], 10)
-      return Math.floor(levelNum / 100) * 100 + ""
-    }
-    return "100" // Default to 100 level if not found
-  }
-  
   const courseLevels = ["100", "200", "300", "400", "500"]
 
   // Refs for animations
@@ -73,73 +68,106 @@ export default function QueensCourses() {
   const isFiltersInView = useInView(filtersRef, { once: true, amount: 0.3 })
   const isTableInView = useInView(tableRef, { once: true, amount: 0.1 })
 
-  // Filter courses based on search and filters
-  const filteredCourses = courses.filter((course) => {
-    // Check if both code and name exist before calling toLowerCase()
-    const matchesSearch = !searchTerm || (
-      (course?.course_code?.toLowerCase?.() || "").includes(searchTerm.toLowerCase()) ||
-      (course?.course_name?.toLowerCase?.() || "").includes(searchTerm.toLowerCase())
-    )
+  // Fetch departments on mount
+  useEffect(() => {
+    fetchDepartments().then(setDepartments)
+  }, [])
 
-    const level = getCourseLevel(course.course_code)
-    const matchesDepartment = selectedDepartments.length === 0 || selectedDepartments.includes(course.department)
-    const matchesLevel = selectedLevels.length === 0 || selectedLevels.includes(level)
-    
-    // Allow courses with no GPA data
-    const matchesGpa = gpaRange[0] === 0 && gpaRange[1] === 4.3 ? 
-      true : // If full range is selected, show all courses
-      (course.averageGPA > 0 && course.averageGPA >= gpaRange[0] && course.averageGPA <= gpaRange[1])
-    
-    // Don't filter out courses without distribution data
-    return matchesSearch && matchesDepartment && matchesLevel && matchesGpa
-  })
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm)
+      setCurrentPage(1)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchTerm])
 
-  // Sort courses
-  const sortedCourses = [...filteredCourses].sort((a, b) => {
-    if (!sortConfig) return 0
+  // Sync URL params
+  const updateUrl = useCallback(
+    (params: Record<string, string | undefined>) => {
+      const newParams = new URLSearchParams(searchParams.toString())
+      Object.entries(params).forEach(([key, value]) => {
+        if (value && value !== "" && value !== "0" && value !== "4.3" && value !== "1" && value !== "true") {
+          newParams.set(key, value)
+        } else if (key === "has_data" && value === "false") {
+          newParams.set(key, value)
+        } else {
+          newParams.delete(key)
+        }
+      })
+      const paramString = newParams.toString()
+      router.replace(paramString ? `?${paramString}` : "", { scroll: false })
+    },
+    [searchParams, router]
+  )
 
-    if (sortConfig.key === "code") {
-      return sortConfig.direction === "ascending" 
-        ? a.course_code.localeCompare(b.course_code) 
-        : b.course_code.localeCompare(a.course_code)
+  // Fetch courses when filters change
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadCourses() {
+      setLoading(true)
+      try {
+        const result = await fetchCoursesPage({
+          page: currentPage,
+          limit: coursesPerPage,
+          search: debouncedSearch || undefined,
+          departments: selectedDepartments.length > 0 ? selectedDepartments : undefined,
+          levels: selectedLevels.length > 0 ? selectedLevels : undefined,
+          gpaMin: gpaRange[0],
+          gpaMax: gpaRange[1],
+          sortBy: (sortConfig?.key as "code" | "name" | "gpa" | "enrollment") || undefined,
+          sortDir: sortConfig ? (sortConfig.direction === "ascending" ? "asc" : "desc") : undefined,
+          hasData,
+        })
+        if (!cancelled) {
+          setCourses(result.courses)
+          setTotal(result.total)
+          setTotalPages(result.totalPages)
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
     }
 
-    if (sortConfig.key === "name") {
-      return sortConfig.direction === "ascending" 
-        ? a.course_name.localeCompare(b.course_name) 
-        : b.course_name.localeCompare(a.course_name)
-    }
+    loadCourses()
 
-    if (sortConfig.key === "gpa") {
-      return sortConfig.direction === "ascending" 
-        ? a.averageGPA - b.averageGPA 
-        : b.averageGPA - a.averageGPA
-    }
+    // Update URL
+    updateUrl({
+      page: currentPage > 1 ? String(currentPage) : undefined,
+      search: debouncedSearch || undefined,
+      departments: selectedDepartments.length > 0 ? selectedDepartments.join(",") : undefined,
+      levels: selectedLevels.length > 0 ? selectedLevels.join(",") : undefined,
+      gpa_min: gpaRange[0] > 0 ? String(gpaRange[0]) : undefined,
+      gpa_max: gpaRange[1] < 4.3 ? String(gpaRange[1]) : undefined,
+      sort_by: sortConfig?.key || undefined,
+      sort_dir: sortConfig ? (sortConfig.direction === "ascending" ? "asc" : "desc") : undefined,
+    })
 
-    if (sortConfig.key === "enrollment") {
-      return sortConfig.direction === "ascending" 
-        ? a.totalEnrollment - b.totalEnrollment 
-        : b.totalEnrollment - a.totalEnrollment
+    return () => {
+      cancelled = true
     }
-
-    return 0
-  })
+  }, [currentPage, debouncedSearch, selectedDepartments, selectedLevels, gpaRange, sortConfig])
 
   const requestSort = (key: string) => {
-    let direction: "ascending" | "descending" = "ascending"
+    // GPA and enrollment default to descending first (show highest values first)
+    const defaultDesc = key === "gpa" || key === "enrollment"
+    let direction: "ascending" | "descending" = defaultDesc ? "descending" : "ascending"
 
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === "ascending") {
-      direction = "descending"
+    if (sortConfig && sortConfig.key === key) {
+      direction = sortConfig.direction === "ascending" ? "descending" : "ascending"
     }
 
     setSortConfig({ key, direction })
+    setCurrentPage(1)
   }
 
   const getSortIcon = (key: string) => {
     if (!sortConfig || sortConfig.key !== key) {
       return <ChevronDown className="h-4 w-4 opacity-50" />
     }
-
     return sortConfig.direction === "ascending" ? (
       <ChevronUp className="h-4 w-4" />
     ) : (
@@ -156,21 +184,34 @@ export default function QueensCourses() {
 
   const resetFilters = () => {
     setSearchTerm("")
+    setDebouncedSearch("")
     setSelectedDepartments([])
     setSelectedLevels([])
     setGpaRange([0, 4.3])
     setSortConfig(null)
+    setCurrentPage(1)
   }
 
   const toggleDepartment = (department: string) => {
     setSelectedDepartments((prev) =>
-      prev.includes(department) ? prev.filter((d) => d !== department) : [...prev, department],
+      prev.includes(department) ? prev.filter((d) => d !== department) : [...prev, department]
     )
+    setCurrentPage(1)
   }
 
   const toggleLevel = (level: string) => {
-    setSelectedLevels((prev) => (prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]))
+    setSelectedLevels((prev) =>
+      prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]
+    )
+    setCurrentPage(1)
   }
+
+  const hasActiveFilters =
+    debouncedSearch !== "" ||
+    selectedDepartments.length > 0 ||
+    selectedLevels.length > 0 ||
+    gpaRange[0] > 0 ||
+    (gpaRange[1] < 4.3)
 
   return (
     <div className="relative min-h-screen overflow-hidden mesh-gradient pt-20">
@@ -187,7 +228,7 @@ export default function QueensCourses() {
           background-image: radial-gradient(circle, #00305f 1px, transparent 1px);
           background-size: 20px 20px;
         }
-        
+
         .gradient-text {
           background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
           background-size: 300% 300%;
@@ -197,7 +238,7 @@ export default function QueensCourses() {
           background-clip: text;
           color: transparent;
         }
-        
+
         @keyframes gradient-shift {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
@@ -255,40 +296,6 @@ export default function QueensCourses() {
           padding: 0.5rem;
         }
       `}</style>
-
-      {/* Display mock data notification */}
-      {isUsingMockData && (
-        <div className="bg-amber-100 border-l-4 border-amber-500 text-amber-700 p-4 fixed top-4 right-4 z-50 max-w-md shadow-md rounded-md">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm">
-                Using mock data. Please configure Supabase connection to use real data.
-              </p>
-            </div>
-            <div className="ml-auto pl-3">
-              <div className="-mx-1.5 -my-1.5">
-                <button
-                  className="inline-flex bg-amber-100 text-amber-500 rounded-md p-1.5 hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
-                  onClick={() => {
-                    const banner = document.querySelector('.bg-amber-100');
-                    banner?.classList.add('hidden');
-                  }}
-                >
-                  <span className="sr-only">Dismiss</span>
-                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Background elements */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
@@ -362,7 +369,7 @@ export default function QueensCourses() {
               variant="ghost"
               onClick={resetFilters}
               className={`whitespace-nowrap ${
-                filteredCourses.length < courses.length
+                hasActiveFilters
                   ? "liquid-btn-red border-0 text-white hover:bg-transparent"
                   : "glass-btn border-0 text-[#d62839] hover:bg-white/30"
               }`}
@@ -482,6 +489,10 @@ export default function QueensCourses() {
                       defaultValue={[0, 4.3]}
                       value={gpaRange}
                       onValueChange={setGpaRange}
+                      onValueCommit={(value) => {
+                        setGpaRange(value)
+                        setCurrentPage(1)
+                      }}
                       max={4.3}
                       step={0.1}
                       className="mb-6"
@@ -584,50 +595,51 @@ export default function QueensCourses() {
                         </th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {sortedCourses.length > 0 ? (
-                        // Calculate pagination
-                        (() => {
-                          const indexOfLastCourse = currentPage * coursesPerPage;
-                          const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-                          const currentCourses = sortedCourses.slice(indexOfFirstCourse, indexOfLastCourse);
-                          
-                          return currentCourses.map((course, index) => (
-                            <motion.tr
-                              key={course.id}
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: index * 0.03 }}
-                              className="border-t hover:bg-[#00305f]/5 transition-colors duration-200"
-                            >
-                              <td className="px-4 py-3 text-sm font-medium">
-                                <a
-                                  href={`/schools/queens/${course.course_code.replace(/\s+/g, "-").toLowerCase()}`}
-                                  className="text-[#d62839] hover:underline"
-                                >
-                                  {course.course_code}
-                                </a>
-                              </td>
-                              <td className="px-4 py-3 text-sm">{course.course_name}</td>
-                              <td className="px-4 py-3 text-sm">
-                                <span className={`font-medium ${getGpaColor(course.averageGPA)}`}>
-                                  {course.averageGPA.toFixed(1)}
-                                </span>
-                              </td>
-                              <td className="px-4 py-3 text-sm">
-                                <div className="flex items-center">
-                                  <div className="w-16 bg-muted rounded-full h-2 mr-2">
-                                    <div
-                                      className="bg-[#00305f] rounded-full h-2"
-                                      style={{ width: `${(course.totalEnrollment / 600) * 100}%` }}
-                                    />
-                                  </div>
-                                  {Math.round(course.totalEnrollment)}
-                                </div>
-                              </td>
-                            </motion.tr>
-                          ));
-                        })()
+                    <motion.tbody
+                      key={`${currentPage}-${debouncedSearch}-${sortConfig?.key}-${sortConfig?.direction}-${hasData}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {courses.length > 0 ? (
+                        courses.map((course) => (
+                          <tr
+                            key={course.id}
+                            className="border-t hover:bg-[#00305f]/5 transition-colors duration-200"
+                          >
+                            <td className="px-4 py-3 text-sm font-medium">
+                              <a
+                                href={`/schools/queens/${course.course_code.replace(/\s+/g, "-").toLowerCase()}`}
+                                className="text-[#d62839] hover:underline"
+                              >
+                                {course.course_code}
+                              </a>
+                            </td>
+                            <td className="px-4 py-3 text-sm">{course.course_name}</td>
+                            <td className="px-4 py-3 text-sm">
+                              <span className={`font-medium ${getGpaColor(course.averageGPA)}`}>
+                                {course.averageGPA > 0 ? course.averageGPA.toFixed(1) : "N/A"}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-sm">
+                              <div className="flex items-center">
+                                {course.totalEnrollment > 0 ? (
+                                  <>
+                                    <div className="w-16 bg-muted rounded-full h-2 mr-2">
+                                      <div
+                                        className="bg-[#00305f] rounded-full h-2"
+                                        style={{ width: `${Math.min((course.totalEnrollment / 600) * 100, 100)}%` }}
+                                      />
+                                    </div>
+                                    {Math.round(course.totalEnrollment)}
+                                  </>
+                                ) : (
+                                  <span className="text-muted-foreground">N/A</span>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))
                       ) : (
                         <tr>
                           <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
@@ -635,19 +647,19 @@ export default function QueensCourses() {
                           </td>
                         </tr>
                       )}
-                    </tbody>
+                    </motion.tbody>
                   </table>
                 </div>
 
                 <div className="bg-white/40 backdrop-blur-sm px-6 py-4 text-sm text-muted-foreground border-t border-white/60 flex flex-col lg-filters:flex-row justify-between items-center gap-4">
                   <div>
-                    Showing {Math.min(currentPage * coursesPerPage, sortedCourses.length)} of {sortedCourses.length} filtered courses (from total {courses.length})
+                    Showing {courses.length > 0 ? (currentPage - 1) * coursesPerPage + 1 : 0}–{Math.min(currentPage * coursesPerPage, total)} of {total} courses
                   </div>
-                  
+
                   {/* Pagination controls */}
-                  {sortedCourses.length > coursesPerPage && (
+                  {totalPages > 1 && (
                     <div className="flex items-center gap-2">
-                      <Button 
+                      <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
@@ -657,20 +669,20 @@ export default function QueensCourses() {
                         Previous
                       </Button>
                       <span className="text-sm">
-                        Page {currentPage} of {Math.ceil(sortedCourses.length / coursesPerPage)}
+                        Page {currentPage} of {totalPages}
                       </span>
-                      <Button 
+                      <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(sortedCourses.length / coursesPerPage)))}
-                        disabled={currentPage >= Math.ceil(sortedCourses.length / coursesPerPage)}
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage >= totalPages}
                         className="glass-btn border-0 text-[#00305f] hover:bg-white/30"
                       >
                         Next
                       </Button>
                     </div>
                   )}
-                  
+
                   <div className="text-xs bg-[#efb215]/10 text-[#efb215] px-3 py-1 rounded-full">
                     <strong>Note:</strong> GPA is calculated on a 4.3 scale
                   </div>
