@@ -74,8 +74,9 @@ export default function CourseCommentsPage() {
   ).sort();
 
   const sentimentBadge = (label: string) => {
-    if (label === 'positive') return 'bg-green-100/80 text-green-700 border border-green-200/60';
-    if (label === 'negative') return 'bg-red-100/80 text-red-600 border border-red-200/60';
+    const normalized = label.toLowerCase();
+    if (normalized.includes('positive')) return 'bg-green-100/80 text-green-700 border border-green-200/60';
+    if (normalized.includes('negative')) return 'bg-red-100/80 text-red-600 border border-red-200/60';
     return 'bg-gray-100/80 text-gray-500 border border-gray-200/60';
   };
 

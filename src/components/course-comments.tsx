@@ -41,8 +41,9 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
   const currentRmpComment = rmpComments[rmpCommentIndex];
 
   const sentimentColor = (label: string) => {
-    if (label === "positive") return "text-green-600";
-    if (label === "negative") return "text-red-500";
+    const normalized = label.toLowerCase();
+    if (normalized.includes("positive")) return "text-green-600";
+    if (normalized.includes("negative")) return "text-red-500";
     return "text-gray-400";
   };
 
