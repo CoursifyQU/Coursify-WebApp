@@ -288,25 +288,25 @@ export async function getCommentsForCourse(courseCode: string): Promise<{
   try {
     const supabase = getSupabaseClient();
 
+    // Fetch all Reddit comments for this course (no limit)
     const { data: redditData, error: redditError } = await supabase
       .from('rag_chunks')
       .select('text, course_code, professor_name, source_url, tags, upvotes, sentiment_label')
       .eq('course_code', courseCode)
       .eq('source', 'reddit')
-      .order('upvotes', { ascending: false })
-      .limit(20);
+      .order('upvotes', { ascending: false });
 
     if (redditError) {
       console.error('Error fetching reddit comments:', redditError);
     }
 
+    // Fetch all RMP comments for this course (no limit)
     const { data: rmpData, error: rmpError } = await supabase
       .from('rag_chunks')
-      .select('text, course_code, professor_name, source_url, tags, quality_rating, difficulty_rating, sentiment_label')
+      .select('text, course_code, professor_name, source_url, tags, quality_rating, difficulty_rating, sentiment_label, created_at')
       .eq('course_code', courseCode)
       .eq('source', 'ratemyprofessors')
-      .order('quality_rating', { ascending: false })
-      .limit(20);
+      .order('created_at', { ascending: false });
 
     if (rmpError) {
       console.error('Error fetching RMP comments:', rmpError);

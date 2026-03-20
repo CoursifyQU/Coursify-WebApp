@@ -35,6 +35,8 @@ export default function CourseCommentsPage() {
   const [selectedProfessor, setSelectedProfessor] = useState<string | null>(null);
   const [redditComments, setRedditComments] = useState<RedditComment[]>([]);
   const [rmpComments, setRmpComments] = useState<RmpComment[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const commentsPerPage = 20;
 
   useEffect(() => {
     async function fetchComments() {
@@ -68,6 +70,11 @@ export default function CourseCommentsPage() {
     ? tabFiltered.filter(c => c.professor_name === selectedProfessor)
     : tabFiltered;
 
+  // Pagination
+  const totalPages = Math.ceil(filteredComments.length / commentsPerPage);
+  const startIndex = (currentPage - 1) * commentsPerPage;
+  const paginatedComments = filteredComments.slice(startIndex, startIndex + commentsPerPage);
+
   // Reset professor filter when tab changes if the professor isn't in the new tab's comments
   const tabProfessors = Array.from(
     new Set(tabFiltered.map(c => c.professor_name).filter((p): p is string => !!p && p !== 'general_prof'))
@@ -88,6 +95,7 @@ export default function CourseCommentsPage() {
 
   const handleTabChange = (tab: 'all' | 'reddit' | 'rmp') => {
     setActiveTab(tab);
+    setCurrentPage(1);
     // Clear professor filter if they don't appear in the new tab
     if (selectedProfessor) {
       const nextTabComments = tab === 'all' ? allComments : allComments.filter(c => c._type === tab);
@@ -262,7 +270,7 @@ export default function CourseCommentsPage() {
                     <span className="text-xs font-semibold text-[#00305f] uppercase tracking-wider">Professor</span>
                     {selectedProfessor && (
                       <button
-                        onClick={() => setSelectedProfessor(null)}
+                        onClick={() => { setSelectedProfessor(null); setCurrentPage(1); }}
                         className="ml-auto text-xs text-gray-400 hover:text-gray-600 transition-colors"
                         title="Clear filter"
                       >
@@ -279,7 +287,7 @@ export default function CourseCommentsPage() {
                       return (
                         <button
                           key={prof}
-                          onClick={() => setSelectedProfessor(isActive ? null : prof)}
+                          onClick={() => { setSelectedProfessor(isActive ? null : prof); setCurrentPage(1); }}
                           className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 text-left ${
                             isActive
                               ? 'bg-[#00305f] text-white shadow-md shadow-[#00305f]/20'
@@ -302,16 +310,16 @@ export default function CourseCommentsPage() {
 
             {/* Comments list */}
             <div className="flex-1 min-w-0">
-        {filteredComments.length > 0 && (
+        {paginatedComments.length > 0 && (
           <AnimatePresence mode="wait">
             <motion.div
-              key={`${activeTab}-${selectedProfessor ?? 'all'}`}
+              key={`${activeTab}-${selectedProfessor ?? 'all'}-${currentPage}`}
               className="grid grid-cols-1 gap-4"
               initial="hidden"
               animate="visible"
               variants={staggerContainer}
             >
-              {filteredComments.map((comment, index) => {
+              {paginatedComments.map((comment, index) => {
                 const isReddit = comment._type === 'reddit';
 
                 return (
@@ -457,6 +465,34 @@ export default function CourseCommentsPage() {
               })}
             </motion.div>
           </AnimatePresence>
+        )}
+
+        {/* ── Pagination ── */}
+        {totalPages > 1 && (
+          <div className="mt-6 glass-card-deep rounded-xl px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div className="text-sm text-gray-500">
+              Showing {startIndex + 1}–{Math.min(startIndex + commentsPerPage, filteredComments.length)} of {filteredComments.length} comments
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => { setCurrentPage(prev => Math.max(prev - 1, 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                disabled={currentPage === 1}
+                className="px-4 py-1.5 rounded-lg text-sm font-medium text-[#00305f] bg-white/50 hover:bg-white/80 border border-white/70 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              <span className="text-sm text-gray-500">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => { setCurrentPage(prev => Math.min(prev + 1, totalPages)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                disabled={currentPage >= totalPages}
+                className="px-4 py-1.5 rounded-lg text-sm font-medium text-[#00305f] bg-white/50 hover:bg-white/80 border border-white/70 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          </div>
         )}
 
         {/* ── Empty State ── */}
