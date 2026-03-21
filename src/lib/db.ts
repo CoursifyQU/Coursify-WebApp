@@ -138,81 +138,22 @@ export async function fetchDepartments(): Promise<string[]> {
   return data.departments || []
 }
 
-// Get a single course by code
+// Get a single course by code (via server API so signed-in users are not blocked by RLS on direct client queries)
 export async function getCourseByCode(courseCode: string): Promise<CourseWithStats | null> {
+  if (!courseCode.trim()) return null
   try {
-    const supabase = getSupabaseClient();
-    
-    // First get the course
-    const { data: courseData, error: courseError } = await supabase
-      .from('courses')
-      .select('*')
-      .eq('course_code', courseCode)
-      .single();
-    
-    if (courseError || !courseData) {
-      console.error(`Error fetching course with code ${courseCode}:`, courseError);
-      return null;
+    const slug = courseCode.trim().replace(/\s+/g, "-").toLowerCase()
+    const res = await fetch(`/api/courses/${encodeURIComponent(slug)}`)
+    if (res.status === 404) return null
+    if (!res.ok) {
+      console.error(`getCourseByCode API error (${res.status}):`, res.statusText)
+      return null
     }
-
-    console.log(`Found course with ID: ${courseData.id}`);
-
-    // Convert course ID to string explicitly for the join
-    const courseId = String(courseData.id);
-
-    // Then get its distributions
-    const { data: distributionsData, error: distError } = await supabase
-      .from('course_distributions')
-      .select('*')
-      .eq('course_id', courseId)
-      .order('term', { ascending: false });
-    
-    if (distError) {
-      console.error(`Error fetching distributions for course ${courseCode}:`, distError);
-      console.error(`Course ID used for query: ${courseId}`);
-      return null;
-    }
-
-    console.log(`Found ${distributionsData?.length || 0} distributions for course ${courseCode}`);
-
-    // Convert distributions to the correct type
-    const distributions = (distributionsData || []).map(toGradeDistribution);
-
-    // Filter out duplicate distributions by term to ensure consistency
-    const uniqueDistributions = Array.from(
-      new Map(distributions.map(dist => [dist.term, dist]))
-      .values()
-    );
-
-    // Calculate averages using the filtered distributions
-    const totalGPA = uniqueDistributions.reduce(
-      (sum, dist) => sum + dist.average_gpa, 
-      0
-    );
-    const totalEnrollment = uniqueDistributions.reduce(
-      (sum, dist) => sum + dist.enrollment, 
-      0
-    );
-    const averageGPA = uniqueDistributions.length > 0 ? totalGPA / uniqueDistributions.length : 0;
-    const avgEnrollment = uniqueDistributions.length > 0 ? totalEnrollment / uniqueDistributions.length : 0;
-
-    // Combine into a CourseWithStats object
-    const courseWithStats: CourseWithStats = {
-      id: String(courseData.id),
-      course_code: String(courseData.course_code),
-      course_name: String(courseData.course_name),
-      description: courseData.course_description ? String(courseData.course_description) : undefined,
-      credits: Number(courseData.course_units || 0),
-      department: String(courseData.offering_faculty || ""),
-      distributions,
-      averageGPA,
-      totalEnrollment: avgEnrollment
-    };
-    
-    return courseWithStats;
+    const data = (await res.json()) as { course?: CourseWithStats | null }
+    return data.course ?? null
   } catch (error) {
-    console.error(`Error in getCourseByCode:`, error);
-    return null;
+    console.error(`Error in getCourseByCode:`, error)
+    return null
   }
 }
 
