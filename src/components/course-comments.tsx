@@ -40,11 +40,11 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
   const currentRedditComment = redditComments[redditCommentIndex];
   const currentRmpComment = rmpComments[rmpCommentIndex];
 
-  const sentimentColor = (label: string) => {
+  const sentimentBadge = (label: string) => {
     const normalized = label.toLowerCase();
-    if (normalized.includes("positive")) return "text-green-600";
-    if (normalized.includes("negative")) return "text-red-500";
-    return "text-gray-400";
+    if (normalized.includes("positive")) return "bg-green-100/80 text-green-700 border border-green-200/60";
+    if (normalized.includes("negative")) return "bg-red-100/80 text-red-600 border border-red-200/60";
+    return "bg-gray-100/80 text-gray-500 border border-gray-200/60";
   };
 
   if (loading) {
@@ -168,9 +168,11 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                     <img src="/queens_reddit_icon.png" alt="Queen's Reddit" className="h-full w-full object-cover" />
                   </div>
                   <div className="text-sm font-medium text-gray-700">r/queensuniversity</div>
-                  <div className={`ml-auto text-xs capitalize font-medium ${sentimentColor(currentRedditComment.sentiment_label)}`}>
+                  <span
+                    className={`ml-auto text-xs font-medium px-2.5 py-0.5 rounded-full capitalize shrink-0 ${sentimentBadge(currentRedditComment.sentiment_label)}`}
+                  >
                     {currentRedditComment.sentiment_label}
-                  </div>
+                  </span>
                 </div>
 
                 {currentRedditComment.professor_name && currentRedditComment.professor_name !== "general_prof" && (
@@ -305,9 +307,11 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                       ))}
                     </div>
                   </div>
-                  <div className={`ml-auto text-xs capitalize font-medium ${sentimentColor(currentRmpComment.sentiment_label)}`}>
+                  <span
+                    className={`ml-auto text-xs font-medium px-2.5 py-0.5 rounded-full capitalize shrink-0 ${sentimentBadge(currentRmpComment.sentiment_label)}`}
+                  >
                     {currentRmpComment.sentiment_label}
-                  </div>
+                  </span>
                 </div>
 
                 <div className="flex items-center">
