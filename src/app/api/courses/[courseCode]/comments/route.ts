@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { filterRmpTagsForDisplay } from "@/lib/rmp-comment-tags"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
@@ -65,7 +66,9 @@ export async function GET(
       course_code: String(row.course_code ?? ""),
       professor_name: String(row.professor_name ?? ""),
       source_url: String(row.source_url ?? ""),
-      tags: Array.isArray(row.tags) ? row.tags : [],
+      tags: filterRmpTagsForDisplay(
+        Array.isArray(row.tags) ? (row.tags as string[]).filter((t): t is string => typeof t === "string") : []
+      ),
       quality_rating: Number(row.quality_rating) || 0,
       difficulty_rating: Number(row.difficulty_rating) || 0,
       sentiment_label: String(row.sentiment_label ?? "neutral"),
