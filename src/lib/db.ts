@@ -226,57 +226,25 @@ export async function getCommentsForCourse(courseCode: string): Promise<{
   redditComments: RedditComment[];
   rmpComments: RmpComment[];
 }> {
+  if (!courseCode.trim()) return { redditComments: [], rmpComments: [] }
   try {
-    const supabase = getSupabaseClient();
-
-    // Fetch all Reddit comments for this course (no limit)
-    const { data: redditData, error: redditError } = await supabase
-      .from('rag_chunks')
-      .select('text, course_code, professor_name, source_url, tags, upvotes, sentiment_label')
-      .eq('course_code', courseCode)
-      .eq('source', 'reddit')
-      .order('upvotes', { ascending: false });
-
-    if (redditError) {
-      console.error('Error fetching reddit comments:', redditError);
+    const slug = courseCode.trim().replace(/\s+/g, "-").toLowerCase()
+    const res = await fetch(`/api/courses/${encodeURIComponent(slug)}/comments`)
+    if (!res.ok) {
+      console.error("getCommentsForCourse API error:", res.status, res.statusText)
+      return { redditComments: [], rmpComments: [] }
     }
-
-    // Fetch all RMP comments for this course (no limit)
-    const { data: rmpData, error: rmpError } = await supabase
-      .from('rag_chunks')
-      .select('text, course_code, professor_name, source_url, tags, quality_rating, difficulty_rating, sentiment_label, created_at')
-      .eq('course_code', courseCode)
-      .eq('source', 'ratemyprofessors')
-      .order('created_at', { ascending: false });
-
-    if (rmpError) {
-      console.error('Error fetching RMP comments:', rmpError);
+    const data = (await res.json()) as {
+      redditComments?: RedditComment[]
+      rmpComments?: RmpComment[]
     }
-
     return {
-      redditComments: (redditData || []).map((row: any) => ({
-        text: String(row.text || ''),
-        course_code: String(row.course_code || ''),
-        professor_name: String(row.professor_name || ''),
-        source_url: String(row.source_url || ''),
-        tags: Array.isArray(row.tags) ? row.tags : [],
-        upvotes: Number(row.upvotes) || 0,
-        sentiment_label: String(row.sentiment_label || 'neutral'),
-      })),
-      rmpComments: (rmpData || []).map((row: any) => ({
-        text: String(row.text || ''),
-        course_code: String(row.course_code || ''),
-        professor_name: String(row.professor_name || ''),
-        source_url: String(row.source_url || ''),
-        tags: Array.isArray(row.tags) ? row.tags : [],
-        quality_rating: Number(row.quality_rating) || 0,
-        difficulty_rating: Number(row.difficulty_rating) || 0,
-        sentiment_label: String(row.sentiment_label || 'neutral'),
-      })),
-    };
+      redditComments: data.redditComments ?? [],
+      rmpComments: data.rmpComments ?? [],
+    }
   } catch (error) {
-    console.error('Error in getCommentsForCourse:', error);
-    return { redditComments: [], rmpComments: [] };
+    console.error("Error in getCommentsForCourse:", error)
+    return { redditComments: [], rmpComments: [] }
   }
 }
 
