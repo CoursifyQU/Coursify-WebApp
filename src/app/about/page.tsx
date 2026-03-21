@@ -548,22 +548,24 @@ export default function About() {
           transition={{ duration: 0.6 }}
           className="w-full"
         >
-          <div className="relative left-1/2 w-[100dvw] -translate-x-1/2 py-8" style={{ background: 'rgba(255,255,255,0.35)', backdropFilter: 'blur(24px) saturate(160%)', WebkitBackdropFilter: 'blur(24px) saturate(160%)' }}>
+          <div className="relative left-1/2 w-[100dvw] -translate-x-1/2 section-glass py-10 sm:py-14 px-4 overflow-hidden">
+            <div className="absolute left-[10%] top-10 h-72 w-72 blur-[145px] opacity-80 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(0,48,95,0.14) 0%, rgba(0,48,95,0.05) 46%, transparent 76%)' }} />
+            <div className="absolute right-[10%] bottom-6 h-80 w-80 blur-[155px] opacity-75 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(214,40,57,0.14) 0%, rgba(214,40,57,0.05) 44%, transparent 76%)' }} />
             <div className="container mx-auto px-4 sm:px-6 md:px-8 relative z-10">
-              <div className="max-w-3xl mx-auto text-center">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-3">
+              <div className="max-w-2xl mx-auto text-center">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 leading-tight">
                   <span className="gradient-text">Get Involved</span>
                 </h2>
 
-                <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
-                  We're always looking for passionate Queen's students to help improve Coursify. Whether you're
-                  interested in data analysis, software development, or user experience, we'd love to hear from you.
+                <p className="text-sm sm:text-base text-gray-700 mb-7 max-w-2xl mx-auto">
+                  We&apos;re always looking for passionate Queen&apos;s students to help improve Coursify. Whether you&apos;re
+                  interested in data analysis, software development, or user experience, we&apos;d love to hear from you.
                 </p>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3 mb-6">
+                <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3 mb-7">
                   <Link
                     href="mailto:info@coursify.ca"
-                    className="liquid-btn-red text-white px-6 py-2.5 rounded-xl inline-block font-medium w-full sm:w-auto text-center"
+                    className="liquid-btn-red text-white px-7 py-3 rounded-xl inline-block font-medium w-full sm:w-auto text-center"
                   >
                     <span className="flex items-center justify-center">
                       <Mail className="mr-2 h-4 w-4" />
@@ -573,7 +575,7 @@ export default function About() {
 
                   <Link
                     href="/queens-answers"
-                    className="liquid-btn-blue text-white px-6 py-2.5 rounded-xl inline-block font-medium w-full sm:w-auto text-center"
+                    className="liquid-btn-blue text-white px-7 py-3 rounded-xl inline-block font-medium w-full sm:w-auto text-center"
                   >
                     <span className="flex items-center justify-center">
                       <MessageSquare className="mr-2 h-4 w-4" />
@@ -582,23 +584,18 @@ export default function About() {
                   </Link>
                 </div>
 
-                <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-600">
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 bg-[#00305f] rounded-full mr-2"></div>
-                    <span>Real grade distributions</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 bg-[#d62839] rounded-full mr-2"></div>
-                    <span>AI-powered insights</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 bg-[#efb215] rounded-full mr-2"></div>
-                    <span>Queen's focused</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 bg-[#00305f] rounded-full mr-2"></div>
-                    <span>Completely free</span>
-                  </div>
+                <div className="flex flex-wrap justify-center gap-2.5">
+                  {[
+                    { color: "#00305f", label: "Real grade distributions" },
+                    { color: "#d62839", label: "AI-powered insights" },
+                    { color: "#efb215", label: "Queen's focused" },
+                    { color: "#00305f", label: "Completely free" },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center glass-pill px-3 py-1.5 rounded-full">
+                      <div className="w-1.5 h-1.5 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: item.color }} />
+                      <span className="text-xs font-medium text-gray-600">{item.label}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

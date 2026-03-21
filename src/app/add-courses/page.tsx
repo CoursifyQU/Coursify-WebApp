@@ -134,7 +134,7 @@ export default function AddCoursesPage() {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-2 text-[#00305f]">
-              Add Course <span className="gradient-text">Distributions</span>
+              Add Course <span className="coursify-gradient-text">Distributions</span>
             </h1>
             <div className="w-24 h-1 bg-[#d62839] mx-auto mb-4"></div>
             <p className="text-gray-600">Help improve the site and future course selections</p>
@@ -145,14 +145,14 @@ export default function AddCoursesPage() {
               href="https://www.queensu.ca/registrar/academic-info/grades/release-dates-and-viewing"
               target="_blank"
               rel="noopener noreferrer"
-              className="relative group bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white px-6 py-3 rounded-xl inline-flex items-center justify-center font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105 cursor-pointer"
+              className="liquid-btn-red text-white px-6 py-2.5 rounded-xl inline-flex items-center justify-center font-medium w-full sm:w-auto text-center"
             >
               <Info className="mr-2 h-4 w-4" />
               <span className="text-sm">How To Find SOLUS Distribution</span>
             </a>
           </div>
 
-          <Card className="overflow-hidden border-none shadow-md">
+          <Card className="overflow-hidden border-none glass-card-deep !p-0" style={{ background: 'rgba(255, 255, 255, 0.85)', boxShadow: '0 8px 32px rgba(0, 48, 95, 0.13), 0 2px 8px rgba(0, 48, 95, 0.07)' }}>
             <div className="bg-[#00305f] px-6 py-4">
               <h2 className="text-lg font-medium text-white">Upload SOLUS Grade Distribution</h2>
             </div>
@@ -253,7 +253,7 @@ export default function AddCoursesPage() {
                   )}
 
                   <div className="flex justify-center pt-2">
-                    <Button onClick={handleReset} className="bg-[#00305f] hover:bg-[#00305f]/90">
+                    <Button onClick={handleReset} className="liquid-btn-blue text-white rounded-xl px-6 py-2.5 font-medium">
                       Upload Another File
                     </Button>
                   </div>
@@ -293,9 +293,8 @@ export default function AddCoursesPage() {
                       className="hidden"
                     />
                     <Button
-                      variant="outline"
                       onClick={handleSelectFileClick}
-                      className="border-[#00305f] text-[#00305f] hover:bg-[#00305f]/10"
+                      className="liquid-btn-blue text-white rounded-xl px-6 py-2.5 font-medium"
                     >
                       Select PDF File
                     </Button>
@@ -310,10 +309,10 @@ export default function AddCoursesPage() {
                     )}
                   </div>
 
-                  <div className="mt-6 flex items-start p-4 bg-[#efb215]/10 rounded-lg">
+                  <div className="mt-6 flex items-start p-4 bg-[#efb215]/15 border border-[#efb215]/30 rounded-lg shadow-sm">
                     <AlertTriangle className="h-5 w-5 text-[#efb215] mr-3 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-gray-700">
-                      <span className="font-medium">Important:</span> Currently, we only support on-campus courses.
+                      <span className="font-semibold text-gray-800">Important:</span> Currently, we only support on-campus courses.
                       Online course distributions will be supported in future updates.
                     </p>
                   </div>
@@ -332,7 +331,7 @@ export default function AddCoursesPage() {
         description="You need to sign in with your Queen's University email to upload course distributions."
       />
 
-      {/* Add the CSS for the gradient text and dot pattern */}
+      {/* mesh-gradient is page-specific, not in globals */}
       <style jsx global>{`
         .mesh-gradient {
           background-color: hsla(0, 0%, 100%, 1);
@@ -340,27 +339,6 @@ export default function AddCoursesPage() {
             radial-gradient(at 21% 33%, hsla(225, 100%, 19%, 0.05) 0px, transparent 50%),
             radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.05) 0px, transparent 50%),
             radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.05) 0px, transparent 50%);
-        }
-
-        .dot-pattern {
-          background-image: radial-gradient(circle, #00305f 1px, transparent 1px);
-          background-size: 20px 20px;
-        }
-
-        .gradient-text {
-          background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
-          background-size: 300% 300%;
-          animation: gradient-shift 6s ease infinite;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          color: transparent;
-        }
-
-        @keyframes gradient-shift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
         }
       `}</style>
     </div>
