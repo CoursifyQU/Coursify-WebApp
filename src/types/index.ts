@@ -69,3 +69,21 @@ export interface CoursePageResult {
   page: number;
   totalPages: number;
 }
+
+// PDF Upload Types
+export interface ParsedCourseRow {
+  course_code: string;
+  description: string;
+  enrollment: number;
+  grade_percentages: number[];
+  computed_gpa: number;
+}
+
+export interface UploadDistributionResponse {
+  success: boolean;
+  term?: string;
+  inserted: number;
+  skipped: string[];
+  duplicates: string[];
+  errors: string[];
+}

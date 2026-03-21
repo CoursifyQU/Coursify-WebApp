@@ -1,20 +1,24 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Info, UploadCloud, AlertTriangle } from "lucide-react"
+import { Info, UploadCloud, AlertTriangle, CheckCircle2, AlertCircle, ChevronDown, ChevronUp } from "lucide-react"
 import { AuthModal } from "@/components/auth-modal"
 import { useAuth } from "@/lib/auth/auth-context"
 import { getSupabaseClient } from "@/lib/supabase/client"
+import type { UploadDistributionResponse } from "@/types"
+
+type UploadPhase = "idle" | "uploading" | "validating" | "processing" | "done" | "error"
 
 export default function AddCoursesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [uploadSuccess, setUploadSuccess] = useState(false)
-  const [isUploading, setIsUploading] = useState(false)
+  const [uploadPhase, setUploadPhase] = useState<UploadPhase>("idle")
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [uploadResult, setUploadResult] = useState<UploadDistributionResponse | null>(null)
+  const [showSkipped, setShowSkipped] = useState(false)
+  const [showDuplicates, setShowDuplicates] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { user } = useAuth()
 
@@ -24,89 +28,46 @@ export default function AddCoursesPage() {
       return
     }
 
-    setIsUploading(true)
+    // Client-side PDF check
+    if (file.type !== "application/pdf" && !file.name.endsWith(".pdf")) {
+      setUploadPhase("error")
+      setUploadError("Please upload a PDF file.")
+      return
+    }
+
+    setUploadPhase("uploading")
     setUploadError(null)
+    setUploadResult(null)
 
     try {
       const supabase = getSupabaseClient()
-      const timestamp = new Date().getTime()
-      // Create a filename with user ID and timestamp to ensure uniqueness
-      const fileName = `${user.id}_${timestamp}_${file.name}`
-      
-      // Upload file to the course-distributions bucket
-      // Add publicUpload: true to bypass RLS policies
-      const { data, error } = await supabase.storage
-        .from('course-distributions')
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false
-        })
-      
-      if (error) {
-        if (error.message.includes('row-level security')) {
-          console.error("RLS error:", error);
-          // Try again but create the path with the user's ID to match potential RLS policies
-          const userSpecificPath = `${user.id}/${fileName}`;
-          const secondAttempt = await supabase.storage
-            .from('course-distributions')
-            .upload(userSpecificPath, file, {
-              cacheControl: '3600',
-              upsert: false
-            });
-            
-          if (secondAttempt.error) {
-            console.error("Second attempt error:", secondAttempt.error);
-            
-            // If still getting RLS errors, try one more approach
-            if (secondAttempt.error.message.includes('row-level security')) {
-              // Try to get a public upload URL
-              try {
-                const { data: uploadData } = await supabase.storage.from('course-distributions').createSignedUploadUrl(
-                  userSpecificPath
-                );
-                
-                if (uploadData && uploadData.signedUrl) {
-                  // Use the signed URL to upload
-                  const uploadResponse = await fetch(uploadData.signedUrl, {
-                    method: 'PUT',
-                    body: file,
-                    headers: {
-                      'Content-Type': file.type,
-                    },
-                  });
-                  
-                  if (uploadResponse.ok) {
-                    console.log("File uploaded successfully with signed URL");
-                    setUploadSuccess(true);
-                    return;
-                  } else {
-                    throw new Error(`Upload failed: ${uploadResponse.statusText}`);
-                  }
-                }
-              } catch (signedUrlError) {
-                console.error("Signed URL upload error:", signedUrlError);
-              }
-            }
-            
-            throw secondAttempt.error;
-          }
-          
-          console.log("File uploaded successfully with user-specific path:", secondAttempt.data);
-          setUploadSuccess(true);
-          return;
-        }
-        throw error;
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        throw new Error("Not authenticated. Please sign in again.")
       }
-      
-      console.log("File uploaded successfully:", data)
-      setUploadSuccess(true)
+
+      const formData = new FormData()
+      formData.append("file", file)
+
+      setUploadPhase("validating")
+
+      const response = await fetch("/api/upload-distribution", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: formData,
+      })
+
+      const result: UploadDistributionResponse = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.errors?.[0] || "Upload failed.")
+      }
+
+      setUploadPhase("done")
+      setUploadResult(result)
     } catch (error) {
-      console.error("Error uploading file:", error)
-      setUploadError(typeof error === 'object' && error !== null && 'message' in error
-        ? String(error.message)
-        : "There was an error uploading your file. Please try again.")
-    } finally {
-      setIsUploading(false)
+      setUploadPhase("error")
+      setUploadError(error instanceof Error ? error.message : "Upload failed. Please try again.")
     }
   }
 
@@ -124,7 +85,6 @@ export default function AddCoursesPage() {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleUpload(e.dataTransfer.files[0])
     }
@@ -135,8 +95,24 @@ export default function AddCoursesPage() {
       setIsModalOpen(true)
       return
     }
-    
     fileInputRef.current?.click()
+  }
+
+  const handleReset = () => {
+    setUploadPhase("idle")
+    setUploadError(null)
+    setUploadResult(null)
+    setShowSkipped(false)
+    setShowDuplicates(false)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
+
+  const phaseText: Record<string, string> = {
+    uploading: "Uploading...",
+    validating: "Validating PDF format...",
+    processing: "Processing courses...",
   }
 
   return (
@@ -168,7 +144,7 @@ export default function AddCoursesPage() {
             <a
               href="https://www.queensu.ca/registrar/academic-info/grades/release-dates-and-viewing"
               target="_blank"
-              rel="noopener noreferrer" 
+              rel="noopener noreferrer"
               className="relative group bg-gradient-to-r from-[#d62839] to-[#a31e36] hover:from-[#c61e29] hover:to-[#8a1a2e] text-white px-6 py-3 rounded-xl inline-flex items-center justify-center font-medium transition-all duration-500 ease-in-out w-full sm:w-auto text-center shadow-md hover:shadow-lg overflow-hidden hover:scale-105 cursor-pointer"
             >
               <Info className="mr-2 h-4 w-4" />
@@ -182,29 +158,115 @@ export default function AddCoursesPage() {
             </div>
 
             <div className="p-6">
-              {uploadSuccess ? (
-                <div className="text-center py-6">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
+              {uploadPhase === "done" && uploadResult ? (
+                /* Results view */
+                <div className="space-y-4">
+                  {/* Term badge */}
+                  {uploadResult.term && (
+                    <div className="flex justify-center">
+                      <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-[#00305f]/10 text-[#00305f]">
+                        {uploadResult.term}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Inserted count */}
+                  {uploadResult.inserted > 0 && (
+                    <div className="flex items-center p-4 bg-green-50 border border-green-200 rounded-lg">
+                      <CheckCircle2 className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" />
+                      <p className="text-sm text-green-800 font-medium">
+                        {uploadResult.inserted} course{uploadResult.inserted !== 1 ? "s" : ""} added successfully{uploadResult.term ? ` for ${uploadResult.term}` : ""}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* No courses inserted */}
+                  {uploadResult.inserted === 0 && uploadResult.errors.length === 0 && (
+                    <div className="flex items-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <AlertCircle className="h-5 w-5 text-yellow-600 mr-3 flex-shrink-0" />
+                      <p className="text-sm text-yellow-800 font-medium">
+                        {uploadResult.duplicates.length > 0 && uploadResult.skipped.length === 0
+                          ? `All ${uploadResult.duplicates.length} course${uploadResult.duplicates.length !== 1 ? "s" : ""} already had distributions for ${uploadResult.term || "this term"} — nothing new to add.`
+                          : uploadResult.skipped.length > 0 && uploadResult.duplicates.length === 0
+                            ? `None of the ${uploadResult.skipped.length} course${uploadResult.skipped.length !== 1 ? "s" : ""} in this PDF are in our database yet.`
+                            : "No new distributions were added — courses were either already uploaded or not in our database."}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Duplicates */}
+                  {uploadResult.duplicates.length > 0 && (
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <button
+                        onClick={() => setShowDuplicates(!showDuplicates)}
+                        className="flex items-center justify-between w-full text-left"
+                      >
+                        <div className="flex items-center">
+                          <AlertCircle className="h-5 w-5 text-yellow-600 mr-3 flex-shrink-0" />
+                          <p className="text-sm text-yellow-800 font-medium">
+                            {uploadResult.duplicates.length} course{uploadResult.duplicates.length !== 1 ? "s were" : " was"} already uploaded for {uploadResult.term || "this term"} — skipped
+                          </p>
+                        </div>
+                        {showDuplicates ? <ChevronUp className="h-4 w-4 text-yellow-600" /> : <ChevronDown className="h-4 w-4 text-yellow-600" />}
+                      </button>
+                      {showDuplicates && (
+                        <div className="mt-2 pl-8 text-sm text-yellow-700">
+                          {uploadResult.duplicates.join(", ")}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Skipped */}
+                  {uploadResult.skipped.length > 0 && (
+                    <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                      <button
+                        onClick={() => setShowSkipped(!showSkipped)}
+                        className="flex items-center justify-between w-full text-left"
+                      >
+                        <div className="flex items-center">
+                          <AlertTriangle className="h-5 w-5 text-orange-500 mr-3 flex-shrink-0" />
+                          <p className="text-sm text-orange-800 font-medium">
+                            {uploadResult.skipped.length} course{uploadResult.skipped.length !== 1 ? "s aren't" : " isn't"} in our database yet
+                          </p>
+                        </div>
+                        {showSkipped ? <ChevronUp className="h-4 w-4 text-orange-500" /> : <ChevronDown className="h-4 w-4 text-orange-500" />}
+                      </button>
+                      {showSkipped && (
+                        <div className="mt-2 pl-8 text-sm text-orange-700">
+                          {uploadResult.skipped.join(", ")}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Errors */}
+                  {uploadResult.errors.length > 0 && (
+                    <div className="flex items-start p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <AlertTriangle className="h-5 w-5 text-red-600 mr-3 mt-0.5 flex-shrink-0" />
+                      <div className="text-sm text-red-700">
+                        {uploadResult.errors.map((err, i) => (
+                          <p key={i}>{err}</p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-center pt-2">
+                    <Button onClick={handleReset} className="bg-[#00305f] hover:bg-[#00305f]/90">
+                      Upload Another File
+                    </Button>
                   </div>
-                  <h3 className="text-xl font-bold text-[#00305f] mb-2">Upload Successful!</h3>
-                  <p className="text-gray-600 mb-4">
-                    Thank you for contributing to Coursify. Your data will help other students make better course
-                    decisions.
-                  </p>
-                  <Button onClick={() => setUploadSuccess(false)} className="bg-[#00305f] hover:bg-[#00305f]/90">
-                    Upload Another File
-                  </Button>
                 </div>
               ) : (
+                /* Upload view */
                 <div className="relative">
-                  {isUploading && (
-                    <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10">
+                  {/* Loading overlay */}
+                  {(uploadPhase === "uploading" || uploadPhase === "validating" || uploadPhase === "processing") && (
+                    <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10 rounded-lg">
                       <div className="flex flex-col items-center">
                         <div className="w-10 h-10 border-4 border-[#00305f]/20 border-t-[#00305f] rounded-full animate-spin mb-3"></div>
-                        <p className="text-[#00305f] font-medium">Uploading...</p>
+                        <p className="text-[#00305f] font-medium">{phaseText[uploadPhase]}</p>
                       </div>
                     </div>
                   )}
@@ -238,8 +300,8 @@ export default function AddCoursesPage() {
                       Select PDF File
                     </Button>
 
-                    {uploadError && (
-                      <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg">
+                    {uploadPhase === "error" && uploadError && (
+                      <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg w-full">
                         <div className="flex items-start">
                           <AlertTriangle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
                           <p className="text-sm">{uploadError}</p>
@@ -247,7 +309,7 @@ export default function AddCoursesPage() {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="mt-6 flex items-start p-4 bg-[#efb215]/10 rounded-lg">
                     <AlertTriangle className="h-5 w-5 text-[#efb215] mr-3 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-gray-700">
@@ -279,12 +341,12 @@ export default function AddCoursesPage() {
             radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.05) 0px, transparent 50%),
             radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.05) 0px, transparent 50%);
         }
-        
+
         .dot-pattern {
           background-image: radial-gradient(circle, #00305f 1px, transparent 1px);
           background-size: 20px 20px;
         }
-        
+
         .gradient-text {
           background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
           background-size: 300% 300%;
@@ -294,7 +356,7 @@ export default function AddCoursesPage() {
           background-clip: text;
           color: transparent;
         }
-        
+
         @keyframes gradient-shift {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }

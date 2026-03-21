@@ -9,6 +9,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  serverExternalPackages: ["pdfjs-dist", "pdf-parse"],
 }
 
 export default nextConfig
