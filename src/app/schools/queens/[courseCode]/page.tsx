@@ -13,6 +13,13 @@ import { getCourseByCode } from '@/lib/db';
 import type { CourseWithStats } from '@/types';
 import { isUsingMockData } from "@/lib/db";
 import { CourseComments } from "@/components/course-comments";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const GRADE_LABELS = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
 
@@ -38,6 +45,113 @@ const staggerContainer = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
 };
+
+const GPA_SCALE_MIN = 1;
+const GPA_SCALE_MAX = 4.3;
+
+/** Discrete tiers — thresholds align with badges; hex aligns with A–F legend chips */
+type GpaTier = 1 | 2 | 3 | 4 | 5;
+
+function gpaTier(gpa: number): GpaTier {
+  if (!Number.isFinite(gpa)) return 1;
+  if (gpa >= 3.7) return 5;
+  if (gpa >= 3.0) return 4;
+  if (gpa >= 2.3) return 3;
+  if (gpa >= 1.7) return 2;
+  return 1;
+}
+
+/** Line / dot / tooltip — same hues as grade-scale legend */
+const GPA_TIER_HEX: Record<GpaTier, string> = {
+  1: '#D32F2F',
+  2: '#FF9800',
+  3: '#CDDC39',
+  4: '#8BC34A',
+  5: '#4CAF50',
+};
+
+function gpaTierHex(gpa: number): string {
+  return GPA_TIER_HEX[gpaTier(gpa)];
+}
+
+function gpaBadgeClass(gpa: number): string {
+  switch (gpaTier(gpa)) {
+    case 5:
+      return 'bg-green-100 text-green-800';
+    case 4:
+      return 'bg-green-100 text-green-700';
+    case 3:
+      return 'bg-yellow-100 text-yellow-800';
+    case 2:
+      return 'bg-orange-100 text-orange-800';
+    default:
+      return 'bg-red-100 text-red-800';
+  }
+}
+
+function gpaValueTextClass(gpa: number): string {
+  switch (gpaTier(gpa)) {
+    case 5:
+      return 'text-green-700';
+    case 4:
+      return 'text-green-600';
+    case 3:
+      return 'text-yellow-700';
+    case 2:
+      return 'text-orange-700';
+    default:
+      return 'text-red-700';
+  }
+}
+
+/** Bar fill 0–100% where track ends are labeled 1.0 and 4.3 */
+function gpaBarClipPercent(gpa: number): number {
+  if (!Number.isFinite(gpa)) return 0;
+  const t = ((gpa - GPA_SCALE_MIN) / (GPA_SCALE_MAX - GPA_SCALE_MIN)) * 100;
+  return Math.max(0, Math.min(100, t));
+}
+
+/**
+ * Full spectrum spans 1.0–4.3. Inner is wider than the clip so the tip color matches GPA.
+ * Gradient stops align with the A–F tier colors used in the UI.
+ */
+function gpaSpectrumInnerWidth(clipPercent: number): string {
+  if (clipPercent <= 0.05) return '0%';
+  return `${(100 / clipPercent) * 100}%`;
+}
+
+const GPA_SPECTRUM_GRADIENT =
+  'linear-gradient(to right, #b71c1c 0%, #e65100 16%, #f9a825 34%, #c0ca33 52%, #7cb342 74%, #2e7d32 100%)';
+
+function GpaSpectrumBar({
+  gpa,
+  heightClass = 'h-2',
+  transition = { duration: 1, delay: 0.5 },
+}: {
+  gpa: number;
+  heightClass?: string;
+  transition?: { duration?: number; delay?: number };
+}) {
+  const clip = gpaBarClipPercent(gpa);
+  return (
+    <div className={`overflow-hidden ${heightClass} rounded-full bg-[#00305f]/[0.09] border border-[#00305f]/[0.06]`}>
+      <motion.div
+        className="h-full overflow-hidden rounded-full"
+        initial={{ width: 0 }}
+        animate={{ width: `${clip}%` }}
+        transition={transition}
+      >
+        <div
+          className="h-full rounded-full"
+          style={{ width: gpaSpectrumInnerWidth(clip), background: GPA_SPECTRUM_GRADIENT }}
+        />
+      </motion.div>
+    </div>
+  );
+}
+
+const GPA_TREND_Y_DOMAIN: [number, number] = [0, 4.3];
+const GPA_TREND_Y_TICKS = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.3];
 
 export default function CourseDetailPage() {
   const params = useParams();
@@ -95,6 +209,10 @@ export default function CourseDetailPage() {
   const hasDistributions = course.distributions && course.distributions.length > 0;
   const courseCodeParts = courseCode.split(' ');
   const department = courseCodeParts[0];
+
+  const enrollmentRounded = Math.round(course.totalEnrollment);
+  const enrollmentBarMax = 600;
+  const enrollmentBarPct = Math.min((enrollmentRounded / enrollmentBarMax) * 100, 100);
 
   const gradeDistributionData = selectedDistribution
     ? GRADE_LABELS.map((grade, index) => ({
@@ -173,6 +291,73 @@ export default function CourseDetailPage() {
           background: rgba(255,255,255,0.12);
           border: 1px solid rgba(255,255,255,0.2);
           backdrop-filter: blur(8px);
+        }
+        .course-detail-inset-glass {
+          background: linear-gradient(
+            165deg,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(244, 247, 252, 0.68) 42%,
+            rgba(255, 255, 255, 0.55) 100%
+          );
+          backdrop-filter: blur(22px) saturate(175%);
+          -webkit-backdrop-filter: blur(22px) saturate(175%);
+          border: 1px solid rgba(255, 255, 255, 0.95);
+          box-shadow:
+            0 4px 24px rgba(0, 48, 95, 0.1),
+            0 1px 4px rgba(0, 48, 95, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 1),
+            inset 0 -1px 0 rgba(0, 48, 95, 0.07);
+          transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .course-detail-inset-glass:hover {
+          background: linear-gradient(
+            165deg,
+            rgba(255, 255, 255, 0.97) 0%,
+            rgba(248, 250, 255, 0.8) 48%,
+            rgba(255, 255, 255, 0.72) 100%
+          );
+          border-color: rgba(255, 255, 255, 1);
+          box-shadow:
+            0 8px 32px rgba(0, 48, 95, 0.12),
+            0 2px 10px rgba(0, 48, 95, 0.07),
+            inset 0 1px 0 rgba(255, 255, 255, 1),
+            inset 0 -1px 0 rgba(0, 48, 95, 0.05);
+        }
+        button.course-detail-inset-glass[role="combobox"] {
+          -webkit-tap-highlight-color: transparent;
+          color: inherit;
+        }
+        button.course-detail-inset-glass[role="combobox"]:focus,
+        button.course-detail-inset-glass[role="combobox"]:focus-visible,
+        button.course-detail-inset-glass[role="combobox"]:active,
+        button.course-detail-inset-glass[role="combobox"][data-state="open"] {
+          outline: none;
+          background: linear-gradient(
+            165deg,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(244, 247, 252, 0.68) 42%,
+            rgba(255, 255, 255, 0.55) 100%
+          );
+          border-color: rgba(255, 255, 255, 0.95);
+          box-shadow:
+            0 4px 24px rgba(0, 48, 95, 0.1),
+            0 1px 4px rgba(0, 48, 95, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 1),
+            inset 0 -1px 0 rgba(0, 48, 95, 0.07);
+        }
+        button.course-detail-inset-glass[role="combobox"]:hover {
+          background: linear-gradient(
+            165deg,
+            rgba(255, 255, 255, 0.97) 0%,
+            rgba(248, 250, 255, 0.8) 48%,
+            rgba(255, 255, 255, 0.72) 100%
+          );
+          border-color: rgba(255, 255, 255, 1);
+          box-shadow:
+            0 8px 32px rgba(0, 48, 95, 0.12),
+            0 2px 10px rgba(0, 48, 95, 0.07),
+            inset 0 1px 0 rgba(255, 255, 255, 1),
+            inset 0 -1px 0 rgba(0, 48, 95, 0.05);
         }
       `}</style>
 
@@ -289,9 +474,9 @@ export default function CourseDetailPage() {
                 { label: 'Credits', value: String(course.credits || 3) },
                 { label: 'Available Terms', value: String(course.distributions?.length || 0) },
               ].map(({ label, value }) => (
-                <li key={label} className="flex justify-between items-center p-2.5 rounded-xl bg-white/40 hover:bg-white/65 transition-colors">
-                  <span className="text-sm text-gray-500">{label}</span>
-                  <span className="text-sm text-gray-900 font-medium text-right max-w-[60%] truncate">{value}</span>
+                <li key={label} className="course-detail-inset-glass flex justify-between items-center gap-3 p-3 rounded-xl">
+                  <span className="text-sm font-medium text-[#00305f]/70 shrink-0">{label}</span>
+                  <span className="text-sm text-[#00305f] font-semibold text-right max-w-[60%] truncate">{value}</span>
                 </li>
               ))}
             </ul>
@@ -307,8 +492,8 @@ export default function CourseDetailPage() {
               </div>
               <h3 className="text-base font-semibold text-[#00305f]">Prerequisites</h3>
             </div>
-            <div className="p-3.5 rounded-xl bg-white/40 text-gray-700 flex-1 flex items-start hover:bg-white/60 transition-colors">
-              <p className="text-sm leading-relaxed text-gray-600">
+            <div className="course-detail-inset-glass p-4 rounded-xl flex-1 flex items-start min-h-[5.5rem]">
+              <p className="text-sm leading-relaxed text-[#00305f]/85">
                 {course.description && course.description.toString().toLowerCase().includes('prerequisite')
                   ? course.description.toString().split(/\n/).find(line =>
                       line.toLowerCase().includes('prerequisite') || line.toLowerCase().includes('prereq')
@@ -328,36 +513,39 @@ export default function CourseDetailPage() {
               </div>
               <h3 className="text-base font-semibold text-[#00305f]">Performance</h3>
             </div>
-            <div className="space-y-4 flex-1">
-              <div>
+            <div className="space-y-3 flex-1">
+              <div className="course-detail-inset-glass rounded-xl p-3.5">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-semibold text-[#00305f]">Average GPA</span>
-                  <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                    course.averageGPA >= 3.7 ? 'bg-green-100 text-green-800' :
-                    course.averageGPA >= 3.0 ? 'bg-green-100 text-green-700' :
-                    course.averageGPA >= 2.3 ? 'bg-yellow-100 text-yellow-800' :
-                    course.averageGPA >= 1.7 ? 'bg-orange-100 text-orange-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
+                  <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${gpaBadgeClass(course.averageGPA)}`}>
                     {course.averageGPA.toFixed(2)}
                   </span>
                 </div>
-                <div className="overflow-hidden h-2 rounded-full bg-white/50">
-                  <motion.div
-                    className="h-full rounded-full bg-gradient-to-r from-red-500 via-yellow-400 to-green-500"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(course.averageGPA / 4.3) * 100}%` }}
-                    transition={{ duration: 1, delay: 0.5 }}
-                  />
-                </div>
-                <div className="flex justify-between text-xs text-gray-400 mt-0.5">
+                <GpaSpectrumBar gpa={course.averageGPA} heightClass="h-2" transition={{ duration: 1, delay: 0.5 }} />
+                <div className="flex justify-between text-xs text-[#00305f]/45 mt-0.5">
                   <span>1.0</span>
                   <span>4.3</span>
                 </div>
               </div>
-              <div className="flex justify-between items-center p-2.5 rounded-xl bg-white/40 hover:bg-white/65 transition-colors">
-                <span className="text-sm text-gray-500">Avg Enrollment</span>
-                <span className="text-sm text-gray-900 font-medium">{Math.round(course.totalEnrollment)}</span>
+              <div className="course-detail-inset-glass rounded-xl p-3.5">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-semibold text-[#00305f]">Average Enrollment</span>
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#00305f]/12 text-[#00305f]">
+                    {enrollmentRounded}
+                  </span>
+                </div>
+                <div className="overflow-hidden h-2 rounded-full bg-[#00305f]/[0.09] border border-[#00305f]/[0.06]">
+                  <motion.div
+                    className="h-full rounded-full bg-gradient-to-r from-[#00305f]/50 via-[#0066CC] to-[#d62839]/90"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${enrollmentBarPct}%` }}
+                    transition={{ duration: 1, delay: 0.55 }}
+                  />
+                </div>
+                <div className="flex justify-between text-xs text-[#00305f]/45 mt-0.5">
+                  <span>0</span>
+                  <span>{enrollmentBarMax}</span>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -371,10 +559,10 @@ export default function CourseDetailPage() {
         animate="visible"
         variants={staggerContainer}
       >
-        {/* GPA Trend */}
-        <motion.div className="glass-card-deep rounded-2xl p-5 flex flex-col" variants={slideUp}>
+        {/* GPA Trend — chart area flex-1 + 100% ResponsiveContainer fills card to match Grade column height */}
+        <motion.div className="glass-card-deep flex h-full min-h-0 flex-col rounded-2xl p-5" variants={slideUp}>
           {/* Header */}
-          <div className="flex items-center justify-between mb-1">
+          <div className="shrink-0 flex items-center justify-between mb-1">
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 bg-[#d62839] rounded-full flex items-center justify-center flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -383,48 +571,88 @@ export default function CourseDetailPage() {
               </div>
               <div>
                 <h3 className="text-base font-semibold text-[#00305f] leading-tight">GPA Trend</h3>
-                <p className="text-xs text-gray-400">GPA across academic terms</p>
+                <p className="text-xs text-gray-400">
+                  Average GPA across academic terms
+                </p>
               </div>
             </div>
-            <span className="text-[#00305f] text-xs px-3 py-1 rounded-full font-semibold bg-[#00305f]/8 border border-[#00305f]/15">
+            <span className="course-detail-inset-glass inline-flex items-center text-[#00305f] text-xs px-3 py-1.5 rounded-full font-semibold leading-none shrink-0">
               {course.course_code}
             </span>
           </div>
 
           {hasDistributions ? (
             <div
-              className="mt-4 rounded-xl overflow-hidden flex-1"
+              className="mt-4 flex min-h-[200px] min-w-0 flex-1 flex-col overflow-hidden rounded-xl"
               style={{
-                background: 'linear-gradient(160deg, rgba(0,48,95,0.04) 0%, rgba(76,175,80,0.06) 100%)',
+                background: 'linear-gradient(160deg, rgba(0,48,95,0.05) 0%, rgba(0,48,95,0.02) 100%)',
                 border: '1px solid rgba(255,255,255,0.7)',
               }}
             >
-              <ResponsiveContainer width="100%" height={220}>
-                <AreaChart data={termGpaData} margin={{ top: 16, right: 16, left: 0, bottom: 8 }}>
+              <div className="min-h-0 h-full min-w-0 w-full flex-1">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={termGpaData}
+                    margin={{
+                      top: 12,
+                      right: 12,
+                      left: 10,
+                      bottom: termGpaData.length > 6 ? 36 : 28,
+                    }}
+                  >
                   <defs>
-                    <linearGradient id="gpaGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#4CAF50" stopOpacity={0.25} />
-                      <stop offset="100%" stopColor="#4CAF50" stopOpacity={0} />
+                    <linearGradient id={`gpaAreaFill-${course.id}`} x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={gpaTierHex(course.averageGPA)} stopOpacity={0.28} />
+                      <stop offset="100%" stopColor={gpaTierHex(course.averageGPA)} stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="rgba(0,0,0,0.06)" />
                   <XAxis
                     dataKey="term"
-                    tick={{ fontSize: 11, fill: '#9ca3af' }}
+                    type="category"
+                    interval={0}
+                    angle={termGpaData.length > 6 ? -35 : 0}
+                    textAnchor={termGpaData.length > 6 ? 'end' : 'middle'}
+                    height={termGpaData.length > 6 ? 52 : 32}
+                    tick={{ fontSize: 10, fill: '#9ca3af' }}
                     axisLine={false}
                     tickLine={false}
                     dy={6}
+                    label={{
+                      value: 'Term',
+                      position: 'insideBottom',
+                      offset: termGpaData.length > 6 ? -4 : 2,
+                      style: { fill: '#64748b', fontSize: 11, fontWeight: 600 },
+                    }}
                   />
                   <YAxis
-                    domain={[0, 4.3]}
-                    ticks={[0, 1.0, 2.0, 3.0, 4.0]}
-                    tick={{ fontSize: 11, fill: '#9ca3af' }}
+                    domain={GPA_TREND_Y_DOMAIN}
+                    ticks={GPA_TREND_Y_TICKS}
+                    tickFormatter={(v) => {
+                      const n = Number(v);
+                      if (Math.abs(n - 4.3) < 1e-6) return '4.3';
+                      if (Number.isInteger(n)) return `${n}`;
+                      return n.toFixed(1);
+                    }}
+                    tick={{ fontSize: 10, fill: '#9ca3af' }}
                     axisLine={false}
                     tickLine={false}
-                    width={30}
+                    width={48}
+                    label={{
+                      value: 'GPA',
+                      angle: -90,
+                      position: 'insideLeft',
+                      style: { fill: '#64748b', fontSize: 11, fontWeight: 600 },
+                      offset: 8,
+                    }}
                   />
                   <RechartsTooltip
-                    formatter={(value: number) => [value.toFixed(2), 'GPA']}
+                    formatter={(value: number) => [
+                      <span key="v" style={{ color: gpaTierHex(value), fontWeight: 700 }}>
+                        {value.toFixed(2)}
+                      </span>,
+                      'GPA',
+                    ]}
                     contentStyle={{
                       backgroundColor: 'rgba(255,255,255,0.92)',
                       backdropFilter: 'blur(12px)',
@@ -437,23 +665,39 @@ export default function CourseDetailPage() {
                   <Area
                     type="monotone"
                     dataKey="gpa"
-                    stroke="#4CAF50"
+                    stroke="#94a3b8"
                     strokeWidth={2.5}
-                    fill="url(#gpaGradient)"
-                    dot={{ fill: '#fff', stroke: '#4CAF50', strokeWidth: 2.5, r: 4 }}
-                    activeDot={{ r: 6, fill: '#4CAF50', stroke: '#fff', strokeWidth: 2 }}
+                    fill={`url(#gpaAreaFill-${course.id})`}
+                    dot={(props: { cx?: number; cy?: number; payload?: { gpa: number } }) => {
+                      const { cx, cy, payload } = props;
+                      if (cx == null || cy == null || payload == null) return <g />;
+                      const c = gpaTierHex(payload.gpa);
+                      const key = `gpa-dot-${cx}-${cy}-${payload.gpa}`;
+                      return <circle key={key} cx={cx} cy={cy} r={4} fill="#fff" stroke={c} strokeWidth={2.5} />;
+                    }}
+                    activeDot={(props: { cx?: number; cy?: number; payload?: { gpa: number } }) => {
+                      const { cx, cy, payload } = props;
+                      if (cx == null || cy == null || payload == null) return <g />;
+                      const c = gpaTierHex(payload.gpa);
+                      const key = `gpa-active-dot-${cx}-${cy}-${payload.gpa}`;
+                      return <circle key={key} cx={cx} cy={cy} r={6} fill={c} stroke="#fff" strokeWidth={2} />;
+                    }}
                   />
-                </AreaChart>
-              </ResponsiveContainer>
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           ) : (
-            <div className="mt-4 h-56 flex items-center justify-center rounded-xl" style={{ background: 'rgba(255,255,255,0.3)' }}>
+            <div
+              className="mt-4 flex min-h-[14rem] flex-1 items-center justify-center rounded-xl"
+              style={{ background: 'rgba(255,255,255,0.3)' }}
+            >
               <p className="text-gray-400 text-sm">No historical GPA data available</p>
             </div>
           )}
 
           {/* Grade scale legend */}
-          <div className="mt-4 flex flex-wrap justify-center gap-1.5">
+          <div className="mt-4 shrink-0 flex flex-wrap justify-center gap-2">
             {[
               { label: 'A', range: '3.7–4.3', color: '#4CAF50' },
               { label: 'B', range: '2.7–3.3', color: '#CDDC39' },
@@ -461,19 +705,22 @@ export default function CourseDetailPage() {
               { label: 'D', range: '0.7–1.3', color: '#FF5722' },
               { label: 'F', range: '<0.7', color: '#D32F2F' },
             ].map(({ label, range, color }) => (
-              <div key={label} className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-white/50 border border-white/70">
-                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
-                <span className="text-gray-600 font-medium">{label}</span>
-                <span className="text-gray-400">{range}</span>
+              <div
+                key={label}
+                className="course-detail-inset-glass inline-flex w-fit shrink-0 items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs max-w-full"
+              >
+                <span className="w-2 h-2 rounded-full flex-shrink-0 shadow-sm" style={{ backgroundColor: color }} />
+                <span className="text-[#00305f]/80 font-semibold">{label}</span>
+                <span className="text-[#00305f]/45 whitespace-nowrap">{range}</span>
               </div>
             ))}
           </div>
         </motion.div>
 
         {/* Grade Distribution */}
-        <motion.div className="glass-card-deep rounded-2xl p-5 flex flex-col" variants={slideUp}>
+        <motion.div className="glass-card-deep flex h-full min-h-0 flex-col rounded-2xl p-5" variants={slideUp}>
           {/* Header */}
-          <div className="flex items-center justify-between mb-1">
+          <div className="shrink-0 flex items-center justify-between mb-1">
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 bg-[#d62839] rounded-full flex items-center justify-center flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -485,28 +732,46 @@ export default function CourseDetailPage() {
                 <p className="text-xs text-gray-400">Percentage of students per grade</p>
               </div>
             </div>
-            <select
-              className="text-xs bg-white/60 backdrop-blur-sm border border-white/75 rounded-full px-3 py-1.5 text-[#00305f] font-semibold focus:outline-none focus:ring-2 focus:ring-[#00305f]/20 cursor-pointer"
-              value={selectedTerm}
-              onChange={(e) => setSelectedTerm(e.target.value)}
-            >
-              {course.distributions?.map(dist => (
-                <option key={dist.term} value={dist.term}>{dist.term}</option>
-              ))}
-            </select>
+            {course.distributions && course.distributions.length > 0 && (
+              <Select value={selectedTerm} onValueChange={setSelectedTerm}>
+                <SelectTrigger
+                  className="course-detail-inset-glass inline-flex h-auto min-h-0 w-fit shrink-0 cursor-pointer items-center gap-1.5 rounded-full border-0 px-3 py-1.5 text-xs font-semibold leading-none text-[#00305f] shadow-none outline-none ring-0 ring-offset-0 transition-[background,box-shadow,border-color] duration-200 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=open]:ring-0 active:opacity-100 data-[placeholder]:text-[#00305f]/55 justify-start [&>span]:line-clamp-1 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:shrink-0 [&>svg]:opacity-60"
+                  aria-label="Select term for grade distribution"
+                >
+                  <SelectValue placeholder="Term" />
+                </SelectTrigger>
+                <SelectContent
+                  position="item-aligned"
+                  align="end"
+                  sideOffset={2}
+                  className="z-[100] max-h-72 overflow-hidden rounded-lg border border-gray-200/90 bg-white p-0.5 text-[#00305f] shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=open]:[--tw-enter-scale:1] data-[state=closed]:[--tw-exit-scale:1] data-[side=bottom]:slide-in-from-top-0 data-[side=top]:slide-in-from-bottom-0"
+                >
+                  {course.distributions.map((dist) => (
+                    <SelectItem
+                      key={dist.term}
+                      value={dist.term}
+                      className="cursor-pointer rounded-md py-2 pl-8 pr-3 text-xs font-semibold text-[#00305f] outline-none focus:bg-gray-100 focus:text-[#00305f] data-[highlighted]:bg-gray-100 data-[highlighted]:text-[#00305f] data-[state=checked]:bg-gray-50"
+                    >
+                      {dist.term}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           {hasDistributions && selectedDistribution ? (
-            <>
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
               <div
-                className="mt-4 rounded-xl overflow-hidden"
+                className="mt-4 flex min-h-[160px] min-w-0 flex-1 flex-col overflow-hidden rounded-xl"
                 style={{
                   background: 'linear-gradient(160deg, rgba(214,40,57,0.03) 0%, rgba(0,48,95,0.04) 100%)',
                   border: '1px solid rgba(255,255,255,0.7)',
                 }}
               >
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart key={`chart-${selectedTerm}`} data={gradeDistributionData} margin={{ top: 12, right: 12, left: 0, bottom: 4 }} barCategoryGap="25%">
+                <div className="min-h-0 h-full min-w-0 w-full flex-1">
+                  <ResponsiveContainer width="100%" height="100%">
+                  <BarChart key={`chart-${selectedTerm}`} data={gradeDistributionData} margin={{ top: 12, right: 12, left: 0, bottom: 8 }} barCategoryGap="25%">
                     <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="rgba(0,0,0,0.06)" />
                     <XAxis
                       dataKey="grade"
@@ -540,37 +805,67 @@ export default function CourseDetailPage() {
                       ))}
                     </Bar>
                   </BarChart>
-                </ResponsiveContainer>
+                  </ResponsiveContainer>
+                </div>
               </div>
 
-              {/* Stats row */}
-              <div className="mt-4 grid grid-cols-3 gap-2.5">
-                <div className="bg-white/45 border border-white/65 rounded-xl p-3 text-center">
+              {/* Stats row — glass cards; Avg GPA includes mini scale bar */}
+              <div className="mt-4 shrink-0 grid grid-cols-3 gap-2.5">
+                <div className="course-detail-inset-glass rounded-xl p-3 text-center flex flex-col">
                   <div className="text-xs text-gray-400 mb-1">Avg GPA</div>
-                  <div className="text-base font-bold text-green-600">{selectedDistribution.average_gpa.toFixed(2)}</div>
+                  <div className={`text-base font-bold ${gpaValueTextClass(selectedDistribution.average_gpa)}`}>
+                    {selectedDistribution.average_gpa.toFixed(2)}
+                  </div>
+                  <GpaSpectrumBar
+                    gpa={selectedDistribution.average_gpa}
+                    heightClass="h-1.5"
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                  />
+                  <div className="flex justify-between w-full text-[10px] text-[#00305f]/40 mt-0.5">
+                    <span>1.0</span>
+                    <span>4.3</span>
+                  </div>
                 </div>
-                <div className="bg-white/45 border border-white/65 rounded-xl p-3 text-center">
+                <div className="course-detail-inset-glass rounded-xl p-3 text-center flex flex-col">
                   <div className="text-xs text-gray-400 mb-1">Enrollment</div>
                   <div className="text-base font-bold text-[#00305f]">{selectedDistribution.enrollment}</div>
+                  <div className="w-full mt-2 overflow-hidden h-1.5 rounded-full bg-[#00305f]/[0.09] border border-[#00305f]/[0.06]">
+                    <motion.div
+                      className="h-full rounded-full bg-gradient-to-r from-[#00305f]/50 via-[#0066CC] to-[#d62839]/90"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min((selectedDistribution.enrollment / enrollmentBarMax) * 100, 100)}%` }}
+                      transition={{ duration: 0.8, delay: 0.25 }}
+                    />
+                  </div>
+                  <div className="flex justify-between w-full text-[10px] text-[#00305f]/40 mt-0.5">
+                    <span>0</span>
+                    <span>{enrollmentBarMax}</span>
+                  </div>
                 </div>
-                <div className="bg-white/45 border border-white/65 rounded-xl p-3 text-center">
+                <div className="course-detail-inset-glass rounded-xl p-3 text-center">
                   <div className="text-xs text-gray-400 mb-1">Term</div>
                   <div className="text-base font-bold text-[#00305f]">{selectedDistribution.term}</div>
                 </div>
               </div>
 
-              {/* Grade breakdown grid */}
-              <div className="mt-3 grid grid-cols-4 sm:grid-cols-5 gap-1.5">
+              {/* Grade breakdown — match GPA Trend legend: tight pills, flex-wrap, content-width */}
+              <div className="mt-3 shrink-0 flex flex-wrap justify-center gap-2">
                 {createDistributionBreakdown(selectedDistribution).map((item, index) => (
-                  <div key={index} className="flex items-center gap-1 bg-white/50 px-2 py-1.5 rounded-lg">
-                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-                    <span className="text-xs text-gray-600 truncate">{item.label}</span>
+                  <div
+                    key={index}
+                    className="course-detail-inset-glass inline-flex w-fit shrink-0 items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs max-w-full"
+                  >
+                    <span className="w-2 h-2 rounded-full flex-shrink-0 shadow-sm" style={{ backgroundColor: item.color }} />
+                    <span className="text-[#00305f]/80 font-medium whitespace-nowrap">{item.label}</span>
                   </div>
                 ))}
               </div>
-            </>
+            </div>
           ) : (
-            <div className="mt-4 h-56 flex items-center justify-center rounded-xl" style={{ background: 'rgba(255,255,255,0.3)' }}>
+            <div
+              className="mt-4 flex min-h-[14rem] flex-1 items-center justify-center rounded-xl"
+              style={{ background: 'rgba(255,255,255,0.3)' }}
+            >
               <p className="text-gray-400 text-sm">No grade distribution data available</p>
             </div>
           )}

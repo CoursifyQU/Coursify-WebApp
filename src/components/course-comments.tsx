@@ -129,19 +129,19 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
               <div className="ml-auto flex items-center gap-1.5">
                 {redditComments.length > 1 && (
                   <motion.button
-                    className="w-7 h-7 rounded-full flex items-center justify-center bg-white/50 hover:bg-white/80 border border-white/70 transition-colors"
+                    className="w-7 h-7 rounded-full flex items-center justify-center glass-pill transition-colors"
                     onClick={prevRedditComment}
                     whileTap={{ scale: 0.9 }}
                   >
                     <ChevronLeft className="h-3.5 w-3.5 text-[#FF4500]" />
                   </motion.button>
                 )}
-                <span className="text-xs text-gray-500 font-medium px-1 min-w-[32px] text-center">
+                <span className="text-xs font-semibold px-2 min-w-[44px] text-center rounded-full glass-pill text-[#00305f]">
                   {redditComments.length > 0 ? `${redditCommentIndex + 1}/${redditComments.length}` : "0"}
                 </span>
                 {redditComments.length > 1 && (
                   <motion.button
-                    className="w-7 h-7 rounded-full flex items-center justify-center bg-white/50 hover:bg-white/80 border border-white/70 transition-colors"
+                    className="w-7 h-7 rounded-full flex items-center justify-center glass-pill transition-colors"
                     onClick={nextRedditComment}
                     whileTap={{ scale: 0.9 }}
                   >
@@ -256,19 +256,19 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
               <div className="ml-auto flex items-center gap-1.5">
                 {rmpComments.length > 1 && (
                   <motion.button
-                    className="w-7 h-7 rounded-full flex items-center justify-center bg-white/50 hover:bg-white/80 border border-white/70 transition-colors"
+                    className="w-7 h-7 rounded-full flex items-center justify-center glass-pill transition-colors"
                     onClick={prevRmpComment}
                     whileTap={{ scale: 0.9 }}
                   >
                     <ChevronLeft className="h-3.5 w-3.5 text-[#00305f]" />
                   </motion.button>
                 )}
-                <span className="text-xs text-gray-500 font-medium px-1 min-w-[32px] text-center">
+                <span className="text-xs font-semibold px-2 min-w-[44px] text-center rounded-full glass-pill text-[#00305f]">
                   {rmpComments.length > 0 ? `${rmpCommentIndex + 1}/${rmpComments.length}` : "0"}
                 </span>
                 {rmpComments.length > 1 && (
                   <motion.button
-                    className="w-7 h-7 rounded-full flex items-center justify-center bg-white/50 hover:bg-white/80 border border-white/70 transition-colors"
+                    className="w-7 h-7 rounded-full flex items-center justify-center glass-pill transition-colors"
                     onClick={nextRmpComment}
                     whileTap={{ scale: 0.9 }}
                   >
