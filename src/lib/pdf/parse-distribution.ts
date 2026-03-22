@@ -121,8 +121,22 @@ export function parseCourseRows(text: string): ParsedCourseRow[] {
  */
 export async function extractTextFromPdf(buffer: Buffer): Promise<string> {
   const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
+
+  // Pre-register the worker so pdfjs-dist skips its dynamic import("./pdf.worker.mjs")
+  // which fails on Vercel serverless. See pdf.mjs line 17501: globalThis.pdfjsWorker check.
+  if (typeof (globalThis as any).pdfjsWorker === "undefined") {
+    const pdfjsWorker = await import("pdfjs-dist/legacy/build/pdf.worker.mjs");
+    (globalThis as any).pdfjsWorker = pdfjsWorker;
+  }
+
   const uint8 = new Uint8Array(buffer);
-  const doc = await pdfjsLib.getDocument({ data: uint8 }).promise;
+  const doc = await pdfjsLib.getDocument({
+    data: uint8,
+    useSystemFonts: true,
+    disableFontFace: true,
+    isEvalSupported: false,
+    useWorkerFetch: false,
+  }).promise;
 
   const textParts: string[] = [];
   for (let i = 1; i <= doc.numPages; i++) {
@@ -141,5 +155,6 @@ export async function extractTextFromPdf(buffer: Buffer): Promise<string> {
     if (line) textParts.push(line);
   }
 
+  await doc.destroy();
   return textParts.join("\n");
 }
