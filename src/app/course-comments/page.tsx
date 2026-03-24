@@ -90,7 +90,7 @@ export default function CourseCommentsPage() {
   const tabs = [
     { id: 'all' as const, label: 'All', count: allComments.length, accent: '#00305f' },
     { id: 'reddit' as const, label: 'Reddit', count: redditComments.length, accent: '#FF4500' },
-    { id: 'rmp' as const, label: 'RateMyProf', count: rmpComments.length, accent: '#00305f' },
+    { id: 'rmp' as const, label: 'RateMyProfessors', count: rmpComments.length, accent: '#00305f' },
   ];
 
   const handleTabChange = (tab: 'all' | 'reddit' | 'rmp') => {
@@ -212,7 +212,7 @@ export default function CourseCommentsPage() {
                   {courseCode || 'All Comments'}
                 </h1>
                 <p className="text-white/60 text-sm mt-1">
-                  Aggregated from Reddit and RateMyProfessor
+                  Aggregated from Reddit and RateMyProfessors
                 </p>
               </div>
 
@@ -222,7 +222,7 @@ export default function CourseCommentsPage() {
                   <span className="text-white font-semibold">{redditComments.length}</span> Reddit
                 </div>
                 <div className="px-3.5 py-1.5 rounded-full text-sm font-medium text-white/80" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}>
-                  <span className="text-white font-semibold">{rmpComments.length}</span> RMP
+                  <span className="text-white font-semibold">{rmpComments.length}</span> RateMyProfessors
                 </div>
                 <div className="px-3.5 py-1.5 rounded-full text-sm font-medium text-white/80" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}>
                   <span className="text-white font-semibold">{allComments.length}</span> total
@@ -282,7 +282,7 @@ export default function CourseCommentsPage() {
         {!loading && (
           <div className={`flex gap-6 items-start ${activeTab === 'rmp' && tabProfessors.length > 0 ? '' : ''}`}>
 
-            {/* Professor sidebar — only on RMP tab */}
+            {/* Professor sidebar — only on RateMyProfessors tab */}
             {activeTab === 'rmp' && tabProfessors.length > 0 && (
               <motion.aside
                 className="w-52 flex-shrink-0 sticky top-24"
@@ -403,7 +403,7 @@ export default function CourseCommentsPage() {
                             ? 'bg-[#FF4500]/10 text-[#FF4500] border border-[#FF4500]/20'
                             : 'bg-brand-navy/10 dark:bg-blue-400/10 text-brand-navy dark:text-white border border-brand-navy/20 dark:border-blue-400/20'
                         }`}>
-                          {isReddit ? 'Reddit' : 'RMP'}
+                          {isReddit ? 'Reddit' : 'RateMyProfessors'}
                         </span>
                       </div>
                     </div>
@@ -481,7 +481,7 @@ export default function CourseCommentsPage() {
                             isReddit ? 'text-[#FF4500]' : 'text-brand-navy dark:text-white'
                           }`}
                         >
-                          {isReddit ? 'View on Reddit' : 'View on RMP'}
+                          {isReddit ? 'View on Reddit' : 'View on RateMyProfessors'}
                           <ExternalLink className="h-3 w-3" />
                         </a>
                       )}

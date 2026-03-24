@@ -221,7 +221,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
           </div>
         </motion.div>
 
-        {/* ── RateMyProf Card ── */}
+        {/* ── RateMyProfessors Card ── */}
         <motion.div
           className="glass-card-deep rounded-xl overflow-hidden flex flex-col"
           initial={{ opacity: 0, x: 20 }}
@@ -238,7 +238,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                   <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h3 className="text-sm font-semibold text-brand-navy dark:text-white">RateMyProf Comments</h3>
+              <h3 className="text-sm font-semibold text-brand-navy dark:text-white">RateMyProfessors Comments</h3>
 
               {/* Nav controls in header */}
               <div className="ml-auto flex items-center gap-1.5">
@@ -338,7 +338,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
               </motion.div>
             ) : (
               <div className="p-6 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm min-h-[160px]">
-                No RateMyProfessor comments for this course.
+                No RateMyProfessors comments for this course.
               </div>
             )}
           </div>
@@ -351,7 +351,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
               rel="noopener noreferrer"
               className="text-brand-navy dark:text-white text-sm font-medium hover:underline flex items-center gap-1"
             >
-              See more on RateMyProfessor
+              See more on RateMyProfessors
               <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>

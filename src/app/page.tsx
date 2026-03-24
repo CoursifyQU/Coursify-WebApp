@@ -291,7 +291,7 @@ export default function Home() {
     {
       question: "Where does the chatbot get its information?",
       answer:
-        "Our AI advisor is trained on thousands of student reviews from Queen's course catalogs, Reddit discussions, and RateMyProfessor reviews to provide you with comprehensive insights about courses and professors.",
+        "Our AI advisor is trained on thousands of student reviews from Queen's course catalogs, Reddit discussions, and RateMyProfessors reviews to provide you with comprehensive insights about courses and professors.",
     },
     {
       question: "How up-to-date is the grade data?",
@@ -374,7 +374,7 @@ export default function Home() {
       icon: <Star className="h-7 w-7" />,
       title: "Student-Powered Reviews",
       description:
-        "See feedback based on student experiences pulled from Reddit and RateMyProfessor — filtered to be relevant to Queen's courses and instructors.",
+        "See feedback based on student experiences pulled from Reddit and RateMyProfessors — filtered to be relevant to Queen's courses and instructors.",
       color: "efb215",
     },
   ];
