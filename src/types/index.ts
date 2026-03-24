@@ -56,8 +56,11 @@ export interface CoursePageParams {
   search?: string;
   departments?: string[];
   levels?: string[];
+  subjects?: string[];
   gpaMin?: number;
   gpaMax?: number;
+  enrollmentMin?: number;
+  enrollmentMax?: number;
   sortBy?: "code" | "name" | "gpa" | "enrollment";
   sortDir?: "asc" | "desc";
   hasData?: boolean;

@@ -12,8 +12,11 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search") || ""
   const departments = searchParams.get("departments")?.split(",").filter(Boolean) || []
   const levels = searchParams.get("levels")?.split(",").filter(Boolean) || []
+  const subjects = searchParams.get("subjects")?.split(",").filter(Boolean) || []
   const gpaMin = parseFloat(searchParams.get("gpa_min") || "0")
   const gpaMax = parseFloat(searchParams.get("gpa_max") || "4.3")
+  const enrollMin = parseFloat(searchParams.get("enroll_min") || "0")
+  const enrollMax = parseFloat(searchParams.get("enroll_max") || "0")
   const sortBy = searchParams.get("sort_by") || "code"
   const sortDir = searchParams.get("sort_dir") || "asc"
   const hasData = searchParams.get("has_data") !== "false" // default true
@@ -42,6 +45,14 @@ export async function GET(request: NextRequest) {
       query = query.in("course_level", levels.map(Number))
     }
 
+    // Subject prefix filter (e.g. CISC, APSC, ANAT)
+    if (subjects.length > 0) {
+      const subjectFilter = subjects
+        .map((s) => `course_code.ilike.${s} %`)
+        .join(",")
+      query = query.or(subjectFilter)
+    }
+
     // GPA range filter (only if not default range)
     if (gpaMin > 0 || gpaMax < 4.3) {
       query = query
@@ -49,9 +60,17 @@ export async function GET(request: NextRequest) {
         .lte("computed_avg_gpa", gpaMax)
     }
 
+    // Enrollment range filter
+    if (enrollMin > 0) {
+      query = query.gte("computed_avg_enrollment", enrollMin)
+    }
+    if (enrollMax > 0) {
+      query = query.lte("computed_avg_enrollment", enrollMax)
+    }
+
     // Only courses with data
     if (hasData) {
-      query = query.or("computed_avg_gpa.gt.0,has_comments.eq.true")
+      query = query.gt("computed_avg_gpa", 0)
     }
 
     // Sorting
