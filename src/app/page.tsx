@@ -249,10 +249,15 @@ export default function Home() {
               </motion.div>
 
               <motion.div variants={heroChildVariants} className="flex flex-wrap gap-3">
-                {["Real grade data", "AI-powered insights", "Queen's focused", "Completely free"].map((label) => (
-                  <div key={label} className="flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-brand-red flex-shrink-0" />
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{label}</span>
+                {[
+                  { label: "Real grade data", color: "bg-red-500" },
+                  { label: "AI-powered insights", color: "bg-yellow-400" },
+                  { label: "Queen's focused", color: "bg-blue-500" },
+                  { label: "Completely free", color: "bg-yellow-600" },
+                ].map(({ label, color }) => (
+                  <div key={label} className="flex items-center glass-pill px-3 py-1.5 rounded-full">
+                    <div className={`w-1.5 h-1.5 rounded-full mr-2 flex-shrink-0 ${color}`} />
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{label}</span>
                   </div>
                 ))}
               </motion.div>
@@ -505,7 +510,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <h3 className={`font-bold text-lg text-brand-navy dark:text-white ${colorClasses.titleHover} transition-colors duration-300 mb-2`}>
+                      <h3 className="font-bold text-lg text-brand-navy dark:text-white mb-2">
                         {faq.question}
                       </h3>
                       <motion.div
@@ -555,9 +560,14 @@ export default function Home() {
               </Link>
             </div>
             <div className="flex flex-wrap justify-center gap-2.5">
-              {["Real grade distributions", "AI-powered insights", "Queen's focused", "Completely free"].map((label) => (
+              {[
+                { label: "Real grade distributions", color: "bg-red-500" },
+                { label: "AI-powered insights", color: "bg-yellow-400" },
+                { label: "Queen's focused", color: "bg-blue-500" },
+                { label: "Completely free", color: "bg-yellow-600" },
+              ].map(({ label, color }) => (
                 <div key={label} className="flex items-center glass-pill px-3 py-1.5 rounded-full">
-                  <div className="w-1.5 h-1.5 rounded-full mr-2 flex-shrink-0 bg-brand-red" />
+                  <div className={`w-1.5 h-1.5 rounded-full mr-2 flex-shrink-0 ${color}`} />
                   <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{label}</span>
                 </div>
               ))}
