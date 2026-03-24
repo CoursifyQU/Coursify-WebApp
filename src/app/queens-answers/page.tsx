@@ -115,22 +115,22 @@ export default function AIFeatures() {
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-white pt-20">
+    <div className="h-screen overflow-hidden bg-white dark:bg-gray-950 pt-20">
       <div className="h-full flex flex-col items-center justify-center px-4 overflow-hidden">
         <div className="w-full max-w-2xl flex flex-col items-center">
           {/* Header */}
           <h1 className="text-5xl font-extrabold text-center mb-3 tracking-tight animated-title">
             <span className="gradient-text">Queen's Answers</span>
           </h1>
-          <p className="text-xl font-semibold text-center mb-10 text-[#00305f] max-w-2xl">
+          <p className="text-xl font-semibold text-center mb-10 text-brand-navy dark:text-white max-w-2xl">
             Got a question? Ask it and get answers, perspectives, and recommendations from all of Queen's
           </p>
 
           {/* Continuous Carousel */}
           <div className="w-full mb-8 overflow-hidden relative carousel-container" ref={containerRef}>
             {/* Light gradient overlays for smooth edge fading */}
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10"></div>
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-gray-950 to-transparent z-10"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-gray-950 to-transparent z-10"></div>
 
             <motion.div className="flex gap-4 px-4" animate={controls} style={{ width: "max-content" }}>
               {duplicatedQuestions.map((q, i) => (
@@ -141,7 +141,7 @@ export default function AIFeatures() {
                   onClick={() => {
                     handleSampleQuestionClick(q.text);
                   }}
-                  className="carousel-item flex items-center bg-white border border-gray-200 rounded-full px-6 py-3 text-base font-medium shadow-sm text-[#00305f] whitespace-nowrap"
+                  className="carousel-item flex items-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full px-6 py-3 text-base font-medium shadow-sm text-brand-navy dark:text-white whitespace-nowrap"
                   style={{ lineHeight: "1.2" }}
                   aria-label={q.text}
                   whileHover={{
@@ -170,7 +170,7 @@ export default function AIFeatures() {
           <button
             type="button"
             onClick={() => setShowHowItWorks(true)}
-            className="text-[#00305f] underline text-base hover:text-[#d62839] transition cursor-pointer"
+            className="text-brand-navy dark:text-white underline text-base hover:text-brand-red transition cursor-pointer"
             style={{ background: "none", border: "none", padding: 0 }}
           >
             Learn how Queen's Answers works &gt;
@@ -197,17 +197,17 @@ export default function AIFeatures() {
                   className="glass-modal-panel modal-content relative max-w-xl w-full rounded-[1.75rem] p-6 sm:p-7"
                 >
                   <button
-                    className="glass-modal-close absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full text-2xl font-bold text-[#00305f]/55 hover:text-[#d62839]"
+                    className="glass-modal-close absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full text-2xl font-bold text-brand-navy/55 dark:text-white/55 hover:text-brand-red"
                     onClick={() => setShowHowItWorks(false)}
                     aria-label="Close"
                   >
                     &times;
                   </button>
                   <div className="glass-modal-accent h-1.5 w-24 rounded-full mb-5 mx-auto opacity-90" />
-                  <h2 className="text-3xl font-bold mb-3 text-center text-[#00305f]">
+                  <h2 className="text-3xl font-bold mb-3 text-center text-brand-navy dark:text-white">
                     How <span className="gradient-text">Queen's Answers</span> Works
                   </h2>
-                  <p className="mx-auto max-w-md text-center text-sm leading-6 text-[#00305f]/68">
+                  <p className="mx-auto max-w-md text-center text-sm leading-6 text-brand-navy/68 dark:text-white/68">
                     A quick overview of how the feature is designed to turn scattered course information into practical recommendations.
                   </p>
                   <ul className="space-y-3 mt-6">
@@ -215,12 +215,12 @@ export default function AIFeatures() {
                       const Icon = item.icon
                       return (
                         <li key={item.title} className="glass-card rounded-2xl p-4 flex items-start gap-4">
-                          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/55 ring-1 ring-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
-                            <Icon className="h-4.5 w-4.5 text-[#00305f]" strokeWidth={1.9} />
+                          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/55 dark:bg-gray-800/55 ring-1 ring-white/70 dark:ring-gray-600/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+                            <Icon className="h-4.5 w-4.5 text-brand-navy dark:text-white" strokeWidth={1.9} />
                           </div>
                           <div>
-                            <div className="font-semibold text-[#00305f]">{item.title}</div>
-                            <div className="text-[#00305f]/70 text-sm mt-1 leading-6">
+                            <div className="font-semibold text-brand-navy dark:text-white">{item.title}</div>
+                            <div className="text-brand-navy/70 dark:text-white/70 text-sm mt-1 leading-6">
                               {item.description}
                             </div>
                           </div>
@@ -236,14 +236,14 @@ export default function AIFeatures() {
 
         {/* Ask a Question Input at the bottom */}
         <div
-          className={`fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-xl flex items-center bg-[#f5f6f7] rounded-full px-4 py-3 shadow-lg transition-all duration-500 ${
+          className={`fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-xl flex items-center bg-[#f5f6f7] dark:bg-gray-800 rounded-full px-4 py-3 shadow-lg transition-all duration-500 ${
             showHowItWorks || showComingSoon ? "opacity-30 pointer-events-none filter blur-[1px]" : "opacity-100 hover:shadow-xl"
           }`}
           style={{ zIndex: 30 }}
         >
           <input
             type="text"
-            className="flex-grow bg-transparent outline-none px-2 py-2 text-lg placeholder:text-[#b0b3b8] placeholder:font-medium"
+            className="flex-grow bg-transparent outline-none px-2 py-2 text-lg text-[#222] dark:text-gray-100 placeholder:text-[#b0b3b8] dark:placeholder:text-gray-500 placeholder:font-medium"
             placeholder="Ask a question"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
@@ -254,13 +254,12 @@ export default function AIFeatures() {
                 handleSubmitQuestion();
               }
             }}
-            style={{ color: "#222" }}
             disabled={showHowItWorks}
           />
           <button
             type="button"
             onClick={() => handleSubmitQuestion()}
-            className="ml-2 bg-[#d62839] hover:bg-[#a31e36] text-white rounded-full w-12 h-10 flex items-center justify-center font-semibold text-lg transition-all duration-300 ease-in-out shadow hover:shadow-lg hover:scale-105"
+            className="ml-2 bg-brand-red hover:bg-red-800 text-white rounded-full w-12 h-10 flex items-center justify-center font-semibold text-lg transition-all duration-300 ease-in-out shadow hover:shadow-lg hover:scale-105"
             style={{ minWidth: "48px" }}
             disabled={showHowItWorks}
           >
@@ -271,8 +270,8 @@ export default function AIFeatures() {
 
       {/* Subtle background accents */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#d62839]/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#00305f]/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red/5 dark:bg-red-400/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-navy/5 dark:bg-blue-400/5 rounded-full blur-3xl"></div>
       </div>
 
       {/* Coming Soon Overlay */}
@@ -293,7 +292,7 @@ export default function AIFeatures() {
               className="glass-modal-panel relative max-w-xl w-full rounded-[1.75rem] p-6 sm:p-7"
             >
               <button
-                className="glass-modal-close absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full text-2xl font-bold text-[#00305f]/55 hover:text-[#d62839]"
+                className="glass-modal-close absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full text-2xl font-bold text-brand-navy/55 dark:text-white/55 hover:text-brand-red"
                 onClick={() => setShowComingSoon(false)}
                 aria-label="Close"
               >
@@ -301,8 +300,8 @@ export default function AIFeatures() {
               </button>
               <div className="flex flex-col items-center">
                 <div className="glass-modal-accent h-1.5 w-24 rounded-full mb-5 opacity-90" />
-                <h2 className="text-3xl font-bold text-[#00305f] mb-2 text-center">Coming Soon</h2>
-                <p className="text-lg text-center text-[#00305f]/72 mb-5 leading-8">
+                <h2 className="text-3xl font-bold text-brand-navy dark:text-white mb-2 text-center">Coming Soon</h2>
+                <p className="text-lg text-center text-brand-navy/72 dark:text-white/72 mb-5 leading-8">
                   We're working hard to bring Queen's Answers to life. This feature will be available in the near future.
                 </p>
                 <div className="glass-card w-full h-3 rounded-full overflow-hidden mb-6 p-0.5">
@@ -313,7 +312,7 @@ export default function AIFeatures() {
                     transition={{ duration: 1.5, ease: "easeInOut" }}
                   />
                 </div>
-                <p className="text-sm text-center text-[#00305f]/60 italic">
+                <p className="text-sm text-center text-brand-navy/60 dark:text-white/60 italic">
                   Queen's Answers will provide AI-powered insights on courses, professors, and more!
                 </p>
               </div>
@@ -371,6 +370,11 @@ export default function AIFeatures() {
           overflow: hidden;
         }
         
+        :is(.dark) .carousel-item {
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+          border: 1px solid #374151;
+        }
+        
         .carousel-item:hover {
           z-index: 20;
           transform: translateY(-4px) scale(1.06);
@@ -379,6 +383,12 @@ export default function AIFeatures() {
           background: linear-gradient(white, white) padding-box,
               linear-gradient(90deg, #00305f, #d62839, #efb215) border-box;
           color: #00305f;
+        }
+        
+        :is(.dark) .carousel-item:hover {
+          background: linear-gradient(#111827, #111827) padding-box,
+              linear-gradient(90deg, #4a9eff, #ff4d5e, #ffc940) border-box;
+          color: #e5e7eb;
         }
         
         .carousel-item:hover::before {
@@ -452,6 +462,22 @@ export default function AIFeatures() {
           text-shadow: 0 0 3px rgba(0, 48, 95, 0.1);
         }
         
+        :is(.dark) .gradient-text {
+          background: linear-gradient(
+            90deg, 
+            #4a9eff 0%, 
+            #ff4d5e 30%, 
+            #ffc940 60%, 
+            #4a9eff 100%
+          );
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          text-fill-color: transparent;
+          text-shadow: 0 0 3px rgba(74, 158, 255, 0.15);
+        }
+        
         @keyframes shine {
           to {
             background-position: 200% center;
@@ -478,6 +504,11 @@ export default function AIFeatures() {
           animation: shimmer 3s infinite;
           transform: translateX(-100%);
           opacity: 0.2;
+        }
+        
+        :is(.dark) .animated-title::before {
+          background: linear-gradient(90deg, transparent, #ff4d5e, transparent);
+          opacity: 0.35;
         }
         
         @keyframes shimmer {

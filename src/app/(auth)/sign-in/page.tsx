@@ -39,9 +39,9 @@ export default function SignIn() {
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-6 py-12">
       {/* Ambient background blobs */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="liquid-blob w-[500px] h-[400px] bg-[#00305f]" style={{ top: "-5%", left: "-8%", animationDelay: "0s" }} />
-        <div className="liquid-blob-alt w-[400px] h-[450px] bg-[#d62839]" style={{ bottom: "-10%", right: "-5%", animationDelay: "-4s" }} />
-        <div className="liquid-blob w-[350px] h-[350px] bg-[#efb215]" style={{ top: "40%", left: "45%", animationDelay: "-8s" }} />
+        <div className="liquid-blob w-[500px] h-[400px] bg-brand-navy" style={{ top: "-5%", left: "-8%", animationDelay: "0s" }} />
+        <div className="liquid-blob-alt w-[400px] h-[450px] bg-brand-red" style={{ bottom: "-10%", right: "-5%", animationDelay: "-4s" }} />
+        <div className="liquid-blob w-[350px] h-[350px] bg-brand-gold" style={{ top: "40%", left: "45%", animationDelay: "-8s" }} />
       </div>
 
       <motion.div
@@ -53,10 +53,10 @@ export default function SignIn() {
         <div className="flex flex-col gap-7">
           {/* Heading */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }}>
-            <h1 className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight text-[#00305f]">
+            <h1 className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight text-brand-navy dark:text-white">
               Welcome
             </h1>
-            <p className="text-gray-500 mt-2">
+            <p className="text-gray-500 dark:text-gray-400 mt-2">
               Access your account and continue your journey with us
             </p>
           </motion.div>
@@ -64,36 +64,36 @@ export default function SignIn() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}>
-              <label className="text-sm font-medium text-gray-500 mb-2 block">Email Address</label>
-              <div className="glass-card rounded-2xl transition-all duration-300 focus-within:border-[#00305f]/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
+              <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">Email Address</label>
+              <div className="glass-card rounded-2xl transition-all duration-300 focus-within:border-brand-navy/30 dark:focus-within:border-blue-400/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
                 <input
                   type="email"
                   placeholder="your.name@queensu.ca"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-transparent text-sm text-[#00305f] placeholder:text-gray-400 px-4 py-4 rounded-2xl focus:outline-none"
+                  className="w-full bg-transparent text-sm text-brand-navy dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 px-4 py-4 rounded-2xl focus:outline-none"
                 />
               </div>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.35 }}>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium text-gray-500">Password</label>
-                <Link href="/forgot-password" className="text-sm text-[#d62839] hover:text-[#00305f] transition-colors duration-300">
+                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Password</label>
+                <Link href="/forgot-password" className="text-sm text-brand-red hover:text-brand-navy dark:hover:text-blue-400 transition-colors duration-300">
                   Reset password
                 </Link>
               </div>
-              <div className="glass-card rounded-2xl relative transition-all duration-300 focus-within:border-[#00305f]/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
+              <div className="glass-card rounded-2xl relative transition-all duration-300 focus-within:border-brand-navy/30 dark:focus-within:border-blue-400/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full bg-transparent text-sm text-[#00305f] placeholder:text-gray-400 px-4 py-4 pr-12 rounded-2xl focus:outline-none"
+                  className="w-full bg-transparent text-sm text-brand-navy dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 px-4 py-4 pr-12 rounded-2xl focus:outline-none"
                 />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-[#00305f] transition-colors duration-200">
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-3 flex items-center text-gray-400 dark:text-gray-500 hover:text-brand-navy dark:hover:text-blue-400 transition-colors duration-200">
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
@@ -119,9 +119,9 @@ export default function SignIn() {
             </motion.button>
           </form>
 
-          <motion.p className="text-center text-sm text-gray-500" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.5 }}>
+          <motion.p className="text-center text-sm text-gray-500 dark:text-gray-400" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.5 }}>
             New to our platform?{" "}
-            <Link href="/sign-up" className="text-[#d62839] hover:text-[#00305f] font-medium transition-colors duration-300">
+            <Link href="/sign-up" className="text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium transition-colors duration-300">
               Create Account
             </Link>
           </motion.p>

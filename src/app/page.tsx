@@ -485,6 +485,22 @@ export default function Home() {
           color: transparent;
         }
 
+        :is(.dark) .gradient-text {
+          background: linear-gradient(
+            -45deg,
+            #4a9eff,
+            #ff4d5e,
+            #ffc940,
+            #4a9eff
+          );
+          background-size: 300% 300%;
+          animation: gradient-shift 6s ease infinite;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          color: transparent;
+        }
+
         .moving-gradient {
           background: linear-gradient(
             -45deg,
@@ -492,6 +508,23 @@ export default function Home() {
             #d62839,
             #efb215,
             #00305f
+          );
+          background-size: 300% 300%;
+          animation: gradient-shift 6s ease infinite;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          color: transparent;
+          display: inline-block;
+        }
+
+        :is(.dark) .moving-gradient {
+          background: linear-gradient(
+            -45deg,
+            #4a9eff,
+            #ff4d5e,
+            #ffc940,
+            #4a9eff
           );
           background-size: 300% 300%;
           animation: gradient-shift 6s ease infinite;
@@ -523,6 +556,18 @@ export default function Home() {
           border-radius: inherit;
         }
 
+        :is(.dark) .gradient-border::before {
+          background: linear-gradient(
+            -45deg,
+            #4a9eff,
+            #ff4d5e,
+            #ffc940,
+            #4a9eff
+          );
+          background-size: 400% 400%;
+          animation: gradient-shift 6s ease infinite;
+        }
+
         .mesh-gradient {
           background-color: hsla(0, 0%, 100%, 1);
           background-image: radial-gradient(
@@ -538,6 +583,25 @@ export default function Home() {
             radial-gradient(
               at 96% 10%,
               hsla(43, 83%, 51%, 0.1) 0px,
+              transparent 50%
+            );
+        }
+
+        :is(.dark) .mesh-gradient {
+          background-color: hsla(222, 47%, 11%, 1);
+          background-image: radial-gradient(
+              at 21% 33%,
+              hsla(225, 100%, 60%, 0.15) 0px,
+              transparent 50%
+            ),
+            radial-gradient(
+              at 79% 76%,
+              hsla(352, 71%, 60%, 0.15) 0px,
+              transparent 50%
+            ),
+            radial-gradient(
+              at 96% 10%,
+              hsla(43, 83%, 60%, 0.15) 0px,
               transparent 50%
             );
         }
@@ -559,6 +623,14 @@ export default function Home() {
             transparent 1px
           );
           background-size: 20px 20px;
+        }
+
+        :is(.dark) .dot-pattern {
+          background-image: radial-gradient(
+            circle,
+            #4a9eff 1px,
+            transparent 1px
+          );
         }
 
         @keyframes border-travel {
@@ -720,15 +792,15 @@ export default function Home() {
           }}
         >
           <div
-            className="liquid-blob w-[480px] h-[380px] bg-[#00305f] opacity-[0.07]"
+            className="liquid-blob w-[480px] h-[380px] bg-brand-navy opacity-[0.07]"
             style={{ top: 0, left: "-6rem", animationDelay: '0s' }}
           />
           <div
-            className="liquid-blob-alt w-[360px] h-[420px] bg-[#d62839] opacity-[0.06]"
+            className="liquid-blob-alt w-[360px] h-[420px] bg-brand-red opacity-[0.06]"
             style={{ top: 0, right: 0, animationDelay: '-4s' }}
           />
           <div
-            className="liquid-blob w-[300px] h-[300px] bg-[#efb215] opacity-[0.05]"
+            className="liquid-blob w-[300px] h-[300px] bg-brand-gold opacity-[0.05]"
             style={{ bottom: 0, left: "33%", animationDelay: '-8s' }}
           />
         </motion.div>
@@ -760,10 +832,10 @@ export default function Home() {
 
                 <motion.h2 variants={heroChildVariants} className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
                   <span className="gradient-text">Course selection</span>
-                  <span className="text-[#00305f]"> powered by AI</span>
+                  <span className="text-brand-navy dark:text-white"> powered by AI</span>
                 </motion.h2>
 
-                <motion.p variants={heroChildVariants} className="text-base sm:text-lg text-gray-700 mb-6">
+                <motion.p variants={heroChildVariants} className="text-base sm:text-lg text-gray-700 dark:text-gray-300 mb-6">
                   Make data-driven decisions with comprehensive insights for all
                   Queen&apos;s University courses.
                 </motion.p>
@@ -793,7 +865,7 @@ export default function Home() {
                   </Link>
                 </motion.div>
 
-                <motion.div variants={heroChildVariants} className="flex flex-wrap justify-center gap-3 text-sm text-gray-600">
+                <motion.div variants={heroChildVariants} className="flex flex-wrap justify-center gap-3 text-sm text-gray-600 dark:text-gray-400">
                   {[
                     { color: "#00305f", label: "Real grade distributions" },
                     { color: "#d62839", label: "AI-powered insights" },
@@ -820,7 +892,7 @@ export default function Home() {
           onClick={handleScrollClick}
         >
           <div className="animate-bounce-slow glass-pill rounded-full p-2 hover:bg-white/70 transition-all duration-300">
-            <ChevronDown className="h-4 w-4 text-[#d62839]" />
+            <ChevronDown className="h-4 w-4 text-brand-red" />
           </div>
         </motion.div>
       </section>
@@ -841,17 +913,17 @@ export default function Home() {
         <SectionReveal className="container mx-auto px-4 relative z-10">
           <motion.div variants={sectionChildVariants} className="text-center mb-8">
             <div className="inline-flex items-center justify-center gap-2 rounded-full glass-pill px-4 py-2 mb-3">
-              <Zap className="h-3.5 w-3.5 text-[#d62839]" />
-              <span className="text-[#d62839] text-xs font-semibold">
+              <Zap className="h-3.5 w-3.5 text-brand-red" />
+              <span className="text-brand-red text-xs font-semibold">
                 Features
               </span>
             </div>
             <h2 className="text-xl sm:text-2xl font-bold mb-2">
-              <span className="text-[#00305f]">Everything you need for</span>
+              <span className="text-brand-navy dark:text-white">Everything you need for</span>
               <br />
               <span className="gradient-text">smarter course decisions</span>
             </h2>
-            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Coursify combines powerful data analytics with AI to help Queen&apos;s
               students make informed academic choices.
             </p>
@@ -877,10 +949,10 @@ export default function Home() {
                     {feature.icon}
                   </div>
                 </div>
-                <h3 className={`font-bold text-base mb-2 text-[#00305f] group-hover:text-[#${feature.color}] transition-colors duration-300`}>
+                <h3 className={`font-bold text-base mb-2 text-brand-navy dark:text-white group-hover:text-[#${feature.color}] transition-colors duration-300`}>
                   {feature.title}
                 </h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -903,16 +975,16 @@ export default function Home() {
         <SectionReveal className="container mx-auto relative z-10" amount={0} margin="0px 0px 40% 0px">
           <motion.div variants={sectionChildVariants} className="text-center mb-8">
             <div className="inline-flex items-center justify-center gap-2 rounded-full glass-pill px-4 py-2 mb-3">
-              <Award className="h-3.5 w-3.5 text-[#efb215]" />
-              <span className="text-[#efb215] text-xs font-semibold">
+              <Award className="h-3.5 w-3.5 text-brand-gold" />
+              <span className="text-brand-gold text-xs font-semibold">
                 Success
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[#00305f]">
+            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-brand-navy dark:text-white">
               Your path to{" "}
               <span className="moving-gradient">academic success</span>
             </h2>
-            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Coursify makes it easy to research courses, compare options, and
               make informed decisions.
             </p>
@@ -942,7 +1014,7 @@ export default function Home() {
                   variants={sectionCardVariants}
                   className="glass-card glass-shine rounded-2xl p-6 text-center h-[220px] flex flex-col items-center justify-center relative overflow-hidden group"
                 >
-                  <span className="absolute top-3 right-4 text-5xl font-black opacity-[0.04] text-[#00305f] select-none">
+                  <span className="absolute top-3 right-4 text-5xl font-black opacity-[0.04] text-brand-navy dark:text-white select-none">
                     {item.step}
                   </span>
                   <div
@@ -951,10 +1023,10 @@ export default function Home() {
                   >
                     <div style={{ color: item.color }}>{item.icon}</div>
                   </div>
-                  <h3 className="text-lg font-bold text-[#00305f] mb-2">
+                  <h3 className="text-lg font-bold text-brand-navy dark:text-white mb-2">
                     {item.step}. {item.title}
                   </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">{item.desc}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{item.desc}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -978,16 +1050,16 @@ export default function Home() {
         <SectionReveal className="container mx-auto relative z-10" amount={0.1}>
           <motion.div variants={sectionChildVariants} className="text-center mb-8">
             <div className="inline-flex items-center justify-center gap-2 rounded-full glass-pill px-4 py-2 mb-3">
-              <Star className="h-3.5 w-3.5 text-[#00305f]" />
-              <span className="text-[#00305f] text-xs font-semibold">
+              <Star className="h-3.5 w-3.5 text-brand-navy dark:text-white" />
+              <span className="text-brand-navy dark:text-white text-xs font-semibold">
                 Testimonials
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[#00305f]">
+            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-brand-navy dark:text-white">
               Trusted by{" "}
               <span className="moving-gradient">Queen&apos;s students</span>
             </h2>
-            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               See how Coursify has helped students make better academic
               decisions.
             </p>
@@ -1048,7 +1120,7 @@ export default function Home() {
                         : `0 28px 56px -36px ${accent.glow}, 0 14px 32px -24px rgba(0, 48, 95, 0.20)`,
                     }}
                   >
-                    <div className="relative overflow-hidden rounded-[calc(2rem-1.5px)] border border-white/60 bg-[rgba(255,255,255,0.52)] p-6 backdrop-blur-2xl sm:p-7">
+                    <div className="relative overflow-hidden rounded-[calc(2rem-1.5px)] border border-white/60 dark:border-white/8 bg-[rgba(255,255,255,0.52)] dark:bg-[rgba(15,23,42,0.5)] p-6 backdrop-blur-2xl sm:p-7">
                       <div
                         className="pointer-events-none absolute inset-0 opacity-60"
                         style={{
@@ -1075,7 +1147,7 @@ export default function Home() {
 
                       <div className="relative z-10 flex h-full flex-col">
                         <div className="mb-6 flex items-center justify-between">
-                          <div className="flex items-center gap-1 text-[#efb215]">
+                          <div className="flex items-center gap-1 text-brand-gold">
                             {[...Array(5)].map((_, i) => (
                               <Star key={i} className={`${isFeatured ? "h-[18px] w-[18px]" : "h-4 w-4"} fill-current`} />
                             ))}
@@ -1103,7 +1175,7 @@ export default function Home() {
                           </svg>
 
                           <blockquote
-                            className={`relative pl-7 pr-2 text-[#00305f]/88 ${
+                            className={`relative pl-7 pr-2 text-brand-navy/90 dark:text-slate-200 ${
                               isFeatured ? "text-lg leading-8 sm:text-[1.35rem]" : "text-base leading-7"
                             }`}
                           >
@@ -1111,20 +1183,20 @@ export default function Home() {
                           </blockquote>
                         </div>
 
-                        <div className="mt-8 flex items-center gap-4 border-t border-white/45 pt-5">
+                        <div className="mt-8 flex items-center gap-4 border-t border-white/45 dark:border-white/10 pt-5">
                           <div
                             className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full p-[1.5px]"
                             style={{
                               background: `linear-gradient(135deg, ${accent.color}, rgba(255,255,255,0.9))`,
                             }}
                           >
-                            <div className="flex h-full w-full items-center justify-center rounded-full bg-white/80 text-sm font-bold backdrop-blur-md" style={{ color: accent.color }}>
+                            <div className="flex h-full w-full items-center justify-center rounded-full bg-white/80 dark:bg-slate-800/80 text-sm font-bold backdrop-blur-md" style={{ color: accent.color }}>
                               {testimonial.initial}
                             </div>
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-[#00305f]">{testimonial.name}</p>
-                            <p className="text-xs uppercase tracking-[0.18em] text-[#00305f]/55">
+                            <p className="text-sm font-semibold text-brand-navy dark:text-white">{testimonial.name}</p>
+                            <p className="text-xs uppercase tracking-[0.18em] text-brand-navy/55 dark:text-slate-400">
                               {testimonial.program}
                             </p>
                           </div>
@@ -1141,7 +1213,7 @@ export default function Home() {
                 type="button"
                 onClick={() => handleTestimonialSwipe(-1)}
                 disabled={isTestimonialAnimating}
-                className="group flex h-14 w-14 items-center justify-center rounded-full border border-white/60 bg-white/55 text-[#00305f] shadow-[0_8px_20px_-5px_rgba(0,48,95,0.35)] backdrop-blur-xl transition-all duration-300 hover:bg-white/75 hover:text-[#d62839] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0 disabled:hover:text-[#00305f]"
+                className="group flex h-14 w-14 items-center justify-center rounded-full border border-white/60 dark:border-white/8 bg-white/55 dark:bg-slate-800/55 text-brand-navy dark:text-white shadow-[0_8px_20px_-5px_rgba(0,48,95,0.35)] backdrop-blur-xl transition-all duration-300 hover:bg-white/75 dark:hover:bg-slate-700/75 hover:text-brand-red active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0 disabled:hover:text-brand-navy dark:disabled:hover:text-white"
                 aria-label="Previous testimonial"
               >
                 <ChevronLeft className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-0.5" />
@@ -1150,7 +1222,7 @@ export default function Home() {
                 type="button"
                 onClick={() => handleTestimonialSwipe(1)}
                 disabled={isTestimonialAnimating}
-                className="group flex h-14 w-14 items-center justify-center rounded-full border border-white/60 bg-white/55 text-[#00305f] shadow-[0_8px_20px_-5px_rgba(0,48,95,0.35)] backdrop-blur-xl transition-all duration-300 hover:bg-white/75 hover:text-[#d62839] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0 disabled:hover:text-[#00305f]"
+                className="group flex h-14 w-14 items-center justify-center rounded-full border border-white/60 dark:border-white/8 bg-white/55 dark:bg-slate-800/55 text-brand-navy dark:text-white shadow-[0_8px_20px_-5px_rgba(0,48,95,0.35)] backdrop-blur-xl transition-all duration-300 hover:bg-white/75 dark:hover:bg-slate-700/75 hover:text-brand-red active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0 disabled:hover:text-brand-navy dark:disabled:hover:text-white"
                 aria-label="Next testimonial"
               >
                 <ChevronRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5" />
@@ -1176,16 +1248,16 @@ export default function Home() {
         <SectionReveal className="container max-w-4xl mx-auto relative z-10" amount={0} margin="0px 0px 40% 0px">
           <motion.div variants={sectionChildVariants} className="text-center mb-8">
             <div className="inline-flex items-center justify-center px-3 py-1.5 rounded-full glass-pill mb-3">
-              <span className="text-[#d62839] text-xs font-semibold mr-2">
+              <span className="text-brand-red text-xs font-semibold mr-2">
                 FAQs
               </span>
-              <Info className="h-3 w-3 text-[#d62839]" />
+              <Info className="h-3 w-3 text-brand-red" />
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[#00305f]">
+            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-brand-navy dark:text-white">
               Frequently Asked{" "}
               <span className="moving-gradient">Questions</span>
             </h2>
-            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Find answers to common questions about Coursify.
             </p>
           </motion.div>
@@ -1209,25 +1281,25 @@ export default function Home() {
                 index % 3 === 0
                   ? {
                       hoverBorder: "hover:border-[#d62839]/30",
-                      iconBg: "bg-[#d62839]/10",
-                      iconText: "text-[#d62839]",
-                      iconHoverBg: "group-hover:bg-[#d62839]",
-                      titleHover: "group-hover:text-[#d62839]",
+                      iconBg: "bg-brand-red/10",
+                      iconText: "text-brand-red",
+                      iconHoverBg: "group-hover:bg-brand-red",
+                      titleHover: "group-hover:text-brand-red",
                     }
                   : index % 3 === 1
                   ? {
                       hoverBorder: "hover:border-[#00305f]/30",
-                      iconBg: "bg-[#00305f]/10",
-                      iconText: "text-[#00305f]",
-                      iconHoverBg: "group-hover:bg-[#00305f]",
-                      titleHover: "group-hover:text-[#00305f]",
+                      iconBg: "bg-brand-navy/10",
+                      iconText: "text-brand-navy dark:text-white",
+                      iconHoverBg: "group-hover:bg-brand-navy",
+                      titleHover: "group-hover:text-brand-navy dark:text-white",
                     }
                   : {
                       hoverBorder: "hover:border-[#efb215]/30",
-                      iconBg: "bg-[#efb215]/10",
-                      iconText: "text-[#efb215]",
-                      iconHoverBg: "group-hover:bg-[#efb215]",
-                      titleHover: "group-hover:text-[#efb215]",
+                      iconBg: "bg-brand-gold/10",
+                      iconText: "text-brand-gold",
+                      iconHoverBg: "group-hover:bg-brand-gold",
+                      titleHover: "group-hover:text-brand-gold",
                     };
 
               return (
@@ -1251,7 +1323,7 @@ export default function Home() {
                     </div>
                     <div>
                       <h3
-                        className={`font-bold text-lg text-[#00305f] ${colorClasses.titleHover} transition-colors duration-300 mb-2`}
+                        className={`font-bold text-lg text-brand-navy dark:text-white ${colorClasses.titleHover} transition-colors duration-300 mb-2`}
                       >
                         {faq.question}
                       </h3>
@@ -1267,7 +1339,7 @@ export default function Home() {
                         }}
                         className="overflow-hidden"
                       >
-                        <p className="text-gray-600 leading-relaxed">
+                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                           {faq.answer}
                         </p>
                       </motion.div>
@@ -1299,10 +1371,10 @@ export default function Home() {
               <motion.h2 variants={sectionChildVariants} className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 leading-tight">
                 <span className="gradient-text">Ready to make smarter</span>
                 <br />
-                <span className="text-[#00305f]">course decisions?</span>
+                <span className="text-brand-navy dark:text-white">course decisions?</span>
               </motion.h2>
 
-              <motion.p variants={sectionChildVariants} className="text-sm sm:text-base text-gray-700 mb-7">
+              <motion.p variants={sectionChildVariants} className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-7">
                 Join thousands of Queen&apos;s students who are using Coursify to plan their academic journey.
               </motion.p>
 
@@ -1340,7 +1412,7 @@ export default function Home() {
                 ].map((item) => (
                   <div key={item.label} className="flex items-center glass-pill px-3 py-1.5 rounded-full">
                     <div className="w-1.5 h-1.5 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: item.color }} />
-                    <span className="text-xs font-medium text-gray-600">{item.label}</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{item.label}</span>
                   </div>
                 ))}
               </motion.div>
@@ -1349,16 +1421,16 @@ export default function Home() {
         </SectionReveal>
       </motion.section>
 
-      <footer className="relative overflow-hidden border-t border-white/60 py-4" style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px) saturate(180%)', WebkitBackdropFilter: 'blur(28px) saturate(180%)' }}>
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+      <footer className="relative overflow-hidden border-t border-white/60 dark:border-white/5 py-4 bg-white/45 dark:bg-slate-900/45 backdrop-blur-[28px]">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/80 dark:via-white/10 to-transparent" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
             <div className="mb-1 md:mb-0">
               <div className="inline-block mb-1">
-                <span className="font-bold text-[#00305f] text-sm tracking-tight">Cours</span>
-                <span className="font-bold text-[#d62839] text-sm tracking-tight">ify</span>
+                <span className="font-bold text-brand-navy dark:text-white text-sm tracking-tight">Cours</span>
+                <span className="font-bold text-brand-red text-sm tracking-tight">ify</span>
               </div>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 dark:text-gray-400">
                 Platform for{" "}
                 <span className="moving-gradient font-medium">
                   Queen&apos;s Students
@@ -1368,19 +1440,19 @@ export default function Home() {
                   Queen&apos;s Students
                 </span>
               </p>
-              <p className="text-xs text-gray-400 mt-0.5 italic">
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 italic">
                 Not affiliated with or endorsed by Queen&apos;s University
               </p>
             </div>
 
-            <div className="text-xs text-gray-600 flex items-center gap-2">
+            <div className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2">
               <span className="moving-gradient font-medium">
                 © {new Date().getFullYear()} Coursify
               </span>
-              <span className="text-gray-300">•</span>
+              <span className="text-gray-300 dark:text-gray-600">•</span>
               <Link
                 href="/about"
-                className="text-[#00305f] hover:text-[#d62839] transition-colors duration-200 font-medium"
+                className="text-brand-navy dark:text-white hover:text-brand-red transition-colors duration-200 font-medium"
               >
                 About Us
               </Link>

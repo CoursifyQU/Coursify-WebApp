@@ -42,17 +42,17 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
 
   const sentimentBadge = (label: string) => {
     const normalized = label.toLowerCase();
-    if (normalized.includes("positive")) return "bg-green-100/80 text-green-700 border border-green-200/60";
-    if (normalized.includes("negative")) return "bg-red-100/80 text-red-600 border border-red-200/60";
-    return "bg-gray-100/80 text-gray-500 border border-gray-200/60";
+    if (normalized.includes("positive")) return "bg-green-100/80 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-200/60 dark:border-green-700/40";
+    if (normalized.includes("negative")) return "bg-red-100/80 dark:bg-red-900/40 text-red-600 dark:text-red-300 border border-red-200/60 dark:border-red-700/40";
+    return "bg-gray-100/80 dark:bg-gray-800/60 text-gray-500 dark:text-gray-400 border border-gray-200/60 dark:border-gray-700/40";
   };
 
   if (loading) {
     return (
       <div className="container mx-auto px-6 md:px-10 lg:px-20 max-w-full mt-6">
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00305f]"></div>
-          <span className="ml-3 text-gray-500">Loading comments...</span>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-navy dark:border-blue-400"></div>
+          <span className="ml-3 text-gray-500 dark:text-gray-400">Loading comments...</span>
         </div>
       </div>
     );
@@ -63,17 +63,17 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
   if (!hasComments) {
     return (
       <div className="container mx-auto px-6 md:px-10 lg:px-20 max-w-full mt-6">
-        <h2 className="text-xl font-bold text-[#00305f] mb-6 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#d62839]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <h2 className="text-xl font-bold text-brand-navy dark:text-white mb-6 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-brand-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
           </svg>
           Student Comments
         </h2>
         <div className="glass-card-deep rounded-xl p-8 text-center">
-          <p className="text-gray-500">No student comments found for this course yet.</p>
+          <p className="text-gray-500 dark:text-gray-400">No student comments found for this course yet.</p>
         </div>
         <div className="mt-10 flex flex-col items-center justify-center">
-          <p className="text-base font-medium mb-4 text-gray-700">Talk with our chatbot to get more insights!</p>
+          <p className="text-base font-medium mb-4 text-gray-700 dark:text-gray-300">Talk with our chatbot to get more insights!</p>
           <Link href="/queens-answers" className="liquid-btn-red text-white px-6 py-2.5 rounded-xl inline-flex items-center font-medium">
             <Brain className="mr-2 h-4 w-4" />
             <span className="text-sm">Try AI Assistant</span>
@@ -86,12 +86,12 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
   return (
     <div className="container mx-auto px-6 md:px-10 lg:px-20 max-w-full mt-6">
       <motion.h2
-        className="text-xl font-bold text-[#00305f] mb-6 flex items-center justify-center"
+        className="text-xl font-bold text-brand-navy dark:text-white mb-6 flex items-center justify-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#d62839]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-brand-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
         </svg>
         Wanna see what students are saying?
@@ -108,13 +108,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
         >
           {/* Header with integrated nav */}
           <div
-            className="px-4 py-3 flex-shrink-0"
-            style={{
-              background: "linear-gradient(135deg, rgba(255,69,0,0.22) 0%, rgba(255,120,50,0.10) 50%, rgba(255,255,255,0.60) 100%)",
-              backdropFilter: "blur(16px)",
-              borderBottom: "2.5px solid #FF4500",
-              boxShadow: "inset 0 -1px 0 rgba(255,69,0,0.15)"
-            }}
+            className="px-4 py-3 flex-shrink-0 reddit-comment-header"
           >
             <div className="flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" className="h-7 w-7 flex-shrink-0">
@@ -123,7 +117,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                   <path fill="#FFFFFF" d="M16.67,10A1.46,1.46,0,0,0,14.2,9a7.12,7.12,0,0,0-3.85-1.23L11,4.65,13.14,5.1a1,1,0,1,0,.13-0.61L10.82,4a0.31,0.31,0,0,0-.37.24L9.71,7.71a7.14,7.14,0,0,0-3.9,1.23,1.46,1.46,0,1,0-1.61,2.39,2.87,2.87,0,0,0,0,.44c0,2.24,2.61,4.06,5.83,4.06s5.83-1.82,5.83-4.06a2.87,2.87,0,0,0,0-.44A1.46,1.46,0,0,0,16.67,10Zm-10,1a1,1,0,1,1,1,1A1,1,0,0,1,6.67,11Zm5.81,2.75a3.84,3.84,0,0,1-2.47.77,3.84,3.84,0,0,1-2.47-.77,0.27,0.27,0,0,1,.38-0.38A3.27,3.27,0,0,0,10,14a3.28,3.28,0,0,0,2.09-.61A0.27,0.27,0,1,1,12.48,13.79Zm-0.18-1.71a1,1,0,1,1,1-1A1,1,0,0,1,12.29,12.08Z"/>
                 </g>
               </svg>
-              <h3 className="text-sm font-semibold text-[#00305f]">Reddit Comments</h3>
+              <h3 className="text-sm font-semibold text-brand-navy dark:text-white">Reddit Comments</h3>
 
               {/* Nav controls in header */}
               <div className="ml-auto flex items-center gap-1.5">
@@ -136,7 +130,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                     <ChevronLeft className="h-3.5 w-3.5 text-[#FF4500]" />
                   </motion.button>
                 )}
-                <span className="text-xs font-semibold px-2 min-w-[44px] text-center rounded-full glass-pill text-[#00305f]">
+                <span className="text-xs font-semibold px-2 min-w-[44px] text-center rounded-full glass-pill text-brand-navy dark:text-white">
                   {redditComments.length > 0 ? `${redditCommentIndex + 1}/${redditComments.length}` : "0"}
                 </span>
                 {redditComments.length > 1 && (
@@ -167,7 +161,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                   <div className="h-8 w-8 rounded-full mr-2 overflow-hidden flex-shrink-0">
                     <img src="/queens_reddit_icon.png" alt="Queen's Reddit" className="h-full w-full object-cover" />
                   </div>
-                  <div className="text-sm font-medium text-gray-700">r/queensuniversity</div>
+                  <div className="text-sm font-medium text-gray-700 dark:text-gray-300">r/queensuniversity</div>
                   <span
                     className={`ml-auto text-xs font-medium px-2.5 py-0.5 rounded-full capitalize shrink-0 ${sentimentBadge(currentRedditComment.sentiment_label)}`}
                   >
@@ -177,22 +171,22 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
 
                 {currentRedditComment.professor_name && currentRedditComment.professor_name !== "general_prof" && (
                   <div className="flex items-center">
-                    <span className="text-xs text-gray-400 mr-1">Professor:</span>
-                    <span className="text-xs text-[#00305f] font-medium">{currentRedditComment.professor_name}</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 mr-1">Professor:</span>
+                    <span className="text-xs text-brand-navy dark:text-white font-medium">{currentRedditComment.professor_name}</span>
                   </div>
                 )}
 
-                <p className="text-sm text-gray-700 line-clamp-4">{currentRedditComment.text}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-4">{currentRedditComment.text}</p>
 
                 {currentRedditComment.tags && currentRedditComment.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1">
                     {currentRedditComment.tags.map((tag, index) => (
-                      <span key={index} className="text-xs glass-pill px-2 py-0.5 rounded-full text-gray-600">{tag}</span>
+                      <span key={index} className="text-xs glass-pill px-2 py-0.5 rounded-full text-gray-600 dark:text-gray-400">{tag}</span>
                     ))}
                   </div>
                 )}
 
-                <div className="flex items-center text-xs text-gray-400">
+                <div className="flex items-center text-xs text-gray-400 dark:text-gray-500">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1 text-[#FF4500]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
                   </svg>
@@ -205,14 +199,14 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                 </div>
               </motion.div>
             ) : (
-              <div className="p-6 flex items-center justify-center text-gray-400 text-sm min-h-[160px]">
+              <div className="p-6 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm min-h-[160px]">
                 No Reddit comments for this course.
               </div>
             )}
           </div>
 
           {/* Footer */}
-          <div className="px-5 py-3 border-t border-white/60 flex justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.35)", backdropFilter: "blur(12px)" }}>
+          <div className="px-5 py-3 border-t border-white/60 dark:border-white/5 flex justify-center flex-shrink-0 bg-white/35 dark:bg-slate-900/35 backdrop-blur-[12px]">
             <a
               href="https://www.reddit.com/r/queensuniversity/"
               target="_blank"
@@ -236,21 +230,15 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
         >
           {/* Header with integrated nav */}
           <div
-            className="px-4 py-3 flex-shrink-0"
-            style={{
-              background: "linear-gradient(135deg, rgba(0,48,95,0.22) 0%, rgba(0,80,160,0.10) 50%, rgba(255,255,255,0.60) 100%)",
-              backdropFilter: "blur(16px)",
-              borderBottom: "2.5px solid #00305f",
-              boxShadow: "inset 0 -1px 0 rgba(0,48,95,0.15)"
-            }}
+            className="px-4 py-3 flex-shrink-0 rmp-comment-header"
           >
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 flex-shrink-0 bg-[#00305f] rounded-full flex items-center justify-center shadow-sm">
+              <div className="w-7 h-7 flex-shrink-0 bg-brand-navy rounded-full flex items-center justify-center shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h3 className="text-sm font-semibold text-[#00305f]">RateMyProf Comments</h3>
+              <h3 className="text-sm font-semibold text-brand-navy dark:text-white">RateMyProf Comments</h3>
 
               {/* Nav controls in header */}
               <div className="ml-auto flex items-center gap-1.5">
@@ -260,10 +248,10 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                     onClick={prevRmpComment}
                     whileTap={{ scale: 0.9 }}
                   >
-                    <ChevronLeft className="h-3.5 w-3.5 text-[#00305f]" />
+                    <ChevronLeft className="h-3.5 w-3.5 text-brand-navy dark:text-white" />
                   </motion.button>
                 )}
-                <span className="text-xs font-semibold px-2 min-w-[44px] text-center rounded-full glass-pill text-[#00305f]">
+                <span className="text-xs font-semibold px-2 min-w-[44px] text-center rounded-full glass-pill text-brand-navy dark:text-white">
                   {rmpComments.length > 0 ? `${rmpCommentIndex + 1}/${rmpComments.length}` : "0"}
                 </span>
                 {rmpComments.length > 1 && (
@@ -272,7 +260,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                     onClick={nextRmpComment}
                     whileTap={{ scale: 0.9 }}
                   >
-                    <ChevronRight className="h-3.5 w-3.5 text-[#00305f]" />
+                    <ChevronRight className="h-3.5 w-3.5 text-brand-navy dark:text-white" />
                   </motion.button>
                 )}
               </div>
@@ -292,13 +280,13 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
               >
                 <div className="flex items-center">
                   <div className="flex items-center gap-2">
-                    <div className="text-sm font-medium text-gray-700">Anonymous</div>
+                    <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Anonymous</div>
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
                         <svg
                           key={i}
                           xmlns="http://www.w3.org/2000/svg"
-                          className={`h-3.5 w-3.5 ${i < Math.floor(currentRmpComment.quality_rating) ? "text-yellow-400" : i < currentRmpComment.quality_rating ? "text-yellow-300" : "text-gray-200"}`}
+                          className={`h-3.5 w-3.5 ${i < Math.floor(currentRmpComment.quality_rating) ? "text-yellow-400" : i < currentRmpComment.quality_rating ? "text-yellow-300" : "text-gray-200 dark:text-gray-600"}`}
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -315,12 +303,12 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                 </div>
 
                 <div className="flex items-center">
-                  <span className="text-xs text-gray-400 mr-1">Professor:</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500 mr-1">Professor:</span>
                   <a
                     href={currentRmpComment.source_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-[#00305f] hover:underline font-medium flex items-center"
+                    className="text-xs text-brand-navy dark:text-white hover:underline font-medium flex items-center"
                   >
                     {currentRmpComment.professor_name}
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -329,39 +317,39 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                   </a>
                 </div>
 
-                <p className="text-sm text-gray-700 line-clamp-4">{currentRmpComment.text}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-4">{currentRmpComment.text}</p>
 
                 {currentRmpComment.tags && currentRmpComment.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1">
                     {currentRmpComment.tags.map((tag, index) => (
-                      <span key={index} className="text-xs glass-pill px-2 py-0.5 rounded-full text-[#00305f]">{tag}</span>
+                      <span key={index} className="text-xs glass-pill px-2 py-0.5 rounded-full text-brand-navy dark:text-white">{tag}</span>
                     ))}
                   </div>
                 )}
 
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="glass-pill px-2.5 py-1 rounded-full text-[#00305f] font-medium">
+                  <span className="glass-pill px-2.5 py-1 rounded-full text-brand-navy dark:text-white font-medium">
                     Quality: {currentRmpComment.quality_rating}/5
                   </span>
-                  <span className="glass-pill px-2.5 py-1 rounded-full text-[#d62839] font-medium">
+                  <span className="glass-pill px-2.5 py-1 rounded-full text-brand-red font-medium">
                     Difficulty: {currentRmpComment.difficulty_rating}/5
                   </span>
                 </div>
               </motion.div>
             ) : (
-              <div className="p-6 flex items-center justify-center text-gray-400 text-sm min-h-[160px]">
+              <div className="p-6 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm min-h-[160px]">
                 No RateMyProfessor comments for this course.
               </div>
             )}
           </div>
 
           {/* Footer */}
-          <div className="px-5 py-3 border-t border-white/60 flex justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.35)", backdropFilter: "blur(12px)" }}>
+          <div className="px-5 py-3 border-t border-white/60 dark:border-white/5 flex justify-center flex-shrink-0 bg-white/35 dark:bg-slate-900/35 backdrop-blur-[12px]">
             <a
               href="https://www.ratemyprofessors.com/school/1466"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#00305f] text-sm font-medium hover:underline flex items-center gap-1"
+              className="text-brand-navy dark:text-white text-sm font-medium hover:underline flex items-center gap-1"
             >
               See more on RateMyProfessor
               <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -391,7 +379,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
       </motion.div>
 
       <motion.div
-        className="text-center text-xs text-gray-400 mb-2"
+        className="text-center text-xs text-gray-400 dark:text-gray-500 mb-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.7, delay: 0.4 }}
@@ -401,7 +389,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
 
       {/* Chatbot CTA */}
       <div className="mt-8 mb-4 flex flex-col items-center justify-center">
-        <p className="text-sm font-medium mb-3 text-gray-600">Talk with our chatbot to get more insights!</p>
+        <p className="text-sm font-medium mb-3 text-gray-600 dark:text-gray-400">Talk with our chatbot to get more insights!</p>
         <Link href="/queens-answers" className="liquid-btn-red text-white px-6 py-2.5 rounded-xl inline-flex items-center font-medium">
           <Brain className="mr-2 h-4 w-4" />
           <span className="text-sm">Try AI Assistant</span>

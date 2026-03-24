@@ -82,9 +82,9 @@ export default function CourseCommentsPage() {
 
   const sentimentBadge = (label: string) => {
     const normalized = label.toLowerCase();
-    if (normalized.includes('positive')) return 'bg-green-100/80 text-green-700 border border-green-200/60';
-    if (normalized.includes('negative')) return 'bg-red-100/80 text-red-600 border border-red-200/60';
-    return 'bg-gray-100/80 text-gray-500 border border-gray-200/60';
+    if (normalized.includes('positive')) return 'bg-green-100/80 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-200/60 dark:border-green-700/40';
+    if (normalized.includes('negative')) return 'bg-red-100/80 dark:bg-red-900/40 text-red-600 dark:text-red-300 border border-red-200/60 dark:border-red-700/40';
+    return 'bg-gray-100/80 dark:bg-gray-800/60 text-gray-500 dark:text-gray-400 border border-gray-200/60 dark:border-gray-700/40';
   };
 
   const tabs = [
@@ -106,17 +106,23 @@ export default function CourseCommentsPage() {
 
   return (
     <div
-      className="min-h-screen pb-20 pt-20"
-      style={{
-        backgroundColor: 'hsla(0,0%,100%,1)',
-        backgroundImage: `
-          radial-gradient(at 21% 33%, hsla(225,100%,19%,0.09) 0px, transparent 50%),
-          radial-gradient(at 79% 76%, hsla(352,71%,54%,0.08) 0px, transparent 50%),
-          radial-gradient(at 96% 10%, hsla(43,83%,51%,0.07) 0px, transparent 50%)
-        `
-      }}
+      className="min-h-screen pb-20 pt-20 comments-page-bg"
     >
       <style dangerouslySetInnerHTML={{ __html: `
+        .comments-page-bg {
+          background-color: #fff;
+          background-image:
+            radial-gradient(at 21% 33%, hsla(225,100%,19%,0.09) 0px, transparent 50%),
+            radial-gradient(at 79% 76%, hsla(352,71%,54%,0.08) 0px, transparent 50%),
+            radial-gradient(at 96% 10%, hsla(43,83%,51%,0.07) 0px, transparent 50%);
+        }
+        :is(.dark) .comments-page-bg {
+          background-color: #0b1527;
+          background-image:
+            radial-gradient(at 21% 33%, hsla(225,100%,30%,0.12) 0px, transparent 50%),
+            radial-gradient(at 79% 76%, hsla(352,71%,40%,0.08) 0px, transparent 50%),
+            radial-gradient(at 96% 10%, hsla(43,83%,40%,0.06) 0px, transparent 50%);
+        }
         .glass-card-deep {
           background: rgba(255,255,255,0.72);
           backdrop-filter: blur(28px) saturate(170%);
@@ -146,13 +152,33 @@ export default function CourseCommentsPage() {
         .tab-pill.active-all { background: rgba(0,48,95,0.9); border-color: rgba(0,48,95,0.3); color: white; }
         .tab-pill.active-reddit { background: rgba(255,69,0,0.9); border-color: rgba(255,69,0,0.3); color: white; }
         .tab-pill.active-rmp { background: rgba(0,48,95,0.9); border-color: rgba(0,48,95,0.3); color: white; }
+        :is(.dark) .glass-card-deep {
+          background: rgba(30,41,59,0.72);
+          border: 1px solid rgba(255,255,255,0.08);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.20), 0 2px 8px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        :is(.dark) .glass-card-deep:hover {
+          box-shadow: 0 14px 40px rgba(0,0,0,0.24), 0 3px 10px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+        :is(.dark) .glass-hero {
+          background: rgba(0,48,95,0.92);
+          border: 1px solid rgba(255,255,255,0.08);
+          box-shadow: 0 24px 64px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        :is(.dark) .tab-pill {
+          background: rgba(30,41,59,0.55);
+          border: 1px solid rgba(255,255,255,0.1);
+        }
+        :is(.dark) .tab-pill:hover { background: rgba(30,41,59,0.75); }
+        :is(.dark) .tab-pill.active-all { background: rgba(59,130,246,0.9); border-color: rgba(59,130,246,0.3); }
+        :is(.dark) .tab-pill.active-rmp { background: rgba(59,130,246,0.9); border-color: rgba(59,130,246,0.3); }
       ` }} />
 
       {/* Background blobs */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#d62839]/8 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#00305f]/8 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-[#efb215]/6 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-navy/8 dark:bg-blue-400/8 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-brand-gold/6 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-6 md:px-10 lg:px-20 max-w-5xl">
@@ -218,7 +244,7 @@ export default function CourseCommentsPage() {
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
               className={`tab-pill rounded-full px-4 py-2 text-sm font-medium flex items-center gap-2 ${
-                activeTab === tab.id ? `active-${tab.id}` : 'text-gray-600'
+                activeTab === tab.id ? `active-${tab.id}` : 'text-gray-600 dark:text-gray-400'
               }`}
             >
               {tab.id === 'reddit' && (
@@ -228,7 +254,7 @@ export default function CourseCommentsPage() {
                 </svg>
               )}
               {tab.id === 'rmp' && (
-                <div className={`w-4 h-4 rounded-full flex items-center justify-center ${activeTab === 'rmp' ? 'bg-white/20' : 'bg-[#00305f]/10'}`}>
+                <div className={`w-4 h-4 rounded-full flex items-center justify-center ${activeTab === 'rmp' ? 'bg-white/20' : 'bg-brand-navy/10 dark:bg-blue-400/10'}`}>
                   <svg viewBox="0 0 20 20" fill={activeTab === 'rmp' ? 'white' : '#00305f'} className="w-3 h-3">
                     <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                   </svg>
@@ -236,7 +262,7 @@ export default function CourseCommentsPage() {
               )}
               {tab.label}
               <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
-                activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-gray-200/70 text-gray-500'
+                activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-gray-200/70 dark:bg-white/10 text-gray-500 dark:text-gray-400'
               }`}>
                 {tab.count}
               </span>
@@ -247,8 +273,8 @@ export default function CourseCommentsPage() {
         {/* ── Loading ── */}
         {loading && (
           <div className="flex justify-center items-center py-24">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#00305f]" />
-            <span className="ml-3 text-gray-500">Loading comments...</span>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-navy dark:border-blue-400" />
+            <span className="ml-3 text-gray-500 dark:text-gray-400">Loading comments...</span>
           </div>
         )}
 
@@ -266,12 +292,12 @@ export default function CourseCommentsPage() {
               >
                 <div className="glass-card-deep rounded-2xl px-4 py-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <User className="h-3.5 w-3.5 text-[#00305f]/60" />
-                    <span className="text-xs font-semibold text-[#00305f] uppercase tracking-wider">Professor</span>
+                    <User className="h-3.5 w-3.5 text-brand-navy/60 dark:text-white/60" />
+                    <span className="text-xs font-semibold text-brand-navy dark:text-white uppercase tracking-wider">Professor</span>
                     {selectedProfessor && (
                       <button
                         onClick={() => { setSelectedProfessor(null); setCurrentPage(1); }}
-                        className="ml-auto text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                        className="ml-auto text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
                         title="Clear filter"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
@@ -290,13 +316,13 @@ export default function CourseCommentsPage() {
                           onClick={() => { setSelectedProfessor(isActive ? null : prof); setCurrentPage(1); }}
                           className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 text-left ${
                             isActive
-                              ? 'bg-[#00305f] text-white shadow-md shadow-[#00305f]/20'
-                              : 'bg-white/50 text-gray-700 hover:bg-white/90 border border-white/70'
+                              ? 'bg-brand-navy dark:bg-blue-600 text-white shadow-md shadow-[#00305f]/20 dark:shadow-blue-900/30'
+                              : 'bg-white/50 dark:bg-white/[0.06] text-gray-700 dark:text-gray-300 hover:bg-white/90 dark:hover:bg-white/[0.12] border border-white/70 dark:border-white/10'
                           }`}
                         >
                           <span className="truncate mr-2">{prof}</span>
                           <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold flex-shrink-0 ${
-                            isActive ? 'bg-white/20 text-white' : 'bg-gray-200/80 text-gray-500'
+                            isActive ? 'bg-white/20 text-white' : 'bg-gray-200/80 dark:bg-white/10 text-gray-500 dark:text-gray-400'
                           }`}>
                             {commentCount}
                           </span>
@@ -334,14 +360,14 @@ export default function CourseCommentsPage() {
                         {isReddit ? (
                           <RedditIcon className="w-8 h-8 flex-shrink-0" />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-[#00305f] flex items-center justify-center flex-shrink-0 shadow-sm">
+                          <div className="w-8 h-8 rounded-full bg-brand-navy flex items-center justify-center flex-shrink-0 shadow-sm">
                             <svg viewBox="0 0 20 20" fill="white" className="w-4 h-4">
                               <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                             </svg>
                           </div>
                         )}
                         <div>
-                          <div className="text-sm font-semibold text-gray-800">
+                          <div className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                             {isReddit ? 'r/queensuniversity' : 'Anonymous'}
                           </div>
                           {!isReddit && (
@@ -356,7 +382,7 @@ export default function CourseCommentsPage() {
                                       ? 'text-yellow-400'
                                       : i < (comment as RmpComment).quality_rating
                                         ? 'text-yellow-300'
-                                        : 'text-gray-200'
+                                        : 'text-gray-200 dark:text-gray-600'
                                   }`}
                                 >
                                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -375,7 +401,7 @@ export default function CourseCommentsPage() {
                         <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
                           isReddit
                             ? 'bg-[#FF4500]/10 text-[#FF4500] border border-[#FF4500]/20'
-                            : 'bg-[#00305f]/10 text-[#00305f] border border-[#00305f]/20'
+                            : 'bg-brand-navy/10 dark:bg-blue-400/10 text-brand-navy dark:text-white border border-brand-navy/20 dark:border-blue-400/20'
                         }`}>
                           {isReddit ? 'Reddit' : 'RMP'}
                         </span>
@@ -385,15 +411,15 @@ export default function CourseCommentsPage() {
                     {/* Professor */}
                     {comment.professor_name && comment.professor_name !== 'general_prof' && (
                       <div className="flex items-center gap-1.5 mb-3">
-                        <span className="text-xs text-gray-400">Professor:</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500">Professor:</span>
                         {isReddit ? (
-                          <span className="text-xs text-[#00305f] font-medium">{comment.professor_name}</span>
+                          <span className="text-xs text-brand-navy dark:text-white font-medium">{comment.professor_name}</span>
                         ) : (
                           <a
                             href={comment.source_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-[#00305f] hover:underline font-medium flex items-center gap-0.5"
+                            className="text-xs text-brand-navy dark:text-white hover:underline font-medium flex items-center gap-0.5"
                           >
                             {comment.professor_name}
                             <ExternalLink className="h-3 w-3" />
@@ -403,7 +429,7 @@ export default function CourseCommentsPage() {
                     )}
 
                     {/* Comment text */}
-                    <p className="text-sm text-gray-700 leading-relaxed mb-3">{comment.text}</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-3">{comment.text}</p>
 
                     {/* Tags */}
                     {comment.tags && comment.tags.length > 0 && (
@@ -414,7 +440,7 @@ export default function CourseCommentsPage() {
                             className={`text-xs px-2.5 py-0.5 rounded-full border ${
                               isReddit
                                 ? 'bg-[#FF4500]/6 text-[#FF4500]/80 border-[#FF4500]/15'
-                                : 'bg-[#00305f]/6 text-[#00305f]/80 border-[#00305f]/15'
+                                : 'bg-brand-navy/6 dark:bg-blue-400/6 text-brand-navy/80 dark:text-white/80 border-brand-navy/15 dark:border-blue-400/15'
                             }`}
                           >
                             {tag}
@@ -424,10 +450,10 @@ export default function CourseCommentsPage() {
                     )}
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between pt-3 border-t border-white/60">
+                    <div className="flex items-center justify-between pt-3 border-t border-white/60 dark:border-white/[0.06]">
                       <div className="flex items-center gap-3">
                         {isReddit && (
-                          <div className="flex items-center gap-1 text-xs text-gray-400">
+                          <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-[#FF4500]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
                             </svg>
@@ -436,10 +462,10 @@ export default function CourseCommentsPage() {
                         )}
                         {!isReddit && (
                           <div className="flex items-center gap-2">
-                            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#00305f]/8 text-[#00305f] font-medium">
+                            <span className="text-xs px-2.5 py-0.5 rounded-full bg-brand-navy/8 dark:bg-blue-400/8 text-brand-navy dark:text-white font-medium">
                               Quality: {(comment as RmpComment).quality_rating}/5
                             </span>
-                            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#d62839]/8 text-[#d62839] font-medium">
+                            <span className="text-xs px-2.5 py-0.5 rounded-full bg-brand-red/8 text-brand-red font-medium">
                               Difficulty: {(comment as RmpComment).difficulty_rating}/5
                             </span>
                           </div>
@@ -452,7 +478,7 @@ export default function CourseCommentsPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className={`text-xs font-medium flex items-center gap-1 hover:underline ${
-                            isReddit ? 'text-[#FF4500]' : 'text-[#00305f]'
+                            isReddit ? 'text-[#FF4500]' : 'text-brand-navy dark:text-white'
                           }`}
                         >
                           {isReddit ? 'View on Reddit' : 'View on RMP'}
@@ -470,24 +496,24 @@ export default function CourseCommentsPage() {
         {/* ── Pagination ── */}
         {totalPages > 1 && (
           <div className="mt-6 glass-card-deep rounded-xl px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-gray-500 dark:text-gray-400">
               Showing {startIndex + 1}–{Math.min(startIndex + commentsPerPage, filteredComments.length)} of {filteredComments.length} comments
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => { setCurrentPage(prev => Math.max(prev - 1, 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 disabled={currentPage === 1}
-                className="px-4 py-1.5 rounded-lg text-sm font-medium text-[#00305f] bg-white/50 hover:bg-white/80 border border-white/70 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-4 py-1.5 rounded-lg text-sm font-medium text-brand-navy dark:text-white bg-white/50 dark:bg-white/[0.06] hover:bg-white/80 dark:hover:bg-white/[0.12] border border-white/70 dark:border-white/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
                 Page {currentPage} of {totalPages}
               </span>
               <button
                 onClick={() => { setCurrentPage(prev => Math.min(prev + 1, totalPages)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 disabled={currentPage >= totalPages}
-                className="px-4 py-1.5 rounded-lg text-sm font-medium text-[#00305f] bg-white/50 hover:bg-white/80 border border-white/70 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-4 py-1.5 rounded-lg text-sm font-medium text-brand-navy dark:text-white bg-white/50 dark:bg-white/[0.06] hover:bg-white/80 dark:hover:bg-white/[0.12] border border-white/70 dark:border-white/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -502,17 +528,17 @@ export default function CourseCommentsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 text-base mb-2">
+            <MessageSquare className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <p className="text-gray-500 dark:text-gray-400 text-base mb-2">
               {courseCode ? 'No comments found for this filter.' : 'No course code provided.'}
             </p>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 dark:text-gray-500 text-sm">
               {courseCode ? 'Try switching to a different tab.' : 'Navigate here from a course page.'}
             </p>
             {courseCode && activeTab !== 'all' && (
               <button
                 onClick={() => handleTabChange('all')}
-                className="mt-5 px-5 py-2 rounded-full text-sm font-medium bg-[#00305f]/10 text-[#00305f] hover:bg-[#00305f]/15 transition-colors border border-[#00305f]/20"
+                className="mt-5 px-5 py-2 rounded-full text-sm font-medium bg-brand-navy/10 dark:bg-blue-400/10 text-brand-navy dark:text-white hover:bg-brand-navy/15 dark:hover:bg-blue-500/15 transition-colors border border-brand-navy/20 dark:border-blue-400/20"
               >
                 View all comments
               </button>
@@ -523,7 +549,7 @@ export default function CourseCommentsPage() {
           </div>
         )}
 
-        <p className="text-center text-xs text-gray-400 mt-8">
+        <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-8">
           Comments are aggregated from public sources and may not reflect current course structure.
         </p>
       </div>

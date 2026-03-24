@@ -27,30 +27,30 @@ export function SignInModal({ isOpen, onClose, onLogin, onSignUp }: SignInModalP
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ type: "spring", duration: 0.5 }}
-        className="relative bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4 z-50"
+        className="relative bg-white dark:bg-gray-900 rounded-xl shadow-xl p-6 max-w-md w-full mx-4 z-50"
       >
         <div className="flex flex-col items-center text-center">
-          <div className="w-16 h-16 bg-[#00305f]/10 rounded-full flex items-center justify-center mb-4">
-            <Lock className="h-8 w-8 text-[#00305f]" />
+          <div className="w-16 h-16 bg-brand-navy/10 dark:bg-blue-400/10 rounded-full flex items-center justify-center mb-4">
+            <Lock className="h-8 w-8 text-brand-navy dark:text-white" />
           </div>
 
-          <h2 className="text-2xl font-bold text-[#00305f] mb-2">Sign in required</h2>
+          <h2 className="text-2xl font-bold text-brand-navy dark:text-white mb-2">Sign in required</h2>
 
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             Please log in to upload course distributions. Your contributions help other students make informed
             decisions!
           </p>
 
           <div className="flex flex-col sm:flex-row w-full gap-3 mb-4">
-            <Button onClick={onLogin} className="w-full bg-[#00305f] hover:bg-[#00305f]/90">
+            <Button onClick={onLogin} className="w-full bg-brand-navy hover:bg-brand-navy/90 dark:hover:bg-blue-500/90">
               Log in
             </Button>
-            <Button onClick={onSignUp} className="w-full bg-[#d62839] hover:bg-[#d62839]/90">
+            <Button onClick={onSignUp} className="w-full bg-brand-red hover:bg-brand-red/90">
               Sign up
             </Button>
           </div>
 
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-sm font-medium">
+          <button onClick={onClose} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 text-sm font-medium">
             Cancel
           </button>
         </div>

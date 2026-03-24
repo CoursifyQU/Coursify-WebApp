@@ -50,6 +50,15 @@ export default function About() {
           color: transparent;
         }
 
+        :is(.dark) .gradient-text {
+          background: linear-gradient(-45deg, #4a9eff, #ff4d5e, #ffc940, #4a9eff);
+          background-size: 300% 300%;
+          animation: gradient-shift 6s ease infinite;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
         .moving-gradient {
           background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
           background-size: 300% 300%;
@@ -61,6 +70,15 @@ export default function About() {
           display: inline-block;
         }
 
+        :is(.dark) .moving-gradient {
+          background: linear-gradient(-45deg, #4a9eff, #ff4d5e, #ffc940, #4a9eff);
+          background-size: 300% 300%;
+          animation: gradient-shift 6s ease infinite;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
         @keyframes gradient-shift {
           0%   { background-position: 0% 50%; }
           50%  { background-position: 100% 50%; }
@@ -69,9 +87,9 @@ export default function About() {
       `}</style>
 
       <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
-        <div className="liquid-blob w-[500px] h-[440px] bg-[#d62839] top-0 right-0 opacity-[0.05]" style={{ animationDelay: '0s' }} />
-        <div className="liquid-blob-alt w-[420px] h-[480px] bg-[#00305f] bottom-0 left-0 opacity-[0.05]" style={{ animationDelay: '-6s' }} />
-        <div className="liquid-blob w-[300px] h-[300px] bg-[#efb215] top-1/3 left-1/2 opacity-[0.04]" style={{ animationDelay: '-12s' }} />
+        <div className="liquid-blob w-[500px] h-[440px] bg-brand-red top-0 right-0 opacity-[0.05]" style={{ animationDelay: '0s' }} />
+        <div className="liquid-blob-alt w-[420px] h-[480px] bg-brand-navy bottom-0 left-0 opacity-[0.05]" style={{ animationDelay: '-6s' }} />
+        <div className="liquid-blob w-[300px] h-[300px] bg-brand-gold top-1/3 left-1/2 opacity-[0.04]" style={{ animationDelay: '-12s' }} />
       </div>
 
       <div className="container pt-12 pb-0 px-4 md:px-6 lg:px-8 relative z-10">
@@ -88,14 +106,14 @@ export default function About() {
             style={{ background: "radial-gradient(circle, rgba(214,40,57,0.14) 0%, rgba(214,40,57,0.05) 42%, transparent 74%)" }}
           />
           <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full glass-pill mb-4">
-            <span className="text-[#00305f] text-sm font-semibold mr-2">Our Story</span>
+            <span className="text-brand-navy dark:text-blue-400 text-sm font-semibold mr-2">Our Story</span>
             <span className="flex h-1.5 w-1.5 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d62839] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#d62839]"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-red"></span>
             </span>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            <span className="text-[#00305f]">About</span> <span className="gradient-text">Coursify</span>
+            <span className="text-brand-navy dark:text-white">About</span> <span className="gradient-text">Coursify</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-6">
             Helping Queen&apos;s University students make informed academic decisions through data and AI.
@@ -103,7 +121,7 @@ export default function About() {
           <Button
             onClick={scrollToFeatures}
             variant="outline"
-            className="group border-[#d62839] text-[#d62839] hover:bg-[#d62839] hover:text-white"
+            className="group border-brand-red text-brand-red hover:bg-brand-red hover:text-white dark:border-red-400 dark:text-red-400 dark:hover:bg-red-500 dark:hover:text-white"
           >
             <span className="flex items-center">
               See Features
@@ -116,20 +134,20 @@ export default function About() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20 max-w-5xl mx-auto">
           <div>
             <div className="relative">
-              <div className="absolute -left-4 -top-4 w-12 h-12 bg-[#efb215]/20 rounded-full blur-lg"></div>
-              <h2 className="text-2xl font-bold mb-6 text-[#00305f] relative z-10">Our Mission</h2>
+              <div className="absolute -left-4 -top-4 w-12 h-12 bg-brand-gold/20 rounded-full blur-lg"></div>
+              <h2 className="text-2xl font-bold mb-6 text-brand-navy dark:text-white relative z-10">Our Mission</h2>
             </div>
             <div className="space-y-4">
-              <p className="text-gray-700">
+              <p className="text-gray-700 dark:text-gray-300">
                 Coursify was created to address a critical gap in the Queen&apos;s University student experience: the
                 lack of comprehensive, accessible data about courses and their historical performance.
               </p>
-              <p className="text-gray-700">
+              <p className="text-gray-700 dark:text-gray-300">
                 We believe that students should have access to detailed information about courses, including grade
                 distributions, professor performance, and peer experiences, to make informed decisions about their
                 academic journey.
               </p>
-              <p className="text-gray-700">
+              <p className="text-gray-700 dark:text-gray-300">
                 By combining official university data with cutting-edge AI technology, we&apos;ve built a platform that
                 empowers students to optimize their course selections and academic planning.
               </p>
@@ -138,7 +156,7 @@ export default function About() {
               <Button
                 asChild
                 variant="outline"
-                className="group border-[#00305f] text-[#00305f] hover:bg-[#00305f] hover:text-white"
+                className="group border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-500 dark:hover:text-white"
               >
                 <Link href="/schools/queens">
                   <span className="flex items-center">
@@ -151,24 +169,24 @@ export default function About() {
           </div>
 
           <div className="glass-card rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-6 text-[#00305f]">Platform Stats</h2>
+            <h2 className="text-2xl font-bold mb-6 text-brand-navy dark:text-white">Platform Stats</h2>
             <div className="grid grid-cols-2 gap-4">
               {[
-                { icon: <BarChart3 className="h-5 w-5 text-[#00305f]" />, value: "500+", label: "Courses Tracked", valueColor: "text-[#d62839]", bg: "rgba(0,48,95,0.07)" },
-                { icon: <BarChart3 className="h-5 w-5 text-[#d62839]" />, value: "8+", label: "Semesters of Data", valueColor: "text-[#00305f]", bg: "rgba(214,40,57,0.07)" },
-                { icon: <MessageSquare className="h-5 w-5 text-[#efb215]" />, value: "50+", label: "Departments", valueColor: "text-[#d62839]", bg: "rgba(239,178,21,0.07)" },
-                { icon: <Brain className="h-5 w-5 text-[#00305f]" />, value: "1000s", label: "Students Helped", valueColor: "text-[#00305f]", bg: "rgba(0,48,95,0.07)" },
+                { icon: <BarChart3 className="h-5 w-5 text-brand-navy dark:text-blue-400" />, value: "500+", label: "Courses Tracked", valueColor: "text-brand-red", bg: "rgba(0,48,95,0.07)", darkBg: "rgba(74,158,255,0.1)" },
+                { icon: <BarChart3 className="h-5 w-5 text-brand-red" />, value: "8+", label: "Semesters of Data", valueColor: "text-brand-navy dark:text-blue-400", bg: "rgba(214,40,57,0.07)", darkBg: "rgba(214,40,57,0.1)" },
+                { icon: <MessageSquare className="h-5 w-5 text-brand-gold" />, value: "50+", label: "Departments", valueColor: "text-brand-red", bg: "rgba(239,178,21,0.07)", darkBg: "rgba(239,178,21,0.1)" },
+                { icon: <Brain className="h-5 w-5 text-brand-navy dark:text-blue-400" />, value: "1000s", label: "Students Helped", valueColor: "text-brand-navy dark:text-blue-400", bg: "rgba(0,48,95,0.07)", darkBg: "rgba(74,158,255,0.1)" },
               ].map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-xl p-5 text-center"
-                  style={{ background: stat.bg }}
+                  className="rounded-xl p-5 text-center bg-[--stat-bg]"
+                  style={{ "--stat-bg": stat.bg } as React.CSSProperties}
                 >
                   <div className="w-11 h-11 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: stat.bg }}>
                     {stat.icon}
                   </div>
                   <p className={`text-3xl font-bold ${stat.valueColor}`}>{stat.value}</p>
-                  <p className="text-sm text-gray-600 mt-1">{stat.label}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -190,10 +208,10 @@ export default function About() {
           <div className="relative z-10">
             <div className="text-center mb-10">
               <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full glass-pill mb-4">
-                <span className="text-[#d62839] text-sm font-semibold">Our Team</span>
+                <span className="text-brand-red text-sm font-semibold">Our Team</span>
               </div>
-              <h2 className="text-3xl font-bold mb-4 text-[#00305f]">Meet the Team</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold mb-4 text-brand-navy dark:text-white">Meet the Team</h2>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
                 We&apos;re a group of passionate Queen&apos;s students dedicated to improving the academic experience.
               </p>
             </div>
@@ -202,18 +220,18 @@ export default function About() {
               <Card className="glass-card rounded-2xl border-0 h-full">
                 <CardContent className="p-6 h-full">
                   <div className="flex flex-col items-center text-center h-full">
-                    <div className="w-20 h-20 bg-gradient-to-br from-[#00305f]/80 to-[#00305f] rounded-full flex items-center justify-center mb-4 shadow-lg">
+                    <div className="w-20 h-20 bg-gradient-to-br from-brand-navy/80 to-brand-navy rounded-full flex items-center justify-center mb-4 shadow-lg">
                       <span className="text-xl font-bold text-white">AJ</span>
                     </div>
-                    <h3 className="text-lg font-bold text-[#00305f]">Amaan Javed</h3>
-                    <p className="text-[#d62839] mb-3">Team Lead</p>
-                    <p className="mb-4 text-gray-600 text-sm flex-grow">Queen&apos;s Computing &apos;27</p>
+                    <h3 className="text-lg font-bold text-brand-navy dark:text-white">Amaan Javed</h3>
+                    <p className="text-brand-red mb-3">Team Lead</p>
+                    <p className="mb-4 text-gray-600 dark:text-gray-400 text-sm flex-grow">Queen&apos;s Computing &apos;27</p>
                     <div className="flex space-x-3 mt-auto">
                       <a
                         href="https://github.com/amaanjaved1"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
+                        className="text-gray-400 dark:text-gray-500 hover:text-brand-navy dark:hover:text-blue-400 transition-colors duration-300"
                       >
                         <Github className="h-4 w-4" />
                       </a>
@@ -221,13 +239,13 @@ export default function About() {
                         href="https://www.linkedin.com/in/amaan-javed/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
+                        className="text-gray-400 dark:text-gray-500 hover:text-brand-navy dark:hover:text-blue-400 transition-colors duration-300"
                       >
                         <Linkedin className="h-4 w-4" />
                       </a>
                       <button
                         onClick={() => copyToClipboard("amaan.javed@queensu.ca", "Amaan")}
-                        className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
+                        className="text-gray-400 dark:text-gray-500 hover:text-brand-navy dark:hover:text-blue-400 transition-colors duration-300"
                       >
                         <Mail className="h-4 w-4" />
                       </button>
@@ -239,18 +257,18 @@ export default function About() {
               <Card className="glass-card rounded-2xl border-0 h-full">
                 <CardContent className="p-6 h-full">
                   <div className="flex flex-col items-center text-center h-full">
-                    <div className="w-20 h-20 bg-gradient-to-br from-[#d62839]/80 to-[#d62839] rounded-full flex items-center justify-center mb-4 shadow-lg">
+                    <div className="w-20 h-20 bg-gradient-to-br from-brand-red/80 to-brand-red rounded-full flex items-center justify-center mb-4 shadow-lg">
                       <span className="text-xl font-bold text-white">AA</span>
                     </div>
-                    <h3 className="text-lg font-bold text-[#00305f]">Aayush Aryal</h3>
-                    <p className="text-[#d62839] mb-3">Lead Web Developer</p>
-                    <p className="mb-4 text-gray-600 text-sm flex-grow">Queen&apos;s Computing &apos;28</p>
+                    <h3 className="text-lg font-bold text-brand-navy dark:text-white">Aayush Aryal</h3>
+                    <p className="text-brand-red mb-3">Lead Web Developer</p>
+                    <p className="mb-4 text-gray-600 dark:text-gray-400 text-sm flex-grow">Queen&apos;s Computing &apos;28</p>
                     <div className="flex space-x-3 mt-auto">
                       <a
                         href="https://github.com/aayusha59"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
+                        className="text-gray-400 dark:text-gray-500 hover:text-brand-navy dark:hover:text-blue-400 transition-colors duration-300"
                       >
                         <Github className="h-4 w-4" />
                       </a>
@@ -258,13 +276,13 @@ export default function About() {
                         href="https://www.linkedin.com/in/aayush-aryal1/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
+                        className="text-gray-400 dark:text-gray-500 hover:text-brand-navy dark:hover:text-blue-400 transition-colors duration-300"
                       >
                         <Linkedin className="h-4 w-4" />
                       </a>
                       <button
                         onClick={() => copyToClipboard("23wv35@queensu.ca", "Aayush")}
-                        className="text-gray-400 hover:text-[#00305f] transition-colors duration-300"
+                        className="text-gray-400 dark:text-gray-500 hover:text-brand-navy dark:hover:text-blue-400 transition-colors duration-300"
                       >
                         <Mail className="h-4 w-4" />
                       </button>
@@ -290,40 +308,40 @@ export default function About() {
           />
           <div className="relative z-10">
             <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full glass-pill mb-4">
-              <span className="text-[#efb215] text-sm font-semibold">Features</span>
+              <span className="text-brand-gold text-sm font-semibold">Features</span>
             </div>
-            <h2 className="text-3xl font-bold mb-6 text-[#00305f]">What Coursify Offers</h2>
-            <p className="mb-10 text-gray-600 max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold mb-6 text-brand-navy dark:text-white">What Coursify Offers</h2>
+            <p className="mb-10 text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               Everything you need to make smarter course decisions, all in one place.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-2">
               <div className="glass-card rounded-2xl p-6">
-                <div className="w-12 h-12 bg-[#00305f]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BarChart3 className="h-5 w-5 text-[#00305f]" />
+                <div className="w-12 h-12 bg-brand-navy/10 dark:bg-blue-400/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BarChart3 className="h-5 w-5 text-brand-navy dark:text-blue-400" />
                 </div>
-                <h3 className="font-bold text-lg text-[#00305f] mb-3">Grade Distributions & Enrollment</h3>
-                <p className="text-gray-600">
+                <h3 className="font-bold text-lg text-brand-navy dark:text-white mb-3">Grade Distributions & Enrollment</h3>
+                <p className="text-gray-600 dark:text-gray-400">
                   View historical course grade distributions and enrollment data to understand course difficulty and class sizes before you register.
                 </p>
               </div>
 
               <div className="glass-card rounded-2xl p-6">
-                <div className="w-12 h-12 bg-[#d62839]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MessageSquare className="h-5 w-5 text-[#d62839]" />
+                <div className="w-12 h-12 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MessageSquare className="h-5 w-5 text-brand-red" />
                 </div>
-                <h3 className="font-bold text-lg text-[#00305f] mb-3">Real Student Comments</h3>
-                <p className="text-gray-600">
+                <h3 className="font-bold text-lg text-brand-navy dark:text-white mb-3">Real Student Comments</h3>
+                <p className="text-gray-600 dark:text-gray-400">
                   Read past student comments sourced from RateMyProfessors and Reddit to get honest, unfiltered perspectives on courses and professors.
                 </p>
               </div>
 
               <div className="glass-card rounded-2xl p-6">
-                <div className="w-12 h-12 bg-[#efb215]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Brain className="h-5 w-5 text-[#efb215]" />
+                <div className="w-12 h-12 bg-brand-gold/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Brain className="h-5 w-5 text-brand-gold" />
                 </div>
-                <h3 className="font-bold text-lg text-[#00305f] mb-3">AI Chat Assistant</h3>
-                <p className="text-gray-600">
+                <h3 className="font-bold text-lg text-brand-navy dark:text-white mb-3">AI Chat Assistant</h3>
+                <p className="text-gray-600 dark:text-gray-400">
                   Chat with our custom AI trained on real student comments to get instant, personalized answers about any course or professor.
                 </p>
               </div>
@@ -340,12 +358,12 @@ export default function About() {
           <div className="container mx-auto px-4 sm:px-6 md:px-8 relative z-10">
             <div className="max-w-2xl mx-auto text-center">
               <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full glass-pill mb-4">
-                <span className="text-[#00305f] text-sm font-semibold">Open Source</span>
+                <span className="text-brand-navy dark:text-blue-400 text-sm font-semibold">Open Source</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 leading-tight text-[#00305f]">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 leading-tight text-brand-navy dark:text-white">
                 Built in the Open
               </h2>
-              <p className="text-sm sm:text-base text-gray-700 mb-7 max-w-2xl mx-auto">
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-7 max-w-2xl mx-auto">
                 We&apos;ve open-sourced our entire codebase so students can contribute improvements and so other schools can set up a similar platform for their own students.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-7">
@@ -372,8 +390,8 @@ export default function About() {
                   </span>
                 </a>
               </div>
-              <p className="text-xs text-gray-500">
-                Visit our <a href="https://github.com/CoursifyQU" target="_blank" rel="noopener noreferrer" className="text-[#00305f] hover:text-[#d62839] font-medium transition-colors duration-200">GitHub organization</a> to see all repositories.
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Visit our <a href="https://github.com/CoursifyQU" target="_blank" rel="noopener noreferrer" className="text-brand-navy dark:text-blue-400 hover:text-brand-red dark:hover:text-red-400 font-medium transition-colors duration-200">GitHub organization</a> to see all repositories.
               </p>
             </div>
           </div>
@@ -381,16 +399,16 @@ export default function About() {
       </div>
 
       {/* Footer */}
-      <footer className="relative overflow-hidden border-t border-white/60 py-4" style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px) saturate(180%)', WebkitBackdropFilter: 'blur(28px) saturate(180%)' }}>
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+      <footer className="relative overflow-hidden border-t border-white/60 dark:border-white/5 py-4 bg-white/45 dark:bg-slate-900/45 backdrop-blur-[28px]">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/80 dark:via-white/10 to-transparent" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
             <div className="mb-1 md:mb-0">
               <div className="inline-block mb-1">
-                <span className="font-bold text-[#00305f] text-sm tracking-tight">Cours</span>
-                <span className="font-bold text-[#d62839] text-sm tracking-tight">ify</span>
+                <span className="font-bold text-brand-navy dark:text-blue-400 text-sm tracking-tight">Cours</span>
+                <span className="font-bold text-brand-red text-sm tracking-tight">ify</span>
               </div>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 dark:text-gray-400">
                 Platform for{" "}
                 <span className="moving-gradient font-medium">
                   Queen&apos;s Students
@@ -400,19 +418,19 @@ export default function About() {
                   Queen&apos;s Students
                 </span>
               </p>
-              <p className="text-xs text-gray-400 mt-0.5 italic">
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 italic">
                 Not affiliated with or endorsed by Queen&apos;s University
               </p>
             </div>
 
-            <div className="text-xs text-gray-600 flex items-center gap-2">
+            <div className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2">
               <span className="moving-gradient font-medium">
                 © {new Date().getFullYear()} Coursify
               </span>
-              <span className="text-gray-300">•</span>
+              <span className="text-gray-300 dark:text-gray-600">•</span>
               <Link
                 href="/about"
-                className="text-[#00305f] hover:text-[#d62839] transition-colors duration-200 font-medium"
+                className="text-brand-navy dark:text-blue-400 hover:text-brand-red dark:hover:text-red-400 transition-colors duration-200 font-medium"
               >
                 About Us
               </Link>

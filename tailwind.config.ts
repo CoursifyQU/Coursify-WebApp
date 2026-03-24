@@ -22,6 +22,9 @@ const config: Config = {
         'nav': '850px',
       },
       colors: {
+        "brand-navy": "#00305f",
+        "brand-red": "#d62839",
+        "brand-gold": "#efb215",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

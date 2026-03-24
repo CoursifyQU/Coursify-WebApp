@@ -295,18 +295,85 @@ export default function QueensCourses() {
           border-radius: 0.75rem;
           padding: 0.5rem;
         }
+
+        /* ── Dark-mode overrides ── */
+        :is(.dark) .mesh-gradient {
+          background-color: hsla(220, 20%, 10%, 1);
+          background-image:
+            radial-gradient(at 21% 33%, hsla(225, 100%, 30%, 0.15) 0px, transparent 50%),
+            radial-gradient(at 79% 76%, hsla(352, 71%, 40%, 0.12) 0px, transparent 50%),
+            radial-gradient(at 96% 10%, hsla(43, 83%, 40%, 0.10) 0px, transparent 50%);
+        }
+
+        :is(.dark) .dot-pattern {
+          background-image: radial-gradient(circle, #4a9eff 1px, transparent 1px);
+        }
+
+        :is(.dark) .gradient-text {
+          background: linear-gradient(-45deg, #4a9eff, #ff4d5e, #ffc940, #4a9eff);
+          background-size: 300% 300%;
+          animation: gradient-shift 6s ease infinite;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          color: transparent;
+        }
+
+        :is(.dark) .glass-card-deep {
+          background: rgba(30, 41, 59, 0.72);
+          backdrop-filter: blur(28px) saturate(170%);
+          -webkit-backdrop-filter: blur(28px) saturate(170%);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.3),
+            0 2px 8px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05),
+            inset 0 -1px 0 rgba(255, 255, 255, 0.02);
+        }
+
+        :is(.dark) .glass-card-deep:hover {
+          box-shadow:
+            0 16px 48px rgba(0, 0, 0, 0.4),
+            0 4px 14px rgba(0, 0, 0, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08),
+            inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+        }
+
+        :is(.dark) .glass-btn:hover,
+        :is(.dark) .glass-btn:focus {
+          background: rgba(30, 41, 59, 0.55) !important;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+        }
+
+        :is(.dark) [cmdk-item][data-selected="true"],
+        :is(.dark) [cmdk-item][aria-selected="true"],
+        :is(.dark) [role="option"][data-selected="true"],
+        :is(.dark) [role="option"][aria-selected="true"] {
+          background-color: rgba(74, 158, 255, 0.15) !important;
+          color: #4a9eff !important;
+        }
+
+        :is(.dark) .search-glass {
+          background: rgba(30, 41, 59, 0.72);
+          backdrop-filter: blur(20px) saturate(160%);
+          -webkit-backdrop-filter: blur(20px) saturate(160%);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow:
+            0 4px 20px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
       `}</style>
 
       {/* Background elements */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#d62839]/8 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#00305f]/8 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-[#efb215]/7 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/8 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-navy/8 dark:bg-blue-400/8 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-brand-gold/7 rounded-full blur-3xl"></div>
       </div>
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="liquid-blob w-[420px] h-[320px] bg-[#d62839] -top-10 -right-20"></div>
-        <div className="liquid-blob-alt w-[360px] h-[280px] bg-[#00305f] -bottom-10 -left-20"></div>
+        <div className="liquid-blob w-[420px] h-[320px] bg-brand-red -top-10 -right-20"></div>
+        <div className="liquid-blob-alt w-[360px] h-[280px] bg-brand-navy -bottom-10 -left-20"></div>
         <div className="dot-pattern absolute inset-0 opacity-[0.06]"></div>
       </div>
 
@@ -319,14 +386,14 @@ export default function QueensCourses() {
           className="mb-12 text-center lg-filters:text-left"
         >
           <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full glass-pill mb-4">
-            <span className="text-[#00305f] text-sm font-medium mr-2">Course Explorer</span>
+            <span className="text-brand-navy dark:text-white text-sm font-medium mr-2">Course Explorer</span>
             <span className="flex h-1.5 w-1.5 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d62839] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#d62839]"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-red"></span>
             </span>
           </div>
           <h1 className="text-3xl lg-filters:text-4xl font-bold mb-4">
-            <span className="text-[#00305f]">Queen's University</span> <span className="gradient-text">Courses</span>
+            <span className="text-brand-navy dark:text-white">Queen's University</span> <span className="gradient-text">Courses</span>
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto lg-filters:mx-0">
             Browse and filter through all courses offered at Queen's University. View grade distributions, enrollment
@@ -344,14 +411,14 @@ export default function QueensCourses() {
           <div className="flex-1">
             <div className="search-glass">
               <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-7 h-7 rounded-lg bg-[#00305f]/10">
-                  <Search className="h-3.5 w-3.5 text-[#00305f]" />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-7 h-7 rounded-lg bg-brand-navy/10 dark:bg-blue-400/10">
+                  <Search className="h-3.5 w-3.5 text-brand-navy dark:text-white" />
                 </div>
                 <Input
                   placeholder="Search by course code or name..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12 bg-transparent border-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none text-[#00305f] placeholder:text-[#00305f]/40"
+                  className="pl-12 bg-transparent border-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none text-brand-navy dark:text-white placeholder:text-brand-navy/40 dark:placeholder:text-white/40"
                 />
               </div>
             </div>
@@ -360,7 +427,7 @@ export default function QueensCourses() {
             <Button
               variant="ghost"
               onClick={() => setShowFilters(!showFilters)}
-              className="lg-filters:hidden glass-btn border-0 text-[#00305f] hover:bg-white/30"
+              className="lg-filters:hidden glass-btn border-0 text-brand-navy dark:text-white hover:bg-white/30"
             >
               <Filter className="h-4 w-4 mr-2" />
               Filters
@@ -371,7 +438,7 @@ export default function QueensCourses() {
               className={`whitespace-nowrap ${
                 hasActiveFilters
                   ? "liquid-btn-red border-0 text-white hover:bg-transparent"
-                  : "glass-btn border-0 text-[#d62839] hover:bg-white/30"
+                  : "glass-btn border-0 text-brand-red hover:bg-white/30"
               }`}
             >
               <X className="h-4 w-4 mr-2" />
@@ -389,7 +456,7 @@ export default function QueensCourses() {
           >
             <div className="glass-card-deep rounded-xl p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-medium flex items-center text-[#00305f]">
+                <h3 className="font-medium flex items-center text-brand-navy dark:text-white">
                   <SlidersHorizontal className="h-4 w-4 mr-2" />
                   Filters
                 </h3>
@@ -401,14 +468,14 @@ export default function QueensCourses() {
               <div className="space-y-6">
                 {/* Department Dropdown */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block text-[#00305f]">Department</label>
+                  <label className="text-sm font-medium mb-2 block text-brand-navy dark:text-white">Department</label>
                   <Popover open={departmentOpen} onOpenChange={setDepartmentOpen}>
                     <PopoverTrigger asChild>
                       <Button
                         variant="ghost"
                         role="combobox"
                         aria-expanded={departmentOpen}
-                        className="w-full justify-between glass-btn border-0 text-[#00305f] hover:bg-white/30 transition-colors duration-300"
+                        className="w-full justify-between glass-btn border-0 text-brand-navy dark:text-white hover:bg-white/30 transition-colors duration-300"
                       >
                         {selectedDepartments.length > 0
                           ? `${selectedDepartments.length} selected`
@@ -444,14 +511,14 @@ export default function QueensCourses() {
 
                 {/* Course Level Dropdown */}
                 <div className="mt-6">
-                  <label className="text-sm font-medium mb-2 block text-[#00305f]">Course Level</label>
+                  <label className="text-sm font-medium mb-2 block text-brand-navy dark:text-white">Course Level</label>
                   <Popover open={levelOpen} onOpenChange={setLevelOpen}>
                     <PopoverTrigger asChild>
                       <Button
                         variant="ghost"
                         role="combobox"
                         aria-expanded={levelOpen}
-                        className="w-full justify-between glass-btn border-0 text-[#00305f] hover:bg-white/30 transition-colors duration-300"
+                        className="w-full justify-between glass-btn border-0 text-brand-navy dark:text-white hover:bg-white/30 transition-colors duration-300"
                       >
                         {selectedLevels.length > 0 ? `${selectedLevels.length} selected` : "Select levels"}
                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -483,7 +550,7 @@ export default function QueensCourses() {
 
                 {/* GPA Range with Circle Handles */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block text-[#00305f]">GPA Range</label>
+                  <label className="text-sm font-medium mb-2 block text-brand-navy dark:text-white">GPA Range</label>
                   <div className="pt-4 px-2">
                     <Slider
                       defaultValue={[0, 4.3]}
@@ -497,7 +564,7 @@ export default function QueensCourses() {
                       step={0.1}
                       className="mb-6"
                     />
-                    <div className="flex justify-between text-sm text-[#00305f]">
+                    <div className="flex justify-between text-sm text-brand-navy dark:text-white">
                       <span className="font-medium">{gpaRange[0].toFixed(1)}</span>
                       <span className="font-medium">{gpaRange[1].toFixed(1)}</span>
                     </div>
@@ -514,12 +581,12 @@ export default function QueensCourses() {
                     {selectedDepartments.map((dept) => (
                       <Badge
                         key={dept}
-                        className="bg-[#00305f]/10 text-[#00305f] hover:bg-[#00305f]/20 flex items-center"
+                        className="bg-brand-navy/10 dark:bg-blue-400/10 text-brand-navy dark:text-white hover:bg-brand-navy/20 dark:hover:bg-blue-400/20 flex items-center"
                       >
                         {dept}
                         <button
                           onClick={() => setSelectedDepartments(selectedDepartments.filter((d) => d !== dept))}
-                          className="ml-1 hover:text-[#d62839]"
+                          className="ml-1 hover:text-brand-red"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -528,21 +595,21 @@ export default function QueensCourses() {
                     {selectedLevels.map((level) => (
                       <Badge
                         key={level}
-                        className="bg-[#00305f]/10 text-[#00305f] hover:bg-[#00305f]/20 flex items-center"
+                        className="bg-brand-navy/10 dark:bg-blue-400/10 text-brand-navy dark:text-white hover:bg-brand-navy/20 dark:hover:bg-blue-400/20 flex items-center"
                       >
                         {level}-Level
                         <button
                           onClick={() => setSelectedLevels(selectedLevels.filter((l) => l !== level))}
-                          className="ml-1 hover:text-[#d62839]"
+                          className="ml-1 hover:text-brand-red"
                         >
                           <X className="h-3 w-3" />
                         </button>
                       </Badge>
                     ))}
                     {(gpaRange[0] > 0 || gpaRange[1] < 4.3) && (
-                      <Badge className="bg-[#00305f]/10 text-[#00305f] hover:bg-[#00305f]/20 flex items-center">
+                      <Badge className="bg-brand-navy/10 dark:bg-blue-400/10 text-brand-navy dark:text-white hover:bg-brand-navy/20 dark:hover:bg-blue-400/20 flex items-center">
                         GPA: {gpaRange[0].toFixed(1)} - {gpaRange[1].toFixed(1)}
-                        <button onClick={() => setGpaRange([0, 4.3])} className="ml-1 hover:text-[#d62839]">
+                        <button onClick={() => setGpaRange([0, 4.3])} className="ml-1 hover:text-brand-red">
                           <X className="h-3 w-3" />
                         </button>
                       </Badge>
@@ -563,8 +630,8 @@ export default function QueensCourses() {
             {loading ? (
               <div className="glass-card-deep rounded-xl p-8 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00305f] mx-auto"></div>
-                  <p className="mt-4 text-gray-600">Loading course data...</p>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-navy dark:border-blue-400 mx-auto"></div>
+                  <p className="mt-4 text-gray-600 dark:text-gray-400">Loading course data...</p>
                 </div>
               </div>
             ) : (
@@ -572,23 +639,23 @@ export default function QueensCourses() {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="bg-[#00305f]/5">
-                        <th className="px-4 py-3 text-left text-sm font-medium text-[#00305f]">
+                      <tr className="bg-brand-navy/5 dark:bg-blue-400/5">
+                        <th className="px-4 py-3 text-left text-sm font-medium text-brand-navy dark:text-white">
                           <button className="flex items-center" onClick={() => requestSort("code")}>
                             Course Code {getSortIcon("code")}
                           </button>
                         </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-[#00305f]">
+                        <th className="px-4 py-3 text-left text-sm font-medium text-brand-navy dark:text-white">
                           <button className="flex items-center" onClick={() => requestSort("name")}>
                             Course Name {getSortIcon("name")}
                           </button>
                         </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-[#00305f]">
+                        <th className="px-4 py-3 text-left text-sm font-medium text-brand-navy dark:text-white">
                           <button className="flex items-center" onClick={() => requestSort("gpa")}>
                             Avg. GPA {getSortIcon("gpa")}
                           </button>
                         </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-[#00305f]">
+                        <th className="px-4 py-3 text-left text-sm font-medium text-brand-navy dark:text-white">
                           <button className="flex items-center" onClick={() => requestSort("enrollment")}>
                             Enrollment {getSortIcon("enrollment")}
                           </button>
@@ -605,12 +672,12 @@ export default function QueensCourses() {
                         courses.map((course) => (
                           <tr
                             key={course.id}
-                            className="border-t hover:bg-[#00305f]/5 transition-colors duration-200"
+                            className="border-t hover:bg-brand-navy/5 dark:hover:bg-blue-400/5 transition-colors duration-200"
                           >
                             <td className="px-4 py-3 text-sm font-medium">
                               <a
                                 href={`/schools/queens/${course.course_code.replace(/\s+/g, "-").toLowerCase()}`}
-                                className="text-[#d62839] hover:underline"
+                                className="text-brand-red hover:underline"
                               >
                                 {course.course_code}
                               </a>
@@ -627,7 +694,7 @@ export default function QueensCourses() {
                                   <>
                                     <div className="w-16 bg-muted rounded-full h-2 mr-2">
                                       <div
-                                        className="bg-[#00305f] rounded-full h-2"
+                                        className="bg-brand-navy dark:bg-blue-400 rounded-full h-2"
                                         style={{ width: `${Math.min((course.totalEnrollment / 600) * 100, 100)}%` }}
                                       />
                                     </div>
@@ -651,7 +718,7 @@ export default function QueensCourses() {
                   </table>
                 </div>
 
-                <div className="bg-white/40 backdrop-blur-sm px-6 py-4 text-sm text-muted-foreground border-t border-white/60 flex flex-col lg-filters:flex-row justify-between items-center gap-4">
+                <div className="bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm px-6 py-4 text-sm text-muted-foreground border-t border-white/60 dark:border-white/5 flex flex-col lg-filters:flex-row justify-between items-center gap-4">
                   <div>
                     Showing {courses.length > 0 ? (currentPage - 1) * coursesPerPage + 1 : 0}–{Math.min(currentPage * coursesPerPage, total)} of {total} courses
                   </div>
@@ -664,7 +731,7 @@ export default function QueensCourses() {
                         size="sm"
                         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                         disabled={currentPage === 1}
-                        className="glass-btn border-0 text-[#00305f] hover:bg-white/30"
+                        className="glass-btn border-0 text-brand-navy dark:text-white hover:bg-white/30"
                       >
                         Previous
                       </Button>
@@ -676,14 +743,14 @@ export default function QueensCourses() {
                         size="sm"
                         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                         disabled={currentPage >= totalPages}
-                        className="glass-btn border-0 text-[#00305f] hover:bg-white/30"
+                        className="glass-btn border-0 text-brand-navy dark:text-white hover:bg-white/30"
                       >
                         Next
                       </Button>
                     </div>
                   )}
 
-                  <div className="text-xs bg-[#efb215]/10 text-[#efb215] px-3 py-1 rounded-full">
+                  <div className="text-xs bg-brand-gold/10 text-brand-gold px-3 py-1 rounded-full">
                     <strong>Note:</strong> GPA is calculated on a 4.3 scale
                   </div>
                 </div>
@@ -691,8 +758,8 @@ export default function QueensCourses() {
             )}
 
             <div className="mt-6 p-6 glass-card-deep glass-shine rounded-xl relative overflow-hidden">
-              <h3 className="text-lg font-bold text-[#00305f] mb-3">Need Help Choosing?</h3>
-              <p className="text-gray-600 mb-4">
+              <h3 className="text-lg font-bold text-brand-navy dark:text-white mb-3">Need Help Choosing?</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 Our AI assistant can provide personalized course recommendations based on your interests, learning
                 style, and academic goals.
               </p>
