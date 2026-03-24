@@ -2,7 +2,7 @@ import Link from "next/link"
 
 const Footer = () => {
   return (
-    <footer className="relative overflow-hidden border-t border-white/60 py-4" style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(28px) saturate(180%)', WebkitBackdropFilter: 'blur(28px) saturate(180%)' }}>
+    <footer className="relative overflow-hidden border-t border-white/60 dark:border-white/5 py-4 bg-white/45 dark:bg-gray-900/45 backdrop-blur-[28px] backdrop-saturate-[180%]">
       <style jsx global>{`
         .moving-gradient {
           background: linear-gradient(
@@ -35,10 +35,10 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-2">
           <div className="mb-1 md:mb-0">
             <div className="inline-block mb-1">
-              <span className="font-bold text-[#00305f] text-sm tracking-tight">Cours</span>
-              <span className="font-bold text-[#d62839] text-sm tracking-tight">ify</span>
+              <span className="font-bold text-brand-navy dark:text-white text-sm tracking-tight">Cours</span>
+              <span className="font-bold text-brand-red text-sm tracking-tight">ify</span>
             </div>
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-gray-600 dark:text-gray-400">
               Platform for{" "}
               <span className="moving-gradient font-medium">
                 Queen&apos;s Students
@@ -48,19 +48,19 @@ const Footer = () => {
                 Queen&apos;s Students
               </span>
             </p>
-            <p className="text-xs text-gray-400 mt-0.5 italic">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 italic">
               Not affiliated with or endorsed by Queen&apos;s University
             </p>
           </div>
 
-          <div className="text-xs text-gray-600 flex items-center gap-2">
+          <div className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2">
             <span className="moving-gradient font-medium">
               © {new Date().getFullYear()} Coursify
             </span>
-            <span className="text-gray-300">•</span>
+            <span className="text-gray-300 dark:text-gray-600">•</span>
             <Link
               href="/about"
-              className="text-[#00305f] hover:text-[#d62839] transition-colors duration-200 font-medium"
+              className="text-brand-navy dark:text-white hover:text-brand-red transition-colors duration-200 font-medium"
             >
               About Us
             </Link>

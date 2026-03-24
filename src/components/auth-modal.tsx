@@ -44,7 +44,7 @@ export function AuthModal({
             className="glass-modal-panel max-w-md w-full rounded-[1.75rem] p-0 relative"
           >
             <button
-              className="glass-modal-close absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-xl font-bold text-[#00305f]/55 hover:text-[#d62839]"
+              className="glass-modal-close absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-xl font-bold text-brand-navy/55 dark:text-white/55 hover:text-brand-red"
               onClick={onClose}
               aria-label="Close"
             >
@@ -53,13 +53,13 @@ export function AuthModal({
 
             <div className="p-6 pb-5">
               <div className="glass-modal-accent h-1.5 w-24 rounded-full mb-5 opacity-90" />
-              <h2 className="text-2xl font-bold text-[#00305f]">{title}</h2>
-              <p className="mt-2 text-sm leading-6 text-[#00305f]/70">{description}</p>
+              <h2 className="text-2xl font-bold text-brand-navy dark:text-white">{title}</h2>
+              <p className="mt-2 text-sm leading-6 text-brand-navy/70 dark:text-white/70">{description}</p>
             </div>
 
             <div className="px-6 pb-6">
               <div className="glass-card rounded-2xl p-4 mb-6">
-                <p className="text-sm leading-6 text-[#00305f]/78">
+                <p className="text-sm leading-6 text-brand-navy/78 dark:text-white/78">
                   Only Queen's University students with a valid @queensu.ca email address can access this feature.
                 </p>
               </div>

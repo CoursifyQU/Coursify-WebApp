@@ -56,15 +56,15 @@ export default function ForgotPassword() {
       {/* Ambient background blobs */}
       <div className="fixed inset-0 pointer-events-none">
         <div
-          className="liquid-blob w-[500px] h-[400px] bg-[#00305f]"
+          className="liquid-blob w-[500px] h-[400px] bg-brand-navy"
           style={{ top: "-5%", left: "-8%", animationDelay: "0s" }}
         />
         <div
-          className="liquid-blob-alt w-[400px] h-[450px] bg-[#d62839]"
+          className="liquid-blob-alt w-[400px] h-[450px] bg-brand-red"
           style={{ bottom: "-10%", right: "-5%", animationDelay: "-4s" }}
         />
         <div
-          className="liquid-blob w-[350px] h-[350px] bg-[#efb215]"
+          className="liquid-blob w-[350px] h-[350px] bg-brand-gold"
           style={{ top: "40%", left: "45%", animationDelay: "-8s" }}
         />
       </div>
@@ -84,7 +84,7 @@ export default function ForgotPassword() {
           >
             <Link
               href="/sign-in"
-              className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#00305f] transition-colors duration-300"
+              className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-brand-navy dark:hover:text-blue-400 transition-colors duration-300"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to sign in
@@ -97,10 +97,10 @@ export default function ForgotPassword() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <h1 className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight text-[#00305f]">
+            <h1 className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight text-brand-navy dark:text-white">
               Reset Password
             </h1>
-            <p className="text-gray-500 mt-2">
+            <p className="text-gray-500 dark:text-gray-400 mt-2">
               Enter your Queen&apos;s email and we&apos;ll send you a reset link
             </p>
           </motion.div>
@@ -112,16 +112,16 @@ export default function ForgotPassword() {
               transition={{ duration: 0.5 }}
               className="space-y-5"
             >
-              <div className="glass-card rounded-2xl p-6 border-l-4 border-[#00305f]">
-                <h3 className="font-semibold text-lg mb-2 text-[#00305f]">Check your email</h3>
-                <p className="text-gray-600 text-sm">
-                  We&apos;ve sent a password reset link to <strong className="text-[#00305f]">{email}</strong>.
+              <div className="glass-card rounded-2xl p-6 border-l-4 border-brand-navy dark:border-blue-400">
+                <h3 className="font-semibold text-lg mb-2 text-brand-navy dark:text-white">Check your email</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  We&apos;ve sent a password reset link to <strong className="text-brand-navy dark:text-white">{email}</strong>.
                   Please check your inbox and click the link to reset your password.
                 </p>
               </div>
               <Link
                 href="/sign-in"
-                className="block text-center text-[#d62839] hover:text-[#00305f] font-medium text-sm transition-colors duration-300"
+                className="block text-center text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium text-sm transition-colors duration-300"
               >
                 Return to sign in
               </Link>
@@ -133,17 +133,17 @@ export default function ForgotPassword() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                <label className="text-sm font-medium text-gray-500 mb-2 block">
+                <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">
                   Email Address
                 </label>
-                <div className="glass-card rounded-2xl transition-all duration-300 focus-within:border-[#00305f]/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
+                <div className="glass-card rounded-2xl transition-all duration-300 focus-within:border-brand-navy/30 dark:focus-within:border-blue-400/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
                   <input
                     type="email"
                     placeholder="your.name@queensu.ca"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full bg-transparent text-sm text-[#00305f] placeholder:text-gray-400 px-4 py-4 rounded-2xl focus:outline-none"
+                    className="w-full bg-transparent text-sm text-brand-navy dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 px-4 py-4 rounded-2xl focus:outline-none"
                   />
                 </div>
               </motion.div>
@@ -174,7 +174,7 @@ export default function ForgotPassword() {
           {/* Sign in link */}
           {!isSuccess && (
             <motion.p
-              className="text-center text-sm text-gray-500"
+              className="text-center text-sm text-gray-500 dark:text-gray-400"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.5 }}
@@ -182,7 +182,7 @@ export default function ForgotPassword() {
               Remember your password?{" "}
               <Link
                 href="/sign-in"
-                className="text-[#d62839] hover:text-[#00305f] font-medium transition-colors duration-300"
+                className="text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium transition-colors duration-300"
               >
                 Sign in
               </Link>

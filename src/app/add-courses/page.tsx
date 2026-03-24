@@ -119,25 +119,25 @@ export default function AddCoursesPage() {
     <div className="relative min-h-screen overflow-hidden mesh-gradient pt-20">
       {/* Background elements */}
       <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#d62839]/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#00305f]/5 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-[#efb215]/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-navy/5 dark:bg-blue-400/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-brand-gold/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute w-96 h-96 bg-[#d62839]/5 rounded-full blur-3xl -top-10 -right-20"></div>
-        <div className="absolute w-80 h-80 bg-[#00305f]/5 rounded-full blur-3xl -bottom-10 -left-20"></div>
+        <div className="absolute w-96 h-96 bg-brand-red/5 rounded-full blur-3xl -top-10 -right-20"></div>
+        <div className="absolute w-80 h-80 bg-brand-navy/5 dark:bg-blue-400/5 rounded-full blur-3xl -bottom-10 -left-20"></div>
         <div className="dot-pattern absolute inset-0 opacity-[0.08]"></div>
       </div>
 
       <div className="container mx-auto py-12 px-4 md:px-6 relative z-10">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold mb-2 text-[#00305f]">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2 text-brand-navy dark:text-white">
               Add Course <span className="coursify-gradient-text">Distributions</span>
             </h1>
-            <div className="w-24 h-1 bg-[#d62839] mx-auto mb-4"></div>
-            <p className="text-gray-600">Help improve the site and future course selections</p>
+            <div className="w-24 h-1 bg-brand-red mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Help improve the site and future course selections</p>
           </div>
 
           <div className="flex justify-center mb-8">
@@ -152,8 +152,8 @@ export default function AddCoursesPage() {
             </a>
           </div>
 
-          <Card className="overflow-hidden border-none glass-card-deep !p-0" style={{ background: 'rgba(255, 255, 255, 0.85)', boxShadow: '0 8px 32px rgba(0, 48, 95, 0.13), 0 2px 8px rgba(0, 48, 95, 0.07)' }}>
-            <div className="bg-[#00305f] px-6 py-4">
+          <Card className="overflow-hidden border-none glass-card-deep !p-0 bg-white/85 dark:bg-gray-900/85 shadow-[0_8px_32px_rgba(0,48,95,0.13),0_2px_8px_rgba(0,48,95,0.07)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_2px_8px_rgba(0,0,0,0.15)]">
+            <div className="bg-brand-navy px-6 py-4">
               <h2 className="text-lg font-medium text-white">Upload SOLUS Grade Distribution</h2>
             </div>
 
@@ -164,7 +164,7 @@ export default function AddCoursesPage() {
                   {/* Term badge */}
                   {uploadResult.term && (
                     <div className="flex justify-center">
-                      <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-[#00305f]/10 text-[#00305f]">
+                      <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-brand-navy/10 dark:bg-blue-400/10 text-brand-navy dark:text-white">
                         {uploadResult.term}
                       </span>
                     </div>
@@ -263,24 +263,24 @@ export default function AddCoursesPage() {
                 <div className="relative">
                   {/* Loading overlay */}
                   {(uploadPhase === "uploading" || uploadPhase === "validating" || uploadPhase === "processing") && (
-                    <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10 rounded-lg">
+                    <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 flex items-center justify-center z-10 rounded-lg">
                       <div className="flex flex-col items-center">
-                        <div className="w-10 h-10 border-4 border-[#00305f]/20 border-t-[#00305f] rounded-full animate-spin mb-3"></div>
-                        <p className="text-[#00305f] font-medium">{phaseText[uploadPhase]}</p>
+                        <div className="w-10 h-10 border-4 border-brand-navy/20 dark:border-blue-400/20 border-t-brand-navy dark:border-t-blue-400 rounded-full animate-spin mb-3"></div>
+                        <p className="text-brand-navy dark:text-white font-medium">{phaseText[uploadPhase]}</p>
                       </div>
                     </div>
                   )}
 
                   <div
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center hover:border-[#00305f] transition-colors duration-300"
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center hover:border-brand-navy dark:hover:border-blue-400 transition-colors duration-300"
                     onDragOver={handleDragOver}
                     onDrop={handleDrop}
                   >
-                    <div className="w-16 h-16 bg-[#00305f]/10 rounded-full flex items-center justify-center mb-4">
-                      <UploadCloud className="h-8 w-8 text-[#00305f]" />
+                    <div className="w-16 h-16 bg-brand-navy/10 dark:bg-blue-400/10 rounded-full flex items-center justify-center mb-4">
+                      <UploadCloud className="h-8 w-8 text-brand-navy dark:text-white" />
                     </div>
-                    <h3 className="text-xl font-semibold text-[#00305f] mb-2">Drop your file here</h3>
-                    <p className="text-gray-500 text-center mb-6">
+                    <h3 className="text-xl font-semibold text-brand-navy dark:text-white mb-2">Drop your file here</h3>
+                    <p className="text-gray-500 dark:text-gray-400 text-center mb-6">
                       Drag and drop your SOLUS grade distribution PDF,
                       <br />
                       or click to browse
@@ -309,9 +309,9 @@ export default function AddCoursesPage() {
                     )}
                   </div>
 
-                  <div className="mt-6 flex items-start p-4 bg-[#efb215]/15 border border-[#efb215]/30 rounded-lg shadow-sm">
-                    <AlertTriangle className="h-5 w-5 text-[#efb215] mr-3 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-gray-700">
+                  <div className="mt-6 flex items-start p-4 bg-brand-gold/15 border border-brand-gold/30 rounded-lg shadow-sm">
+                    <AlertTriangle className="h-5 w-5 text-brand-gold mr-3 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
                       <span className="font-semibold text-gray-800">Important:</span> Currently, we only support on-campus courses.
                       Online course distributions will be supported in future updates.
                     </p>
@@ -339,6 +339,13 @@ export default function AddCoursesPage() {
             radial-gradient(at 21% 33%, hsla(225, 100%, 19%, 0.05) 0px, transparent 50%),
             radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.05) 0px, transparent 50%),
             radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.05) 0px, transparent 50%);
+        }
+        :is(.dark) .mesh-gradient {
+          background-color: hsla(220, 20%, 10%, 1);
+          background-image:
+            radial-gradient(at 21% 33%, hsla(225, 100%, 30%, 0.08) 0px, transparent 50%),
+            radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.06) 0px, transparent 50%),
+            radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.06) 0px, transparent 50%);
         }
       `}</style>
     </div>

@@ -46,8 +46,8 @@ export const CourseCard = ({ course, index, total }: CourseCardProps) => {
       <div className="p-5">
         <div className="flex justify-between items-start mb-3">
           <div>
-            <h3 className="font-bold text-lg text-[#00305f]">{course.code}</h3>
-            <p className="text-sm text-gray-500">{course.name}</p>
+            <h3 className="font-bold text-lg text-brand-navy dark:text-white">{course.code}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{course.name}</p>
           </div>
           <div className={`text-xl font-bold ${getGpaColor(course.gpa)}`}>{course.gpa.toFixed(1)}</div>
         </div>
@@ -65,7 +65,7 @@ export const CourseCard = ({ course, index, total }: CourseCardProps) => {
 
         <div className="flex flex-wrap gap-1 mb-4">
           {course.tags.map((tag, i) => (
-            <span key={i} className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
+            <span key={i} className="bg-gray-100 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded-full">
               {tag}
             </span>
           ))}
@@ -73,7 +73,7 @@ export const CourseCard = ({ course, index, total }: CourseCardProps) => {
 
         <Link
           href={`/schools/queens/${course.code.replace(/\s+/g, "-").toLowerCase()}`}
-          className="flex items-center justify-center w-full text-sm text-[#00305f] hover:text-[#d62839] transition-colors duration-300 mt-2 group-hover:underline"
+          className="flex items-center justify-center w-full text-sm text-brand-navy dark:text-white hover:text-brand-red transition-colors duration-300 mt-2 group-hover:underline"
         >
           View course details
           <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />

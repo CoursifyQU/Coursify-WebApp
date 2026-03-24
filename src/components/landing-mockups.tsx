@@ -1,0 +1,351 @@
+"use client";
+
+import { Brain } from "lucide-react";
+
+const GRADE_COLORS: Record<string, string> = {
+  "A+": "#4CAF50", A: "#4CAF50", "A-": "#8BC34A",
+  "B+": "#CDDC39", B: "#CDDC39", "B-": "#FFEB3B",
+  "C+": "#FFC107", C: "#FFC107", "C-": "#FF9800",
+  "D+": "#FF5722", D: "#FF5722", "D-": "#F44336",
+  F: "#D32F2F",
+};
+
+const GRADE_DATA = [
+  { grade: "A+", pct: 12 }, { grade: "A", pct: 24 }, { grade: "A-", pct: 20 },
+  { grade: "B+", pct: 16 }, { grade: "B", pct: 12 }, { grade: "B-", pct: 6 },
+  { grade: "C+", pct: 4 }, { grade: "C", pct: 3 }, { grade: "C-", pct: 1.5 },
+  { grade: "D+", pct: 0.8 }, { grade: "D", pct: 0.4 }, { grade: "D-", pct: 0.2 },
+  { grade: "F", pct: 0.5 },
+];
+
+const MAX_PCT = 24;
+
+/* ─────────────────────────────────────────────
+   1. Grade Distribution
+   ───────────────────────────────────────────── */
+
+export function GradeDistributionMockup({ compact = false }: { compact?: boolean }) {
+  const barH = compact ? "h-16" : "h-24";
+  const fontSize = compact ? "text-[7px]" : "text-[9px]";
+  const pad = compact ? "p-3" : "p-5";
+
+  return (
+    <div className={`glass-card rounded-2xl ${pad} w-full select-none`}>
+      <div className="flex items-center justify-between mb-1">
+        <div>
+          <span className={`${compact ? "text-xs" : "text-sm"} font-semibold text-brand-navy dark:text-white`}>CISC 121</span>
+          <span className={`${compact ? "text-[9px]" : "text-xs"} text-gray-400 ml-2`}>Intro to Computing</span>
+        </div>
+        <span className={`${compact ? "text-[8px]" : "text-[10px]"} text-gray-400 bg-white/50 dark:bg-white/5 px-2 py-0.5 rounded-md`}>Fall 2023</span>
+      </div>
+
+      <div className={`flex items-end gap-[3px] ${barH} mt-3`}>
+        {GRADE_DATA.map((d) => (
+          <div key={d.grade} className="flex flex-col items-center flex-1 h-full justify-end">
+            <div
+              className="w-full rounded-t-sm min-h-[2px]"
+              style={{ height: `${(d.pct / MAX_PCT) * 100}%`, background: GRADE_COLORS[d.grade], opacity: 0.85 }}
+            />
+            <span className={`${fontSize} text-gray-400 mt-1 leading-none`}>{d.grade}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div>
+            <div className="text-[9px] text-gray-400">Avg GPA</div>
+            <div className={`${compact ? "text-sm" : "text-base"} font-bold text-brand-navy dark:text-white`}>3.41</div>
+          </div>
+          <div>
+            <div className="text-[9px] text-gray-400">Enrollment</div>
+            <div className={`${compact ? "text-sm" : "text-base"} font-bold text-brand-navy dark:text-white`}>326</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5">
+          {[
+            { label: "A", color: "#4CAF50" },
+            { label: "B", color: "#CDDC39" },
+            { label: "C", color: "#FFC107" },
+            { label: "D", color: "#FF5722" },
+            { label: "F", color: "#D32F2F" },
+          ].map((g) => (
+            <div key={g.label} className="flex items-center gap-0.5">
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: g.color }} />
+              <span className="text-[8px] text-gray-400">{g.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   2. Student Reviews
+   ───────────────────────────────────────────── */
+
+function RedditIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="12" fill="#FF4500" />
+      <path d="M19.5 12a1.5 1.5 0 00-2.55-1.07 7.35 7.35 0 00-4-1.25l.68-3.2 2.22.47a1.07 1.07 0 101.12-1.02l-2.5-.53a.6.6 0 00-.7.47L13 9.68a7.4 7.4 0 00-4.08 1.25A1.5 1.5 0 006 12.93a3.26 3.26 0 00-.05.57c0 2.9 3.38 5.25 7.55 5.25s7.55-2.35 7.55-5.25a3.38 3.38 0 00-.05-.57A1.5 1.5 0 0019.5 12z" fill="white" />
+      <circle cx="9.5" cy="13" r="1" fill="#FF4500" />
+      <circle cx="14.5" cy="13" r="1" fill="#FF4500" />
+      <path d="M9.8 15.8a3.56 3.56 0 004.4 0" stroke="#FF4500" strokeWidth=".8" strokeLinecap="round" fill="none" />
+    </svg>
+  );
+}
+
+export function StudentReviewsMockup({ compact = false }: { compact?: boolean }) {
+  const pad = compact ? "p-3" : "p-4";
+  const textSm = compact ? "text-[9px]" : "text-[11px]";
+  const textXs = compact ? "text-[8px]" : "text-[10px]";
+
+  return (
+    <div className="w-full flex flex-col gap-2.5 select-none">
+      {/* Reddit comment */}
+      <div className={`glass-card rounded-2xl ${pad} w-full`}>
+        <div className="flex items-center gap-2 mb-2">
+          <RedditIcon size={compact ? 18 : 22} />
+          <div>
+            <div className={`${textSm} font-semibold text-gray-800 dark:text-gray-200`}>r/queensuniversity</div>
+            <div className={`${textXs} text-gray-400`}>2 months ago</div>
+          </div>
+          <div className="ml-auto flex items-center gap-1.5">
+            <span className={`${textXs} font-medium px-2 py-0.5 rounded-full bg-green-100/80 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-200/60 dark:border-green-700/40`}>Positive</span>
+            <span className={`${textXs} px-2 py-0.5 rounded-full font-medium bg-[#FF4500]/10 text-[#FF4500] border border-[#FF4500]/20`}>Reddit</span>
+          </div>
+        </div>
+        <p className={`${textSm} text-gray-700 dark:text-gray-300 leading-relaxed`}>
+          {compact
+            ? "Honestly one of the best courses I took at Queen's. Prof made the material super engaging."
+            : "Honestly one of the best courses I took at Queen's. The professor made complex material feel approachable and the assignments actually prepared you for the exams."
+          }
+        </p>
+        <div className="flex items-center gap-2 mt-2">
+          <svg viewBox="0 0 20 20" fill="currentColor" className={`${compact ? "h-3 w-3" : "h-3.5 w-3.5"} text-[#FF4500]`}>
+            <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+          </svg>
+          <span className={`${textXs} text-gray-500`}>47 upvotes</span>
+        </div>
+      </div>
+
+      {/* RMP comment */}
+      <div className={`glass-card rounded-2xl ${pad} w-full`}>
+        <div className="flex items-center gap-2 mb-2">
+          <div className={`${compact ? "w-[18px] h-[18px]" : "w-[22px] h-[22px]"} rounded-full bg-brand-navy flex items-center justify-center flex-shrink-0`}>
+            <svg viewBox="0 0 20 20" fill="white" className={compact ? "w-2.5 h-2.5" : "w-3 h-3"}>
+              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <div>
+            <div className={`${textSm} font-semibold text-gray-800 dark:text-gray-200`}>Anonymous</div>
+            <div className="flex mt-0.5">
+              {[...Array(5)].map((_, i) => (
+                <svg key={i} viewBox="0 0 20 20" fill="currentColor" className={`${compact ? "h-2.5 w-2.5" : "h-3 w-3"} ${i < 4 ? "text-yellow-400" : "text-gray-200 dark:text-gray-600"}`}>
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+          </div>
+          <div className="ml-auto flex items-center gap-1.5">
+            <span className={`${textXs} font-medium px-2 py-0.5 rounded-full bg-green-100/80 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-200/60 dark:border-green-700/40`}>Positive</span>
+            <span className={`${textXs} px-2 py-0.5 rounded-full font-medium bg-brand-navy/10 dark:bg-blue-400/10 text-brand-navy dark:text-white border border-brand-navy/20 dark:border-blue-400/20`}>RateMyProfessors</span>
+          </div>
+        </div>
+        <p className={`${textSm} text-gray-700 dark:text-gray-300 leading-relaxed`}>
+          {compact
+            ? "Great prof! Clear lectures and fair exams. Would definitely recommend this class."
+            : "Great professor! Lectures are well-organized, explains concepts clearly, and the exams are very fair. Office hours were always helpful."
+          }
+        </p>
+        <div className="flex items-center gap-2 mt-2">
+          <span className={`${textXs} font-medium px-2 py-0.5 rounded-md bg-brand-navy/8 dark:bg-blue-400/8 text-brand-navy dark:text-white`}>Quality: 4.2/5</span>
+          <span className={`${textXs} font-medium px-2 py-0.5 rounded-md bg-brand-red/8 text-brand-red`}>Difficulty: 2.8/5</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   3. AI Assistant
+   ───────────────────────────────────────────── */
+
+export function AIAssistantMockup({ compact = false }: { compact?: boolean }) {
+  const pad = compact ? "p-3" : "p-5";
+  const textSm = compact ? "text-[9px]" : "text-[11px]";
+
+  return (
+    <div className={`glass-card rounded-2xl ${pad} w-full select-none`}>
+      <div className="flex items-center gap-2 mb-3">
+        <div className="gradient-text text-xs font-bold">Queen&apos;s Answers</div>
+        <div className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse ml-auto" />
+        <span className="text-[9px] text-gray-400">Online</span>
+      </div>
+
+      {/* User message */}
+      <div className="flex justify-end mb-3">
+        <div className={`${compact ? "max-w-[85%]" : "max-w-[80%]"} bg-brand-navy text-white rounded-2xl rounded-tr-sm ${compact ? "px-3 py-2" : "px-4 py-2.5"}`}>
+          <p className={`${textSm} leading-relaxed`}>
+            {compact
+              ? "Which CISC elective is the easiest?"
+              : "I'm in second year CompSci — which CISC elective has the highest GPA and best professor reviews?"
+            }
+          </p>
+        </div>
+      </div>
+
+      {/* AI response */}
+      <div className="flex gap-2 mb-3">
+        <div className={`${compact ? "w-6 h-6" : "w-7 h-7"} rounded-full bg-brand-red flex items-center justify-center flex-shrink-0`}>
+          <Brain className={`${compact ? "h-3 w-3" : "h-3.5 w-3.5"} text-white`} />
+        </div>
+        <div className={`bg-white/60 dark:bg-white/[0.06] border border-white/80 dark:border-white/[0.08] rounded-2xl rounded-tl-sm ${compact ? "px-3 py-2" : "px-4 py-2.5"} flex-1`}>
+          <p className={`${textSm} text-brand-navy dark:text-white leading-relaxed`}>
+            Based on grade data and reviews, <span className="font-semibold">CISC 204</span> (Logic) has the highest avg GPA at <span className="font-semibold text-green-600 dark:text-green-400">3.62</span>. Students say Prof. Li is &ldquo;clear and organized.&rdquo;
+          </p>
+          {!compact && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {["CISC 204 · 3.62 GPA", "CISC 235 · 3.31 GPA", "CISC 223 · 3.18 GPA"].map((t) => (
+                <span key={t} className="text-[9px] font-medium px-2 py-0.5 rounded-full bg-brand-red/8 text-brand-red border border-brand-red/15">
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Input bar */}
+      <div className={`flex items-center bg-gray-100/80 dark:bg-white/[0.04] rounded-full ${compact ? "px-3 py-1.5" : "px-4 py-2"}`}>
+        <span className={`${compact ? "text-[8px]" : "text-[10px]"} text-gray-400 flex-1`}>Ask about any course or professor…</span>
+        <div className={`${compact ? "w-5 h-5" : "w-6 h-6"} rounded-full bg-brand-red flex items-center justify-center`}>
+          <svg viewBox="0 0 20 20" fill="white" className={compact ? "w-2.5 h-2.5" : "w-3 h-3"}>
+            <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   4. Course Analytics
+   ───────────────────────────────────────────── */
+
+const TREND_DATA = [
+  { term: "F21", gpa: 3.12 }, { term: "W22", gpa: 3.28 }, { term: "F22", gpa: 3.05 },
+  { term: "W23", gpa: 3.41 }, { term: "F23", gpa: 3.38 }, { term: "W24", gpa: 3.52 },
+];
+
+const ENROLL_DATA = [
+  { term: "F21", n: 280 }, { term: "W22", n: 310 }, { term: "F22", n: 295 },
+  { term: "W23", n: 340 }, { term: "F23", n: 326 }, { term: "W24", n: 365 },
+];
+
+function gpaColor(gpa: number) {
+  if (gpa >= 3.5) return "#4CAF50";
+  if (gpa >= 3.0) return "#8BC34A";
+  if (gpa >= 2.5) return "#CDDC39";
+  if (gpa >= 2.0) return "#FF9800";
+  return "#D32F2F";
+}
+
+function buildAreaPath(data: { x: number; y: number }[], w: number, h: number, close: boolean) {
+  const pts = data.map((d) => `${d.x},${d.y}`).join(" L");
+  if (!close) return `M${pts}`;
+  return `M${data[0].x},${h} L${pts} L${data[data.length - 1].x},${h} Z`;
+}
+
+export function CourseAnalyticsMockup({ compact = false }: { compact?: boolean }) {
+  const pad = compact ? "p-3" : "p-5";
+  const textSm = compact ? "text-[9px]" : "text-[11px]";
+
+  const chartW = 260;
+  const chartH = compact ? 60 : 90;
+  const xPad = 4;
+  const yMin = 2.8;
+  const yMax = 3.7;
+
+  const points = TREND_DATA.map((d, i) => ({
+    x: xPad + (i / (TREND_DATA.length - 1)) * (chartW - 2 * xPad),
+    y: chartH - ((d.gpa - yMin) / (yMax - yMin)) * chartH,
+  }));
+
+  return (
+    <div className={`glass-card rounded-2xl ${pad} w-full select-none`}>
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-1">
+        <div className="w-6 h-6 bg-brand-red rounded-full flex items-center justify-center flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18" />
+          </svg>
+        </div>
+        <div>
+          <span className={`${compact ? "text-xs" : "text-sm"} font-semibold text-brand-navy dark:text-white`}>GPA Trend</span>
+          <span className={`${compact ? "text-[8px]" : "text-[10px]"} text-gray-400 ml-2`}>CISC 121</span>
+        </div>
+      </div>
+
+      {/* SVG area chart */}
+      <div className="mt-2 rounded-xl bg-white/40 dark:bg-white/[0.03] border border-white/60 dark:border-white/[0.06] overflow-hidden">
+        <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="gpaFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#4CAF50" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#4CAF50" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          {[0, 0.25, 0.5, 0.75, 1].map((t) => (
+            <line key={t} x1={0} y1={t * chartH} x2={chartW} y2={t * chartH} stroke="currentColor" className="text-gray-200 dark:text-white/[0.06]" strokeWidth="0.5" strokeDasharray="3 3" />
+          ))}
+          <path d={buildAreaPath(points, chartW, chartH, true)} fill="url(#gpaFill)" />
+          <path d={buildAreaPath(points, chartW, chartH, false)} fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          {points.map((p, i) => (
+            <circle key={i} cx={p.x} cy={p.y} r={compact ? 2.5 : 3.5} fill="white" stroke={gpaColor(TREND_DATA[i].gpa)} strokeWidth="1.5" />
+          ))}
+        </svg>
+      </div>
+
+      {/* X labels */}
+      <div className="flex justify-between mt-1 px-1">
+        {TREND_DATA.map((d) => (
+          <span key={d.term} className="text-[8px] text-gray-400">{d.term}</span>
+        ))}
+      </div>
+
+      {/* Enrollment mini-bars */}
+      <div className="mt-3 flex items-center justify-between">
+        <span className={`${textSm} font-medium text-gray-500 dark:text-gray-400`}>Enrollment</span>
+        <div className="flex items-end gap-1 h-5">
+          {ENROLL_DATA.map((d) => (
+            <div key={d.term} className="flex flex-col items-center">
+              <div
+                className="w-3.5 rounded-t-sm bg-gradient-to-t from-brand-navy/60 to-brand-navy/30 dark:from-blue-400/50 dark:to-blue-400/20"
+                style={{ height: `${(d.n / 400) * 20}px` }}
+              />
+            </div>
+          ))}
+        </div>
+        <span className={`${textSm} font-bold text-brand-navy dark:text-white`}>365</span>
+      </div>
+
+      {/* Grade legend */}
+      <div className="flex justify-center gap-2 mt-2">
+        {[
+          { label: "A", range: "3.7–4.3", color: "#4CAF50" },
+          { label: "B", range: "2.7–3.6", color: "#CDDC39" },
+          { label: "C", range: "1.7–2.6", color: "#FFC107" },
+          { label: "D", range: "0.7–1.6", color: "#FF5722" },
+        ].map((g) => (
+          <div key={g.label} className="flex items-center gap-0.5">
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: g.color }} />
+            <span className="text-[7px] text-gray-400">{g.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

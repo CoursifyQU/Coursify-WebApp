@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTheme } from "next-themes";
 
 const GRADE_LABELS = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
 
@@ -77,30 +78,30 @@ function gpaTierHex(gpa: number): string {
 function gpaBadgeClass(gpa: number): string {
   switch (gpaTier(gpa)) {
     case 5:
-      return 'bg-green-100 text-green-800';
+      return 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300';
     case 4:
-      return 'bg-green-100 text-green-700';
+      return 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400';
     case 3:
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300';
     case 2:
-      return 'bg-orange-100 text-orange-800';
+      return 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300';
     default:
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300';
   }
 }
 
 function gpaValueTextClass(gpa: number): string {
   switch (gpaTier(gpa)) {
     case 5:
-      return 'text-green-700';
+      return 'text-green-700 dark:text-green-400';
     case 4:
-      return 'text-green-600';
+      return 'text-green-600 dark:text-green-400';
     case 3:
-      return 'text-yellow-700';
+      return 'text-yellow-700 dark:text-yellow-400';
     case 2:
-      return 'text-orange-700';
+      return 'text-orange-700 dark:text-orange-400';
     default:
-      return 'text-red-700';
+      return 'text-red-700 dark:text-red-400';
   }
 }
 
@@ -134,7 +135,7 @@ function GpaSpectrumBar({
 }) {
   const clip = gpaBarClipPercent(gpa);
   return (
-    <div className={`overflow-hidden ${heightClass} rounded-full bg-[#00305f]/[0.09] border border-[#00305f]/[0.06]`}>
+    <div className={`overflow-hidden ${heightClass} rounded-full bg-brand-navy/[0.09] dark:bg-blue-400/[0.09] border border-brand-navy/[0.06] dark:border-blue-400/[0.06]`}>
       <motion.div
         className="h-full overflow-hidden rounded-full"
         initial={{ width: 0 }}
@@ -155,6 +156,8 @@ const GPA_TREND_Y_TICKS = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.3];
 
 export default function CourseDetailPage() {
   const params = useParams();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   const courseCode = params?.courseCode ? (params.courseCode as string).replace(/-/g, ' ').toUpperCase() : '';
   const [selectedTerm, setSelectedTerm] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
@@ -193,11 +196,11 @@ export default function CourseDetailPage() {
 
   if (error || !course) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ background: "rgba(255,255,255,0.9)" }}>
+      <div className="min-h-screen flex items-center justify-center p-4 bg-white/90 dark:bg-slate-900/90">
         <div className="text-center glass-card-deep rounded-2xl p-12">
-          <h1 className="text-3xl font-bold text-[#d62839] mb-4">Course Not Found</h1>
-          <p className="text-gray-600 mb-8">We couldn't find a course with code "{courseCode}".</p>
-          <Link href="/schools/queens" className="px-6 py-3 bg-[#00305f] text-white rounded-xl hover:bg-[#002244] transition">
+          <h1 className="text-3xl font-bold text-brand-red mb-4">Course Not Found</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">We couldn't find a course with code "{courseCode}".</p>
+          <Link href="/schools/queens" className="px-6 py-3 bg-brand-navy text-white rounded-xl hover:bg-[#002244] transition">
             Return to Courses List
           </Link>
         </div>
@@ -248,15 +251,21 @@ export default function CourseDetailPage() {
   const facultyName = course.department?.replace(/^Offering Faculty:/, '') || 'Faculty of Arts and Science';
 
   return (
-    <div className="relative min-h-screen overflow-hidden pb-16 pt-20" style={{
-      backgroundColor: 'hsla(0,0%,100%,1)',
-      backgroundImage: `
-        radial-gradient(at 21% 33%, hsla(225,100%,19%,0.09) 0px, transparent 50%),
-        radial-gradient(at 79% 76%, hsla(352,71%,54%,0.08) 0px, transparent 50%),
-        radial-gradient(at 96% 10%, hsla(43,83%,51%,0.07) 0px, transparent 50%)
-      `
-    }}>
+    <div className="relative min-h-screen overflow-hidden pb-16 pt-20 course-detail-bg">
       <style jsx global>{`
+        .course-detail-bg {
+          background-color: hsla(0,0%,100%,1);
+          background-image:
+            radial-gradient(at 21% 33%, hsla(225,100%,19%,0.09) 0px, transparent 50%),
+            radial-gradient(at 79% 76%, hsla(352,71%,54%,0.08) 0px, transparent 50%),
+            radial-gradient(at 96% 10%, hsla(43,83%,51%,0.07) 0px, transparent 50%);
+        }
+        :is(.dark) .course-detail-bg {
+          background-color: #1a1a1a;
+          background-image:
+            radial-gradient(at 79% 76%, hsla(352,71%,40%,0.06) 0px, transparent 50%),
+            radial-gradient(at 96% 10%, hsla(43,83%,40%,0.04) 0px, transparent 50%);
+        }
         .glass-card-deep {
           background: rgba(255,255,255,0.72);
           backdrop-filter: blur(28px) saturate(170%);
@@ -277,6 +286,22 @@ export default function CourseDetailPage() {
             inset 0 1px 0 rgba(255,255,255,0.98),
             inset 0 -1px 0 rgba(255,255,255,0.35);
         }
+        :is(.dark) .glass-card-deep {
+          background: rgba(38,38,38,0.80);
+          border: 1px solid rgba(255,255,255,0.08);
+          box-shadow:
+            0 8px 32px rgba(0,0,0,0.3),
+            0 2px 8px rgba(0,0,0,0.2),
+            inset 0 1px 0 rgba(255,255,255,0.05),
+            inset 0 -1px 0 rgba(255,255,255,0.02);
+        }
+        :is(.dark) .glass-card-deep:hover {
+          box-shadow:
+            0 16px 48px rgba(0,0,0,0.4),
+            0 4px 14px rgba(0,0,0,0.25),
+            inset 0 1px 0 rgba(255,255,255,0.08),
+            inset 0 -1px 0 rgba(255,255,255,0.03);
+        }
         .glass-hero {
           background: rgba(0,48,95,0.82);
           backdrop-filter: blur(32px) saturate(180%);
@@ -287,41 +312,57 @@ export default function CourseDetailPage() {
             0 4px 16px rgba(0,48,95,0.2),
             inset 0 1px 0 rgba(255,255,255,0.12);
         }
+        :is(.dark) .glass-hero {
+          background: rgba(0,30,60,0.85);
+          border: 1px solid rgba(255,255,255,0.06);
+          box-shadow:
+            0 24px 64px rgba(0,0,0,0.4),
+            0 4px 16px rgba(0,0,0,0.25),
+            inset 0 1px 0 rgba(255,255,255,0.06);
+        }
         .stat-pill {
           background: rgba(255,255,255,0.12);
           border: 1px solid rgba(255,255,255,0.2);
           backdrop-filter: blur(8px);
         }
         .course-detail-inset-glass {
-          background: linear-gradient(
-            165deg,
-            rgba(255, 255, 255, 0.9) 0%,
-            rgba(244, 247, 252, 0.68) 42%,
-            rgba(255, 255, 255, 0.55) 100%
-          );
+          background: linear-gradient(165deg, rgba(255,255,255,0.9) 0%, rgba(244,247,252,0.68) 42%, rgba(255,255,255,0.55) 100%);
           backdrop-filter: blur(22px) saturate(175%);
           -webkit-backdrop-filter: blur(22px) saturate(175%);
-          border: 1px solid rgba(255, 255, 255, 0.95);
+          border: 1px solid rgba(255,255,255,0.95);
           box-shadow:
-            0 4px 24px rgba(0, 48, 95, 0.1),
-            0 1px 4px rgba(0, 48, 95, 0.06),
-            inset 0 1px 0 rgba(255, 255, 255, 1),
-            inset 0 -1px 0 rgba(0, 48, 95, 0.07);
+            0 4px 24px rgba(0,48,95,0.1),
+            0 1px 4px rgba(0,48,95,0.06),
+            inset 0 1px 0 rgba(255,255,255,1),
+            inset 0 -1px 0 rgba(0,48,95,0.07);
           transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
         }
         .course-detail-inset-glass:hover {
-          background: linear-gradient(
-            165deg,
-            rgba(255, 255, 255, 0.97) 0%,
-            rgba(248, 250, 255, 0.8) 48%,
-            rgba(255, 255, 255, 0.72) 100%
-          );
-          border-color: rgba(255, 255, 255, 1);
+          background: linear-gradient(165deg, rgba(255,255,255,0.97) 0%, rgba(248,250,255,0.8) 48%, rgba(255,255,255,0.72) 100%);
+          border-color: rgba(255,255,255,1);
           box-shadow:
-            0 8px 32px rgba(0, 48, 95, 0.12),
-            0 2px 10px rgba(0, 48, 95, 0.07),
-            inset 0 1px 0 rgba(255, 255, 255, 1),
-            inset 0 -1px 0 rgba(0, 48, 95, 0.05);
+            0 8px 32px rgba(0,48,95,0.12),
+            0 2px 10px rgba(0,48,95,0.07),
+            inset 0 1px 0 rgba(255,255,255,1),
+            inset 0 -1px 0 rgba(0,48,95,0.05);
+        }
+        :is(.dark) .course-detail-inset-glass {
+          background: linear-gradient(165deg, rgba(48,48,48,0.85) 0%, rgba(40,40,40,0.65) 42%, rgba(35,35,35,0.55) 100%);
+          border: 1px solid rgba(255,255,255,0.08);
+          box-shadow:
+            0 4px 24px rgba(0,0,0,0.2),
+            0 1px 4px rgba(0,0,0,0.15),
+            inset 0 1px 0 rgba(255,255,255,0.04),
+            inset 0 -1px 0 rgba(255,255,255,0.02);
+        }
+        :is(.dark) .course-detail-inset-glass:hover {
+          background: linear-gradient(165deg, rgba(55,55,55,0.92) 0%, rgba(48,48,48,0.80) 48%, rgba(42,42,42,0.70) 100%);
+          border-color: rgba(255,255,255,0.12);
+          box-shadow:
+            0 8px 32px rgba(0,0,0,0.3),
+            0 2px 10px rgba(0,0,0,0.2),
+            inset 0 1px 0 rgba(255,255,255,0.06),
+            inset 0 -1px 0 rgba(255,255,255,0.03);
         }
         button.course-detail-inset-glass[role="combobox"] {
           -webkit-tap-highlight-color: transparent;
@@ -332,40 +373,60 @@ export default function CourseDetailPage() {
         button.course-detail-inset-glass[role="combobox"]:active,
         button.course-detail-inset-glass[role="combobox"][data-state="open"] {
           outline: none;
-          background: linear-gradient(
-            165deg,
-            rgba(255, 255, 255, 0.9) 0%,
-            rgba(244, 247, 252, 0.68) 42%,
-            rgba(255, 255, 255, 0.55) 100%
-          );
-          border-color: rgba(255, 255, 255, 0.95);
+          background: linear-gradient(165deg, rgba(255,255,255,0.9) 0%, rgba(244,247,252,0.68) 42%, rgba(255,255,255,0.55) 100%);
+          border-color: rgba(255,255,255,0.95);
           box-shadow:
-            0 4px 24px rgba(0, 48, 95, 0.1),
-            0 1px 4px rgba(0, 48, 95, 0.06),
-            inset 0 1px 0 rgba(255, 255, 255, 1),
-            inset 0 -1px 0 rgba(0, 48, 95, 0.07);
+            0 4px 24px rgba(0,48,95,0.1),
+            0 1px 4px rgba(0,48,95,0.06),
+            inset 0 1px 0 rgba(255,255,255,1),
+            inset 0 -1px 0 rgba(0,48,95,0.07);
+        }
+        :is(.dark) button.course-detail-inset-glass[role="combobox"]:focus,
+        :is(.dark) button.course-detail-inset-glass[role="combobox"]:focus-visible,
+        :is(.dark) button.course-detail-inset-glass[role="combobox"]:active,
+        :is(.dark) button.course-detail-inset-glass[role="combobox"][data-state="open"] {
+          background: linear-gradient(165deg, rgba(52,52,52,0.88) 0%, rgba(44,44,44,0.70) 42%, rgba(38,38,38,0.58) 100%);
+          border-color: rgba(255,255,255,0.1);
+          box-shadow:
+            0 4px 24px rgba(0,0,0,0.2),
+            0 1px 4px rgba(0,0,0,0.15),
+            inset 0 1px 0 rgba(255,255,255,0.04),
+            inset 0 -1px 0 rgba(255,255,255,0.02);
         }
         button.course-detail-inset-glass[role="combobox"]:hover {
-          background: linear-gradient(
-            165deg,
-            rgba(255, 255, 255, 0.97) 0%,
-            rgba(248, 250, 255, 0.8) 48%,
-            rgba(255, 255, 255, 0.72) 100%
-          );
-          border-color: rgba(255, 255, 255, 1);
+          background: linear-gradient(165deg, rgba(255,255,255,0.97) 0%, rgba(248,250,255,0.8) 48%, rgba(255,255,255,0.72) 100%);
+          border-color: rgba(255,255,255,1);
           box-shadow:
-            0 8px 32px rgba(0, 48, 95, 0.12),
-            0 2px 10px rgba(0, 48, 95, 0.07),
-            inset 0 1px 0 rgba(255, 255, 255, 1),
-            inset 0 -1px 0 rgba(0, 48, 95, 0.05);
+            0 8px 32px rgba(0,48,95,0.12),
+            0 2px 10px rgba(0,48,95,0.07),
+            inset 0 1px 0 rgba(255,255,255,1),
+            inset 0 -1px 0 rgba(0,48,95,0.05);
+        }
+        :is(.dark) button.course-detail-inset-glass[role="combobox"]:hover {
+          background: linear-gradient(165deg, rgba(58,58,58,0.95) 0%, rgba(50,50,50,0.82) 48%, rgba(44,44,44,0.72) 100%);
+          border-color: rgba(255,255,255,0.12);
+        }
+        .chart-area-bg {
+          background: linear-gradient(160deg, rgba(0,48,95,0.05) 0%, rgba(0,48,95,0.02) 100%);
+          border: 1px solid rgba(255,255,255,0.7);
+        }
+        :is(.dark) .chart-area-bg {
+          background: linear-gradient(160deg, rgba(35,35,35,0.55) 0%, rgba(28,28,28,0.35) 100%);
+          border: 1px solid rgba(255,255,255,0.06);
+        }
+        .chart-empty-bg {
+          background: rgba(255,255,255,0.3);
+        }
+        :is(.dark) .chart-empty-bg {
+          background: rgba(35,35,35,0.45);
         }
       `}</style>
 
       {/* Background blobs */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#d62839]/8 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#00305f]/8 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-[#efb215]/6 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-navy/8 dark:bg-blue-400/8 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-brand-gold/6 rounded-full blur-3xl" />
       </div>
 
       {/* Mock data banner */}
@@ -386,7 +447,7 @@ export default function CourseDetailPage() {
           {/* Subtle light effects */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-[#d62839]/8 pointer-events-none" />
           <div className="absolute top-0 right-0 w-72 h-72 bg-[#0066CC]/15 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-20 w-48 h-48 bg-[#d62839]/10 -mb-20 blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-20 w-48 h-48 bg-brand-red/10 -mb-20 blur-3xl pointer-events-none" />
 
           <div className="relative p-8 md:p-10">
             {/* Breadcrumb */}
@@ -408,7 +469,7 @@ export default function CourseDetailPage() {
             <motion.div
               variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { duration: 0.5, delay: 0.2 } } }}
             >
-              <span className="inline-block px-3 py-1 bg-[#d62839] text-white text-xs font-medium rounded-lg mb-4">
+              <span className="inline-block px-3 py-1 bg-brand-red text-white text-xs font-medium rounded-lg mb-4">
                 {facultyName}
               </span>
             </motion.div>
@@ -461,12 +522,12 @@ export default function CourseDetailPage() {
           {/* Course Details */}
           <motion.div className="glass-card-deep rounded-2xl p-6 flex flex-col" variants={slideUp}>
             <div className="flex items-center gap-2 mb-5">
-              <div className="w-8 h-8 rounded-full bg-[#00305f]/10 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[#d62839]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <div className="w-8 h-8 rounded-full bg-brand-navy/10 dark:bg-blue-400/10 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-brand-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h3 className="text-base font-semibold text-[#00305f]">Course Details</h3>
+              <h3 className="text-base font-semibold text-brand-navy dark:text-white">Course Details</h3>
             </div>
             <ul className="space-y-2.5 flex-1">
               {[
@@ -475,8 +536,8 @@ export default function CourseDetailPage() {
                 { label: 'Available Terms', value: String(course.distributions?.length || 0) },
               ].map(({ label, value }) => (
                 <li key={label} className="course-detail-inset-glass flex justify-between items-center gap-3 p-3 rounded-xl">
-                  <span className="text-sm font-medium text-[#00305f]/70 shrink-0">{label}</span>
-                  <span className="text-sm text-[#00305f] font-semibold text-right max-w-[60%] truncate">{value}</span>
+                  <span className="text-sm font-medium text-brand-navy/70 dark:text-white/70 shrink-0">{label}</span>
+                  <span className="text-sm text-brand-navy dark:text-white font-semibold text-right max-w-[60%] truncate">{value}</span>
                 </li>
               ))}
             </ul>
@@ -485,15 +546,15 @@ export default function CourseDetailPage() {
           {/* Prerequisites */}
           <motion.div className="glass-card-deep rounded-2xl p-6 flex flex-col" variants={slideUp}>
             <div className="flex items-center gap-2 mb-5">
-              <div className="w-8 h-8 rounded-full bg-[#00305f]/10 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[#d62839]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <div className="w-8 h-8 rounded-full bg-brand-navy/10 dark:bg-blue-400/10 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-brand-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
-              <h3 className="text-base font-semibold text-[#00305f]">Prerequisites</h3>
+              <h3 className="text-base font-semibold text-brand-navy dark:text-white">Prerequisites</h3>
             </div>
             <div className="course-detail-inset-glass p-4 rounded-xl flex-1 flex items-start min-h-[5.5rem]">
-              <p className="text-sm leading-relaxed text-[#00305f]/85">
+              <p className="text-sm leading-relaxed text-brand-navy/85 dark:text-white/85">
                 {course.description && course.description.toString().toLowerCase().includes('prerequisite')
                   ? course.description.toString().split(/\n/).find(line =>
                       line.toLowerCase().includes('prerequisite') || line.toLowerCase().includes('prereq')
@@ -506,35 +567,35 @@ export default function CourseDetailPage() {
           {/* Performance Metrics */}
           <motion.div className="glass-card-deep rounded-2xl p-6 flex flex-col" variants={slideUp}>
             <div className="flex items-center gap-2 mb-5">
-              <div className="w-8 h-8 rounded-full bg-[#00305f]/10 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[#d62839]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <div className="w-8 h-8 rounded-full bg-brand-navy/10 dark:bg-blue-400/10 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-brand-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="text-base font-semibold text-[#00305f]">Performance</h3>
+              <h3 className="text-base font-semibold text-brand-navy dark:text-white">Performance</h3>
             </div>
             <div className="space-y-3 flex-1">
               <div className="course-detail-inset-glass rounded-xl p-3.5">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-semibold text-[#00305f]">Average GPA</span>
+                  <span className="text-xs font-semibold text-brand-navy dark:text-white">Average GPA</span>
                   <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${gpaBadgeClass(course.averageGPA)}`}>
                     {course.averageGPA.toFixed(2)}
                   </span>
                 </div>
                 <GpaSpectrumBar gpa={course.averageGPA} heightClass="h-2" transition={{ duration: 1, delay: 0.5 }} />
-                <div className="flex justify-between text-xs text-[#00305f]/45 mt-0.5">
+                <div className="flex justify-between text-xs text-brand-navy/45 dark:text-white/45 mt-0.5">
                   <span>1.0</span>
                   <span>4.3</span>
                 </div>
               </div>
               <div className="course-detail-inset-glass rounded-xl p-3.5">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-semibold text-[#00305f]">Average Enrollment</span>
-                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#00305f]/12 text-[#00305f]">
+                  <span className="text-xs font-semibold text-brand-navy dark:text-white">Average Enrollment</span>
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-brand-navy/12 dark:bg-blue-400/12 text-brand-navy dark:text-white">
                     {enrollmentRounded}
                   </span>
                 </div>
-                <div className="overflow-hidden h-2 rounded-full bg-[#00305f]/[0.09] border border-[#00305f]/[0.06]">
+                <div className="overflow-hidden h-2 rounded-full bg-brand-navy/[0.09] dark:bg-blue-400/[0.09] border border-brand-navy/[0.06] dark:border-blue-400/[0.06]">
                   <motion.div
                     className="h-full rounded-full bg-gradient-to-r from-[#00305f]/50 via-[#0066CC] to-[#d62839]/90"
                     initial={{ width: 0 }}
@@ -542,7 +603,7 @@ export default function CourseDetailPage() {
                     transition={{ duration: 1, delay: 0.55 }}
                   />
                 </div>
-                <div className="flex justify-between text-xs text-[#00305f]/45 mt-0.5">
+                <div className="flex justify-between text-xs text-brand-navy/45 dark:text-white/45 mt-0.5">
                   <span>0</span>
                   <span>{enrollmentBarMax}</span>
                 </div>
@@ -564,30 +625,26 @@ export default function CourseDetailPage() {
           {/* Header */}
           <div className="shrink-0 flex items-center justify-between mb-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 bg-[#d62839] rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-7 h-7 bg-brand-red rounded-full flex items-center justify-center flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-semibold text-[#00305f] leading-tight">GPA Trend</h3>
-                <p className="text-xs text-gray-400">
+                <h3 className="text-base font-semibold text-brand-navy dark:text-white leading-tight">GPA Trend</h3>
+                <p className="text-xs text-gray-400 dark:text-gray-500">
                   Average GPA across academic terms
                 </p>
               </div>
             </div>
-            <span className="course-detail-inset-glass inline-flex items-center text-[#00305f] text-xs px-3 py-1.5 rounded-full font-semibold leading-none shrink-0">
+            <span className="course-detail-inset-glass inline-flex items-center text-brand-navy dark:text-white text-xs px-3 py-1.5 rounded-full font-semibold leading-none shrink-0">
               {course.course_code}
             </span>
           </div>
 
           {hasDistributions ? (
             <div
-              className="mt-4 flex min-h-[200px] min-w-0 flex-1 flex-col overflow-hidden rounded-xl"
-              style={{
-                background: 'linear-gradient(160deg, rgba(0,48,95,0.05) 0%, rgba(0,48,95,0.02) 100%)',
-                border: '1px solid rgba(255,255,255,0.7)',
-              }}
+              className="mt-4 flex min-h-[200px] min-w-0 flex-1 flex-col overflow-hidden rounded-xl chart-area-bg"
             >
               <div className="min-h-0 h-full min-w-0 w-full flex-1">
                 <ResponsiveContainer width="100%" height="100%">
@@ -606,7 +663,7 @@ export default function CourseDetailPage() {
                       <stop offset="100%" stopColor={gpaTierHex(course.averageGPA)} stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="rgba(0,0,0,0.06)" />
+                  <CartesianGrid strokeDasharray="4 4" vertical={false} stroke={isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'} />
                   <XAxis
                     dataKey="term"
                     type="category"
@@ -614,7 +671,7 @@ export default function CourseDetailPage() {
                     angle={termGpaData.length > 6 ? -35 : 0}
                     textAnchor={termGpaData.length > 6 ? 'end' : 'middle'}
                     height={termGpaData.length > 6 ? 52 : 32}
-                    tick={{ fontSize: 10, fill: '#9ca3af' }}
+                    tick={{ fontSize: 10, fill: isDark ? '#94a3b8' : '#9ca3af' }}
                     axisLine={false}
                     tickLine={false}
                     dy={6}
@@ -622,7 +679,7 @@ export default function CourseDetailPage() {
                       value: 'Term',
                       position: 'insideBottom',
                       offset: termGpaData.length > 6 ? -4 : 2,
-                      style: { fill: '#64748b', fontSize: 11, fontWeight: 600 },
+                      style: { fill: isDark ? '#94a3b8' : '#64748b', fontSize: 11, fontWeight: 600 },
                     }}
                   />
                   <YAxis
@@ -634,7 +691,7 @@ export default function CourseDetailPage() {
                       if (Number.isInteger(n)) return `${n}`;
                       return n.toFixed(1);
                     }}
-                    tick={{ fontSize: 10, fill: '#9ca3af' }}
+                    tick={{ fontSize: 10, fill: isDark ? '#94a3b8' : '#9ca3af' }}
                     axisLine={false}
                     tickLine={false}
                     width={48}
@@ -642,7 +699,7 @@ export default function CourseDetailPage() {
                       value: 'GPA',
                       angle: -90,
                       position: 'insideLeft',
-                      style: { fill: '#64748b', fontSize: 11, fontWeight: 600 },
+                      style: { fill: isDark ? '#94a3b8' : '#64748b', fontSize: 11, fontWeight: 600 },
                       offset: 8,
                     }}
                   />
@@ -654,12 +711,13 @@ export default function CourseDetailPage() {
                       'GPA',
                     ]}
                     contentStyle={{
-                      backgroundColor: 'rgba(255,255,255,0.92)',
+                      backgroundColor: isDark ? 'rgba(32,32,32,0.97)' : 'rgba(255,255,255,0.92)',
                       backdropFilter: 'blur(12px)',
                       borderRadius: '10px',
-                      border: '1px solid rgba(255,255,255,0.8)',
-                      boxShadow: '0 4px 20px rgba(0,48,95,0.12)',
+                      border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.8)',
+                      boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,48,95,0.12)',
                       fontSize: '12px',
+                      color: isDark ? '#e2e8f0' : undefined,
                     }}
                   />
                   <Area
@@ -689,10 +747,9 @@ export default function CourseDetailPage() {
             </div>
           ) : (
             <div
-              className="mt-4 flex min-h-[14rem] flex-1 items-center justify-center rounded-xl"
-              style={{ background: 'rgba(255,255,255,0.3)' }}
+              className="mt-4 flex min-h-[14rem] flex-1 items-center justify-center rounded-xl chart-empty-bg"
             >
-              <p className="text-gray-400 text-sm">No historical GPA data available</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">No historical GPA data available</p>
             </div>
           )}
 
@@ -710,8 +767,8 @@ export default function CourseDetailPage() {
                 className="course-detail-inset-glass inline-flex w-fit shrink-0 items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs max-w-full"
               >
                 <span className="w-2 h-2 rounded-full flex-shrink-0 shadow-sm" style={{ backgroundColor: color }} />
-                <span className="text-[#00305f]/80 font-semibold">{label}</span>
-                <span className="text-[#00305f]/45 whitespace-nowrap">{range}</span>
+                <span className="text-brand-navy/80 dark:text-white/80 font-semibold">{label}</span>
+                <span className="text-brand-navy/45 dark:text-white/45 whitespace-nowrap">{range}</span>
               </div>
             ))}
           </div>
@@ -722,20 +779,20 @@ export default function CourseDetailPage() {
           {/* Header */}
           <div className="shrink-0 flex items-center justify-between mb-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 bg-[#d62839] rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-7 h-7 bg-brand-red rounded-full flex items-center justify-center flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-semibold text-[#00305f] leading-tight">Grade Distribution</h3>
-                <p className="text-xs text-gray-400">Percentage of students per grade</p>
+                <h3 className="text-base font-semibold text-brand-navy dark:text-white leading-tight">Grade Distribution</h3>
+                <p className="text-xs text-gray-400 dark:text-gray-500">Percentage of students per grade</p>
               </div>
             </div>
             {course.distributions && course.distributions.length > 0 && (
               <Select value={selectedTerm} onValueChange={setSelectedTerm}>
                 <SelectTrigger
-                  className="course-detail-inset-glass inline-flex h-auto min-h-0 w-fit shrink-0 cursor-pointer items-center gap-1.5 rounded-full border-0 px-3 py-1.5 text-xs font-semibold leading-none text-[#00305f] shadow-none outline-none ring-0 ring-offset-0 transition-[background,box-shadow,border-color] duration-200 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=open]:ring-0 active:opacity-100 data-[placeholder]:text-[#00305f]/55 justify-start [&>span]:line-clamp-1 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:shrink-0 [&>svg]:opacity-60"
+                  className="course-detail-inset-glass inline-flex h-auto min-h-0 w-fit shrink-0 cursor-pointer items-center gap-1.5 rounded-full border-0 px-3 py-1.5 text-xs font-semibold leading-none text-brand-navy dark:text-white shadow-none outline-none ring-0 ring-offset-0 transition-[background,box-shadow,border-color] duration-200 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=open]:ring-0 active:opacity-100 data-[placeholder]:text-brand-navy/55 dark:text-white/55 justify-start [&>span]:line-clamp-1 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:shrink-0 [&>svg]:opacity-60"
                   aria-label="Select term for grade distribution"
                 >
                   <SelectValue placeholder="Term" />
@@ -744,13 +801,13 @@ export default function CourseDetailPage() {
                   position="item-aligned"
                   align="end"
                   sideOffset={2}
-                  className="z-[100] max-h-72 overflow-hidden rounded-lg border border-gray-200/90 bg-white p-0.5 text-[#00305f] shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=open]:[--tw-enter-scale:1] data-[state=closed]:[--tw-exit-scale:1] data-[side=bottom]:slide-in-from-top-0 data-[side=top]:slide-in-from-bottom-0"
+                  className="z-[100] max-h-72 overflow-hidden rounded-lg border border-gray-200/90 dark:border-white/10 bg-white dark:bg-slate-900 p-0.5 text-brand-navy dark:text-white shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=open]:[--tw-enter-scale:1] data-[state=closed]:[--tw-exit-scale:1] data-[side=bottom]:slide-in-from-top-0 data-[side=top]:slide-in-from-bottom-0"
                 >
                   {course.distributions.map((dist) => (
                     <SelectItem
                       key={dist.term}
                       value={dist.term}
-                      className="cursor-pointer rounded-md py-2 pl-8 pr-3 text-xs font-semibold text-[#00305f] outline-none focus:bg-gray-100 focus:text-[#00305f] data-[highlighted]:bg-gray-100 data-[highlighted]:text-[#00305f] data-[state=checked]:bg-gray-50"
+                      className="cursor-pointer rounded-md py-2 pl-8 pr-3 text-xs font-semibold text-brand-navy dark:text-white outline-none focus:bg-gray-100 dark:focus:bg-white/10 focus:text-brand-navy dark:focus:text-white data-[highlighted]:bg-gray-100 dark:data-[highlighted]:bg-white/10 data-[highlighted]:text-brand-navy dark:data-[highlighted]:text-white data-[state=checked]:bg-gray-50 dark:data-[state=checked]:bg-white/5"
                     >
                       {dist.term}
                     </SelectItem>
@@ -763,25 +820,21 @@ export default function CourseDetailPage() {
           {hasDistributions && selectedDistribution ? (
             <div className="flex min-h-0 min-w-0 flex-1 flex-col">
               <div
-                className="mt-4 flex min-h-[160px] min-w-0 flex-1 flex-col overflow-hidden rounded-xl"
-                style={{
-                  background: 'linear-gradient(160deg, rgba(214,40,57,0.03) 0%, rgba(0,48,95,0.04) 100%)',
-                  border: '1px solid rgba(255,255,255,0.7)',
-                }}
+                className="mt-4 flex min-h-[160px] min-w-0 flex-1 flex-col overflow-hidden rounded-xl chart-area-bg"
               >
                 <div className="min-h-0 h-full min-w-0 w-full flex-1">
                   <ResponsiveContainer width="100%" height="100%">
                   <BarChart key={`chart-${selectedTerm}`} data={gradeDistributionData} margin={{ top: 12, right: 12, left: 0, bottom: 8 }} barCategoryGap="25%">
-                    <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="rgba(0,0,0,0.06)" />
+                    <CartesianGrid strokeDasharray="4 4" vertical={false} stroke={isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'} />
                     <XAxis
                       dataKey="grade"
-                      tick={{ fontSize: 10, fill: '#9ca3af' }}
+                      tick={{ fontSize: 10, fill: isDark ? '#94a3b8' : '#9ca3af' }}
                       axisLine={false}
                       tickLine={false}
                       dy={4}
                     />
                     <YAxis
-                      tick={{ fontSize: 10, fill: '#9ca3af' }}
+                      tick={{ fontSize: 10, fill: isDark ? '#94a3b8' : '#9ca3af' }}
                       axisLine={false}
                       tickLine={false}
                       width={28}
@@ -791,12 +844,13 @@ export default function CourseDetailPage() {
                       formatter={(value) => [`${value}%`, 'Students']}
                       labelFormatter={(label) => `Grade ${label}`}
                       contentStyle={{
-                        backgroundColor: 'rgba(255,255,255,0.92)',
+                        backgroundColor: isDark ? 'rgba(32,32,32,0.97)' : 'rgba(255,255,255,0.92)',
                         backdropFilter: 'blur(12px)',
                         borderRadius: '10px',
-                        border: '1px solid rgba(255,255,255,0.8)',
-                        boxShadow: '0 4px 20px rgba(0,48,95,0.12)',
+                        border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.8)',
+                        boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,48,95,0.12)',
                         fontSize: '12px',
+                        color: isDark ? '#e2e8f0' : undefined,
                       }}
                     />
                     <Bar dataKey="count" name="Students" animationDuration={1200} radius={[4, 4, 0, 0]}>
@@ -812,7 +866,7 @@ export default function CourseDetailPage() {
               {/* Stats row — glass cards; Avg GPA includes mini scale bar */}
               <div className="mt-4 shrink-0 grid grid-cols-3 gap-2.5">
                 <div className="course-detail-inset-glass rounded-xl p-3 text-center flex flex-col">
-                  <div className="text-xs text-gray-400 mb-1">Avg GPA</div>
+                  <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">Avg GPA</div>
                   <div className={`text-base font-bold ${gpaValueTextClass(selectedDistribution.average_gpa)}`}>
                     {selectedDistribution.average_gpa.toFixed(2)}
                   </div>
@@ -821,15 +875,15 @@ export default function CourseDetailPage() {
                     heightClass="h-1.5"
                     transition={{ duration: 0.8, delay: 0.2 }}
                   />
-                  <div className="flex justify-between w-full text-[10px] text-[#00305f]/40 mt-0.5">
+                  <div className="flex justify-between w-full text-[10px] text-brand-navy/40 dark:text-white/40 mt-0.5">
                     <span>1.0</span>
                     <span>4.3</span>
                   </div>
                 </div>
                 <div className="course-detail-inset-glass rounded-xl p-3 text-center flex flex-col">
-                  <div className="text-xs text-gray-400 mb-1">Enrollment</div>
-                  <div className="text-base font-bold text-[#00305f]">{selectedDistribution.enrollment}</div>
-                  <div className="w-full mt-2 overflow-hidden h-1.5 rounded-full bg-[#00305f]/[0.09] border border-[#00305f]/[0.06]">
+                  <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">Enrollment</div>
+                  <div className="text-base font-bold text-brand-navy dark:text-white">{selectedDistribution.enrollment}</div>
+                  <div className="w-full mt-2 overflow-hidden h-1.5 rounded-full bg-brand-navy/[0.09] dark:bg-blue-400/[0.09] border border-brand-navy/[0.06] dark:border-blue-400/[0.06]">
                     <motion.div
                       className="h-full rounded-full bg-gradient-to-r from-[#00305f]/50 via-[#0066CC] to-[#d62839]/90"
                       initial={{ width: 0 }}
@@ -837,14 +891,14 @@ export default function CourseDetailPage() {
                       transition={{ duration: 0.8, delay: 0.25 }}
                     />
                   </div>
-                  <div className="flex justify-between w-full text-[10px] text-[#00305f]/40 mt-0.5">
+                  <div className="flex justify-between w-full text-[10px] text-brand-navy/40 dark:text-white/40 mt-0.5">
                     <span>0</span>
                     <span>{enrollmentBarMax}</span>
                   </div>
                 </div>
                 <div className="course-detail-inset-glass rounded-xl p-3 text-center">
-                  <div className="text-xs text-gray-400 mb-1">Term</div>
-                  <div className="text-base font-bold text-[#00305f]">{selectedDistribution.term}</div>
+                  <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">Term</div>
+                  <div className="text-base font-bold text-brand-navy dark:text-white">{selectedDistribution.term}</div>
                 </div>
               </div>
 
@@ -856,17 +910,16 @@ export default function CourseDetailPage() {
                     className="course-detail-inset-glass inline-flex w-fit shrink-0 items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs max-w-full"
                   >
                     <span className="w-2 h-2 rounded-full flex-shrink-0 shadow-sm" style={{ backgroundColor: item.color }} />
-                    <span className="text-[#00305f]/80 font-medium whitespace-nowrap">{item.label}</span>
+                    <span className="text-brand-navy/80 dark:text-white/80 font-medium whitespace-nowrap">{item.label}</span>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
             <div
-              className="mt-4 flex min-h-[14rem] flex-1 items-center justify-center rounded-xl"
-              style={{ background: 'rgba(255,255,255,0.3)' }}
+              className="mt-4 flex min-h-[14rem] flex-1 items-center justify-center rounded-xl chart-empty-bg"
             >
-              <p className="text-gray-400 text-sm">No grade distribution data available</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">No grade distribution data available</p>
             </div>
           )}
         </motion.div>

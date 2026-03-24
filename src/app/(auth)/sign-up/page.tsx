@@ -107,9 +107,9 @@ export default function SignUp() {
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-6 py-12">
       {/* Ambient background blobs */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="liquid-blob w-[500px] h-[400px] bg-[#00305f]" style={{ top: "-5%", left: "-8%", animationDelay: "0s" }} />
-        <div className="liquid-blob-alt w-[400px] h-[450px] bg-[#d62839]" style={{ bottom: "-10%", right: "-5%", animationDelay: "-4s" }} />
-        <div className="liquid-blob w-[350px] h-[350px] bg-[#efb215]" style={{ top: "40%", left: "45%", animationDelay: "-8s" }} />
+        <div className="liquid-blob w-[500px] h-[400px] bg-brand-navy" style={{ top: "-5%", left: "-8%", animationDelay: "0s" }} />
+        <div className="liquid-blob-alt w-[400px] h-[450px] bg-brand-red" style={{ bottom: "-10%", right: "-5%", animationDelay: "-4s" }} />
+        <div className="liquid-blob w-[350px] h-[350px] bg-brand-gold" style={{ top: "40%", left: "45%", animationDelay: "-8s" }} />
       </div>
 
       <motion.div
@@ -121,39 +121,39 @@ export default function SignUp() {
         <div className="flex flex-col gap-7">
           {/* Heading */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }}>
-            <h1 className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight text-[#00305f]">
+            <h1 className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight text-brand-navy dark:text-white">
               Create Account
             </h1>
-            <p className="text-gray-500 mt-2">
+            <p className="text-gray-500 dark:text-gray-400 mt-2">
               Enter your Queen&apos;s University email to get started
             </p>
           </motion.div>
 
           {showVerificationMessage ? (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-5">
-              <div className="glass-card rounded-2xl p-6 border-l-4 border-[#00305f]">
-                <h3 className="font-semibold text-lg mb-2 text-[#00305f]">Check your email</h3>
-                <p className="text-gray-600 text-sm">
-                  We&apos;ve sent you a verification link to <strong className="text-[#00305f]">{email}</strong>.
+              <div className="glass-card rounded-2xl p-6 border-l-4 border-brand-navy dark:border-blue-400">
+                <h3 className="font-semibold text-lg mb-2 text-brand-navy dark:text-white">Check your email</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  We&apos;ve sent you a verification link to <strong className="text-brand-navy dark:text-white">{email}</strong>.
                   Please check your inbox and click the link to verify your account.
                 </p>
               </div>
-              <Link href="/sign-in" className="block text-center text-[#d62839] hover:text-[#00305f] font-medium text-sm transition-colors duration-300">
+              <Link href="/sign-in" className="block text-center text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium text-sm transition-colors duration-300">
                 Return to sign in
               </Link>
             </motion.div>
           ) : (
             <>
               {accountConflict && (
-                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="glass-card rounded-2xl p-5 border-l-4 border-[#efb215]">
-                  <h3 className="font-semibold text-sm text-[#00305f] mb-1">Account Conflict</h3>
-                  <p className="text-gray-600 text-sm mb-3">An account with this email already exists or was previously created.</p>
+                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="glass-card rounded-2xl p-5 border-l-4 border-brand-gold">
+                  <h3 className="font-semibold text-sm text-brand-navy dark:text-white mb-1">Account Conflict</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">An account with this email already exists or was previously created.</p>
                   <div className="flex gap-2 flex-wrap">
-                    <Button type="button" variant="outline" size="sm" onClick={resetAccount} disabled={isResetting} className="text-[#00305f] border-[#efb215]/40 hover:bg-[#efb215]/10 text-xs transition-all duration-300">
+                    <Button type="button" variant="outline" size="sm" onClick={resetAccount} disabled={isResetting} className="text-brand-navy dark:text-white border-brand-gold/40 dark:border-brand-gold/40 hover:bg-brand-gold/10 dark:hover:bg-brand-gold/10 text-xs transition-all duration-300">
                       {isResetting ? "Processing..." : "Reset Account"}
                     </Button>
                     <Link href="/sign-in">
-                      <Button type="button" variant="outline" size="sm" className="text-[#00305f] border-[#efb215]/40 hover:bg-[#efb215]/10 text-xs transition-all duration-300">
+                      <Button type="button" variant="outline" size="sm" className="text-brand-navy dark:text-white border-brand-gold/40 dark:border-brand-gold/40 hover:bg-brand-gold/10 dark:hover:bg-brand-gold/10 text-xs transition-all duration-300">
                         Sign In Instead
                       </Button>
                     </Link>
@@ -163,48 +163,48 @@ export default function SignUp() {
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}>
-                  <label className="text-sm font-medium text-gray-500 mb-2 block">Email Address</label>
-                  <div className="glass-card rounded-2xl transition-all duration-300 focus-within:border-[#00305f]/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
+                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">Email Address</label>
+                  <div className="glass-card rounded-2xl transition-all duration-300 focus-within:border-brand-navy/30 dark:focus-within:border-blue-400/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
                     <input
                       type="email"
                       placeholder="your.name@queensu.ca"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full bg-transparent text-sm text-[#00305f] placeholder:text-gray-400 px-4 py-4 rounded-2xl focus:outline-none"
+                      className="w-full bg-transparent text-sm text-brand-navy dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 px-4 py-4 rounded-2xl focus:outline-none"
                     />
                   </div>
                 </motion.div>
 
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.35 }}>
-                  <label className="text-sm font-medium text-gray-500 mb-2 block">Password</label>
-                  <div className="glass-card rounded-2xl relative transition-all duration-300 focus-within:border-[#00305f]/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
+                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">Password</label>
+                  <div className="glass-card rounded-2xl relative transition-all duration-300 focus-within:border-brand-navy/30 dark:focus-within:border-blue-400/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
                     <input
                       type={showPassword ? "text" : "password"}
                       placeholder="Create a password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full bg-transparent text-sm text-[#00305f] placeholder:text-gray-400 px-4 py-4 pr-12 rounded-2xl focus:outline-none"
+                      className="w-full bg-transparent text-sm text-brand-navy dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 px-4 py-4 pr-12 rounded-2xl focus:outline-none"
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-[#00305f] transition-colors duration-200">
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-3 flex items-center text-gray-400 dark:text-gray-500 hover:text-brand-navy dark:hover:text-blue-400 transition-colors duration-200">
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
                 </motion.div>
 
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.45 }}>
-                  <label className="text-sm font-medium text-gray-500 mb-2 block">Confirm Password</label>
-                  <div className="glass-card rounded-2xl relative transition-all duration-300 focus-within:border-[#00305f]/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
+                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">Confirm Password</label>
+                  <div className="glass-card rounded-2xl relative transition-all duration-300 focus-within:border-brand-navy/30 dark:focus-within:border-blue-400/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
                     <input
                       type={showConfirm ? "text" : "password"}
                       placeholder="Confirm your password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
-                      className="w-full bg-transparent text-sm text-[#00305f] placeholder:text-gray-400 px-4 py-4 pr-12 rounded-2xl focus:outline-none"
+                      className="w-full bg-transparent text-sm text-brand-navy dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 px-4 py-4 pr-12 rounded-2xl focus:outline-none"
                     />
-                    <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-[#00305f] transition-colors duration-200">
+                    <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute inset-y-0 right-3 flex items-center text-gray-400 dark:text-gray-500 hover:text-brand-navy dark:hover:text-blue-400 transition-colors duration-200">
                       {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
@@ -230,9 +230,9 @@ export default function SignUp() {
                 </motion.button>
               </form>
 
-              <motion.p className="text-center text-sm text-gray-500" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.6 }}>
+              <motion.p className="text-center text-sm text-gray-500 dark:text-gray-400" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.6 }}>
                 Already have an account?{" "}
-                <Link href="/sign-in" className="text-[#d62839] hover:text-[#00305f] font-medium transition-colors duration-300">
+                <Link href="/sign-in" className="text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium transition-colors duration-300">
                   Sign in
                 </Link>
               </motion.p>
