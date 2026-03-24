@@ -97,9 +97,8 @@ const Navigation = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
-            <span className="text-lg font-bold tracking-tight">
-              <span className="text-brand-navy dark:text-blue-400">Cours</span>
-              <span className="text-brand-red dark:text-red-400">ify</span>
+            <span className="text-lg font-bold tracking-tight gold-shine-text">
+              Coursify
             </span>
           </Link>
 

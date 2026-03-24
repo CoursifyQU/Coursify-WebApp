@@ -261,11 +261,10 @@ export default function CourseDetailPage() {
             radial-gradient(at 96% 10%, hsla(43,83%,51%,0.07) 0px, transparent 50%);
         }
         :is(.dark) .course-detail-bg {
-          background-color: #0b1527;
+          background-color: #1a1a1a;
           background-image:
-            radial-gradient(at 21% 33%, hsla(225,100%,30%,0.12) 0px, transparent 50%),
-            radial-gradient(at 79% 76%, hsla(352,71%,40%,0.08) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43,83%,40%,0.06) 0px, transparent 50%);
+            radial-gradient(at 79% 76%, hsla(352,71%,40%,0.06) 0px, transparent 50%),
+            radial-gradient(at 96% 10%, hsla(43,83%,40%,0.04) 0px, transparent 50%);
         }
         .glass-card-deep {
           background: rgba(255,255,255,0.72);
@@ -288,7 +287,7 @@ export default function CourseDetailPage() {
             inset 0 -1px 0 rgba(255,255,255,0.35);
         }
         :is(.dark) .glass-card-deep {
-          background: rgba(15,23,42,0.7);
+          background: rgba(38,38,38,0.80);
           border: 1px solid rgba(255,255,255,0.08);
           box-shadow:
             0 8px 32px rgba(0,0,0,0.3),
@@ -348,7 +347,7 @@ export default function CourseDetailPage() {
             inset 0 -1px 0 rgba(0,48,95,0.05);
         }
         :is(.dark) .course-detail-inset-glass {
-          background: linear-gradient(165deg, rgba(15,23,42,0.8) 0%, rgba(20,30,50,0.6) 42%, rgba(15,23,42,0.5) 100%);
+          background: linear-gradient(165deg, rgba(48,48,48,0.85) 0%, rgba(40,40,40,0.65) 42%, rgba(35,35,35,0.55) 100%);
           border: 1px solid rgba(255,255,255,0.08);
           box-shadow:
             0 4px 24px rgba(0,0,0,0.2),
@@ -357,7 +356,7 @@ export default function CourseDetailPage() {
             inset 0 -1px 0 rgba(255,255,255,0.02);
         }
         :is(.dark) .course-detail-inset-glass:hover {
-          background: linear-gradient(165deg, rgba(15,23,42,0.9) 0%, rgba(25,35,55,0.75) 48%, rgba(15,23,42,0.65) 100%);
+          background: linear-gradient(165deg, rgba(55,55,55,0.92) 0%, rgba(48,48,48,0.80) 48%, rgba(42,42,42,0.70) 100%);
           border-color: rgba(255,255,255,0.12);
           box-shadow:
             0 8px 32px rgba(0,0,0,0.3),
@@ -386,7 +385,7 @@ export default function CourseDetailPage() {
         :is(.dark) button.course-detail-inset-glass[role="combobox"]:focus-visible,
         :is(.dark) button.course-detail-inset-glass[role="combobox"]:active,
         :is(.dark) button.course-detail-inset-glass[role="combobox"][data-state="open"] {
-          background: linear-gradient(165deg, rgba(15,23,42,0.8) 0%, rgba(20,30,50,0.6) 42%, rgba(15,23,42,0.5) 100%);
+          background: linear-gradient(165deg, rgba(52,52,52,0.88) 0%, rgba(44,44,44,0.70) 42%, rgba(38,38,38,0.58) 100%);
           border-color: rgba(255,255,255,0.1);
           box-shadow:
             0 4px 24px rgba(0,0,0,0.2),
@@ -404,7 +403,7 @@ export default function CourseDetailPage() {
             inset 0 -1px 0 rgba(0,48,95,0.05);
         }
         :is(.dark) button.course-detail-inset-glass[role="combobox"]:hover {
-          background: linear-gradient(165deg, rgba(15,23,42,0.9) 0%, rgba(25,35,55,0.75) 48%, rgba(15,23,42,0.65) 100%);
+          background: linear-gradient(165deg, rgba(58,58,58,0.95) 0%, rgba(50,50,50,0.82) 48%, rgba(44,44,44,0.72) 100%);
           border-color: rgba(255,255,255,0.12);
         }
         .chart-area-bg {
@@ -412,14 +411,14 @@ export default function CourseDetailPage() {
           border: 1px solid rgba(255,255,255,0.7);
         }
         :is(.dark) .chart-area-bg {
-          background: linear-gradient(160deg, rgba(15,23,42,0.5) 0%, rgba(15,23,42,0.3) 100%);
+          background: linear-gradient(160deg, rgba(35,35,35,0.55) 0%, rgba(28,28,28,0.35) 100%);
           border: 1px solid rgba(255,255,255,0.06);
         }
         .chart-empty-bg {
           background: rgba(255,255,255,0.3);
         }
         :is(.dark) .chart-empty-bg {
-          background: rgba(15,23,42,0.4);
+          background: rgba(35,35,35,0.45);
         }
       `}</style>
 
@@ -712,7 +711,7 @@ export default function CourseDetailPage() {
                       'GPA',
                     ]}
                     contentStyle={{
-                      backgroundColor: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.92)',
+                      backgroundColor: isDark ? 'rgba(32,32,32,0.97)' : 'rgba(255,255,255,0.92)',
                       backdropFilter: 'blur(12px)',
                       borderRadius: '10px',
                       border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.8)',
@@ -845,7 +844,7 @@ export default function CourseDetailPage() {
                       formatter={(value) => [`${value}%`, 'Students']}
                       labelFormatter={(label) => `Grade ${label}`}
                       contentStyle={{
-                        backgroundColor: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.92)',
+                        backgroundColor: isDark ? 'rgba(32,32,32,0.97)' : 'rgba(255,255,255,0.92)',
                         backdropFilter: 'blur(12px)',
                         borderRadius: '10px',
                         border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.8)',

@@ -117,11 +117,10 @@ export default function CourseCommentsPage() {
             radial-gradient(at 96% 10%, hsla(43,83%,51%,0.07) 0px, transparent 50%);
         }
         :is(.dark) .comments-page-bg {
-          background-color: #0b1527;
+          background-color: #1a1a1a;
           background-image:
-            radial-gradient(at 21% 33%, hsla(225,100%,30%,0.12) 0px, transparent 50%),
-            radial-gradient(at 79% 76%, hsla(352,71%,40%,0.08) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43,83%,40%,0.06) 0px, transparent 50%);
+            radial-gradient(at 79% 76%, hsla(352,71%,40%,0.06) 0px, transparent 50%),
+            radial-gradient(at 96% 10%, hsla(43,83%,40%,0.04) 0px, transparent 50%);
         }
         .glass-card-deep {
           background: rgba(255,255,255,0.72);
@@ -153,7 +152,7 @@ export default function CourseCommentsPage() {
         .tab-pill.active-reddit { background: rgba(255,69,0,0.9); border-color: rgba(255,69,0,0.3); color: white; }
         .tab-pill.active-rmp { background: rgba(0,48,95,0.9); border-color: rgba(0,48,95,0.3); color: white; }
         :is(.dark) .glass-card-deep {
-          background: rgba(30,41,59,0.72);
+          background: rgba(38,38,38,0.82);
           border: 1px solid rgba(255,255,255,0.08);
           box-shadow: 0 8px 32px rgba(0,0,0,0.20), 0 2px 8px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
         }
@@ -166,10 +165,10 @@ export default function CourseCommentsPage() {
           box-shadow: 0 24px 64px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
         }
         :is(.dark) .tab-pill {
-          background: rgba(30,41,59,0.55);
+          background: rgba(38,38,38,0.65);
           border: 1px solid rgba(255,255,255,0.1);
         }
-        :is(.dark) .tab-pill:hover { background: rgba(30,41,59,0.75); }
+        :is(.dark) .tab-pill:hover { background: rgba(50,50,50,0.80); }
         :is(.dark) .tab-pill.active-all { background: rgba(59,130,246,0.9); border-color: rgba(59,130,246,0.3); }
         :is(.dark) .tab-pill.active-rmp { background: rgba(59,130,246,0.9); border-color: rgba(59,130,246,0.3); }
       ` }} />

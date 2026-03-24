@@ -320,7 +320,7 @@ export default function QueensCourses() {
         }
 
         :is(.dark) .glass-card-deep {
-          background: rgba(30, 41, 59, 0.72);
+          background: rgba(38, 38, 38, 0.82);
           backdrop-filter: blur(28px) saturate(170%);
           -webkit-backdrop-filter: blur(28px) saturate(170%);
           border: 1px solid rgba(255, 255, 255, 0.08);
@@ -341,7 +341,7 @@ export default function QueensCourses() {
 
         :is(.dark) .glass-btn:hover,
         :is(.dark) .glass-btn:focus {
-          background: rgba(30, 41, 59, 0.55) !important;
+          background: rgba(48, 48, 48, 0.65) !important;
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
         }
 
@@ -354,7 +354,7 @@ export default function QueensCourses() {
         }
 
         :is(.dark) .search-glass {
-          background: rgba(30, 41, 59, 0.72);
+          background: rgba(38, 38, 38, 0.82);
           backdrop-filter: blur(20px) saturate(160%);
           -webkit-backdrop-filter: blur(20px) saturate(160%);
           border: 1px solid rgba(255, 255, 255, 0.08);
