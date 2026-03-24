@@ -132,10 +132,13 @@ const Navigation = () => {
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-gray-500 dark:text-slate-400 hover:text-brand-navy dark:hover:text-white transition-all duration-200"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-black/[0.06] dark:bg-white/[0.10] hover:bg-black/[0.10] dark:hover:bg-white/[0.16] text-gray-600 dark:text-slate-300 border border-black/[0.06] dark:border-white/[0.10]"
               aria-label="Toggle theme"
             >
-              {mounted && theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+              {mounted && theme === "dark"
+                ? <><Sun size={15} /><span className="hidden nav:inline text-xs">Light</span></>
+                : <><Moon size={15} /><span className="hidden nav:inline text-xs">Dark</span></>
+              }
             </button>
 
             {user ? (
@@ -205,9 +208,12 @@ const Navigation = () => {
               <span className="text-sm font-medium text-gray-600 dark:text-slate-300">Theme</span>
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-gray-500 dark:text-slate-400 transition-all duration-200"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-black/[0.06] dark:bg-white/[0.10] hover:bg-black/[0.10] dark:hover:bg-white/[0.16] text-gray-600 dark:text-slate-300 border border-black/[0.06] dark:border-white/[0.10]"
               >
-                {mounted && theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+                {mounted && theme === "dark"
+                  ? <><Sun size={15} /><span className="text-xs">Light mode</span></>
+                  : <><Moon size={15} /><span className="text-xs">Dark mode</span></>
+                }
               </button>
             </div>
 
