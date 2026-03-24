@@ -16,7 +16,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "Coursify",
   description:
-    "Comprehensive course information for Queen's University students",
+    "A course insights platform built for Queen's University students - not affiliated with Queen's University",
   generator: "v0.dev",
 };
 
@@ -28,7 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={manrope.className}>
-        <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          forcedTheme="light"
+        >
           <AuthProvider>
             <div className="flex min-h-screen flex-col">
               <Navigation />
