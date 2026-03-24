@@ -97,9 +97,8 @@ const Navigation = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
-            <span className="text-lg font-bold tracking-tight gold-shine-text">
-              Coursify
-            </span>
+            <span className="text-lg font-bold tracking-tight text-brand-navy dark:text-white">Cours</span>
+            <span className="text-lg font-bold tracking-tight text-brand-red">ify</span>
           </Link>
 
           {/* Desktop nav links */}
@@ -176,70 +175,87 @@ const Navigation = () => {
 
             {/* Mobile hamburger */}
             <button
-              className="nav:hidden p-2 rounded-full hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-gray-500 dark:text-slate-400 hover:text-brand-navy dark:hover:text-white transition-all duration-200"
+              className="nav:hidden p-2 rounded-full hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-gray-500 dark:text-slate-400 hover:text-brand-navy dark:hover:text-white transition-colors duration-200"
               onClick={toggleMenu}
               aria-label="Toggle menu"
             >
-              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              <span className="relative block w-5 h-5">
+                <Menu
+                  size={20}
+                  className={`absolute inset-0 transition-all duration-200 ${isMenuOpen ? "opacity-0 rotate-90" : "opacity-100 rotate-0"}`}
+                />
+                <X
+                  size={20}
+                  className={`absolute inset-0 transition-all duration-200 ${isMenuOpen ? "opacity-100 rotate-0" : "opacity-0 -rotate-90"}`}
+                />
+              </span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile dropdown */}
-      {isMenuOpen && (
-        <div
-          className="nav:hidden max-w-4xl mx-auto mt-2 rounded-3xl px-4 py-4 glass-card"
-        >
-          <nav className="flex flex-col gap-0.5">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-gray-600 dark:text-slate-300 hover:text-brand-navy dark:hover:text-white px-4 py-2.5 rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors duration-200"
-                onClick={toggleMenu}
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/5 flex items-center justify-between px-4 py-2.5">
-              <span className="text-sm font-medium text-gray-600 dark:text-slate-300">Theme</span>
-              <button
-                onClick={toggleTheme}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-black/[0.06] dark:bg-white/[0.10] hover:bg-black/[0.10] dark:hover:bg-white/[0.16] text-gray-600 dark:text-slate-300 border border-black/[0.06] dark:border-white/[0.10]"
-              >
-                {mounted && theme === "dark"
-                  ? <><Sun size={15} /><span className="text-xs">Light mode</span></>
-                  : <><Moon size={15} /><span className="text-xs">Dark mode</span></>
-                }
-              </button>
-            </div>
-
-            {user ? (
-              <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/5">
-                <div className="text-xs font-medium text-gray-400 dark:text-slate-500 mb-1 px-4">{user.email}</div>
-                <button
-                  className="w-full flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-slate-300 hover:text-brand-red rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors duration-200"
-                  onClick={handleSignOut}
+      {/* Mobile dropdown — always in DOM, animated via grid-template-rows */}
+      <div
+        className="nav:hidden max-w-4xl mx-auto mt-2"
+        style={{
+          display: "grid",
+          gridTemplateRows: isMenuOpen ? "1fr" : "0fr",
+          opacity: isMenuOpen ? 1 : 0,
+          transition: "grid-template-rows 0.28s ease, opacity 0.22s ease",
+        }}
+      >
+        <div style={{ overflow: "hidden", minHeight: 0 }}>
+          <div className="rounded-3xl px-4 py-4 glass-card">
+            <nav className="flex flex-col gap-0.5">
+              {links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm font-medium text-gray-600 dark:text-slate-300 hover:text-brand-navy dark:hover:text-white px-4 py-2.5 rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors duration-200"
+                  onClick={toggleMenu}
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
+                  {link.label}
+                </Link>
+              ))}
+
+              <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/5 flex items-center justify-between px-4 py-2.5">
+                <span className="text-sm font-medium text-gray-600 dark:text-slate-300">Theme</span>
+                <button
+                  onClick={toggleTheme}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-black/[0.06] dark:bg-white/[0.10] hover:bg-black/[0.10] dark:hover:bg-white/[0.16] text-gray-600 dark:text-slate-300 border border-black/[0.06] dark:border-white/[0.10]"
+                >
+                  {mounted && theme === "dark"
+                    ? <><Sun size={15} /><span className="text-xs">Light mode</span></>
+                    : <><Moon size={15} /><span className="text-xs">Dark mode</span></>
+                  }
                 </button>
               </div>
-            ) : (
-              <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/5">
-                <button
-                  className="w-full liquid-btn-red text-white text-sm font-medium px-4 py-2.5 rounded-2xl"
-                  onClick={() => { router.push("/sign-in"); setIsMenuOpen(false) }}
-                >
-                  Sign In
-                </button>
-              </div>
-            )}
-          </nav>
+
+              {user ? (
+                <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/5">
+                  <div className="text-xs font-medium text-gray-400 dark:text-slate-500 mb-1 px-4">{user.email}</div>
+                  <button
+                    className="w-full flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-slate-300 hover:text-brand-red rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors duration-200"
+                    onClick={handleSignOut}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/5">
+                  <button
+                    className="w-full liquid-btn-red text-white text-sm font-medium px-4 py-2.5 rounded-2xl"
+                    onClick={() => { router.push("/sign-in"); setIsMenuOpen(false) }}
+                  >
+                    Sign In
+                  </button>
+                </div>
+              )}
+            </nav>
+          </div>
         </div>
-      )}
+      </div>
     </header>
   )
 }
