@@ -243,8 +243,11 @@ export default function Home() {
                     Ask AI Assistant
                   </span>
                 </Link>
-                <Link href="/schools/queens" className="glass-pill text-brand-navy dark:text-white px-7 py-3 rounded-xl inline-block font-medium w-full sm:w-auto text-center border border-white/60 dark:border-white/10 hover:bg-white/60 dark:hover:bg-white/10 transition-all duration-200">
-                  Browse Courses
+                <Link href="/schools/queens" className="liquid-btn-blue text-white px-7 py-3 rounded-xl inline-block font-medium w-full sm:w-auto text-center">
+                  <span className="relative z-10 flex items-center justify-center">
+                    <BarChart className="mr-2 h-5 w-5" />
+                    Browse Courses
+                  </span>
                 </Link>
               </motion.div>
 
@@ -253,7 +256,7 @@ export default function Home() {
                   { label: "Real grade data", color: "bg-red-500" },
                   { label: "AI-powered insights", color: "bg-yellow-400" },
                   { label: "Queen's focused", color: "bg-blue-500" },
-                  { label: "Completely free", color: "bg-yellow-600" },
+                  { label: "Completely free", color: "bg-red-500" },
                 ].map(({ label, color }) => (
                   <div key={label} className="flex items-center glass-pill px-3 py-1.5 rounded-full">
                     <div className={`w-1.5 h-1.5 rounded-full mr-2 flex-shrink-0 ${color}`} />
@@ -547,15 +550,15 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-7">
               <Link href="/queens-answers" className="liquid-btn-red text-white px-7 py-3 rounded-xl inline-block font-medium w-full sm:w-auto text-center">
-                <span className="flex items-center justify-center">
-                  <Brain className="mr-2 h-4 w-4" />
-                  <span className="text-sm">Try AI Assistant</span>
+                <span className="relative z-10 flex items-center justify-center">
+                  <Brain className="mr-2 h-5 w-5" />
+                  Try AI Assistant
                 </span>
               </Link>
               <Link href="/schools/queens" className="liquid-btn-blue text-white px-7 py-3 rounded-xl inline-block font-medium w-full sm:w-auto text-center">
-                <span className="flex items-center justify-center">
-                  <BarChart className="mr-2 h-4 w-4" />
-                  <span className="text-sm">Browse Courses</span>
+                <span className="relative z-10 flex items-center justify-center">
+                  <BarChart className="mr-2 h-5 w-5" />
+                  Browse Courses
                 </span>
               </Link>
             </div>
@@ -564,7 +567,7 @@ export default function Home() {
                 { label: "Real grade distributions", color: "bg-red-500" },
                 { label: "AI-powered insights", color: "bg-yellow-400" },
                 { label: "Queen's focused", color: "bg-blue-500" },
-                { label: "Completely free", color: "bg-yellow-600" },
+                { label: "Completely free", color: "bg-red-500" },
               ].map(({ label, color }) => (
                 <div key={label} className="flex items-center glass-pill px-3 py-1.5 rounded-full">
                   <div className={`w-1.5 h-1.5 rounded-full mr-2 flex-shrink-0 ${color}`} />
