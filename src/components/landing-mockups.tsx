@@ -1,6 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Brain } from "lucide-react";
+import { QUEENS_ANSWERS_DRAFT_STORAGE_KEY } from "@/constants/queens-answers";
 
 const GRADE_COLORS: Record<string, string> = {
   "A+": "#4CAF50", A: "#4CAF50", "A-": "#8BC34A",
@@ -174,8 +177,20 @@ export function StudentReviewsMockup({ compact = false }: { compact?: boolean })
    ───────────────────────────────────────────── */
 
 export function AIAssistantMockup({ compact = false }: { compact?: boolean }) {
+  const router = useRouter();
+  const [draft, setDraft] = useState("");
   const pad = compact ? "p-3" : "p-5";
   const textSm = compact ? "text-[9px]" : "text-[11px]";
+
+  const goToQueensAnswers = () => {
+    const q = draft.trim();
+    if (q) sessionStorage.setItem(QUEENS_ANSWERS_DRAFT_STORAGE_KEY, q);
+    else sessionStorage.removeItem(QUEENS_ANSWERS_DRAFT_STORAGE_KEY);
+    router.push("/queens-answers");
+  };
+
+  const inputText = compact ? "text-[8px]" : "text-[10px]";
+  const inputPad = compact ? "py-0.5" : "py-1";
 
   return (
     <div className={`glass-card rounded-2xl ${pad} w-full select-none`}>
@@ -219,13 +234,31 @@ export function AIAssistantMockup({ compact = false }: { compact?: boolean }) {
       </div>
 
       {/* Input bar */}
-      <div className={`flex items-center bg-gray-100/80 dark:bg-white/[0.04] rounded-full ${compact ? "px-3 py-1.5" : "px-4 py-2"}`}>
-        <span className={`${compact ? "text-[8px]" : "text-[10px]"} text-gray-400 flex-1`}>Ask about any course or professor…</span>
-        <div className={`${compact ? "w-5 h-5" : "w-6 h-6"} rounded-full bg-brand-red flex items-center justify-center`}>
-          <svg viewBox="0 0 20 20" fill="white" className={compact ? "w-2.5 h-2.5" : "w-3 h-3"}>
+      <div className={`flex items-center gap-2 bg-gray-100/80 dark:bg-white/[0.04] rounded-full ${compact ? "px-3 py-1.5" : "px-4 py-2"}`}>
+        <input
+          type="text"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              goToQueensAnswers();
+            }
+          }}
+          placeholder="Ask about any course or professor…"
+          aria-label="Ask about any course or professor"
+          className={`min-w-0 flex-1 bg-transparent outline-none select-text placeholder:text-gray-400 text-brand-navy dark:text-white ${inputText} ${inputPad}`}
+        />
+        <button
+          type="button"
+          onClick={goToQueensAnswers}
+          aria-label="Go to Queen's Answers"
+          className={`${compact ? "w-5 h-5" : "w-6 h-6"} shrink-0 rounded-full bg-brand-red flex items-center justify-center`}
+        >
+          <svg viewBox="0 0 20 20" fill="white" className={compact ? "w-2.5 h-2.5" : "w-3 h-3"} aria-hidden>
             <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
-        </div>
+        </button>
       </div>
     </div>
   );

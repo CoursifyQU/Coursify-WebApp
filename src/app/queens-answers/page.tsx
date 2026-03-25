@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, useAnimation, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/lib/auth/auth-context"
+import { QUEENS_ANSWERS_DRAFT_STORAGE_KEY } from "@/constants/queens-answers"
 import { AuthModal } from "@/components/auth-modal"
 import { Bot, Search, MessageSquare, Target, ArrowRight } from "lucide-react"
 
@@ -14,6 +15,14 @@ export default function AIFeatures() {
   const containerRef = useRef<HTMLDivElement>(null)
   const controls = useAnimation()
   const { user } = useAuth()
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem(QUEENS_ANSWERS_DRAFT_STORAGE_KEY)
+    if (stored) {
+      setQuestion(stored)
+      sessionStorage.removeItem(QUEENS_ANSWERS_DRAFT_STORAGE_KEY)
+    }
+  }, [])
   const howItWorksItems = [
     {
       icon: Search,
