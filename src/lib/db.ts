@@ -121,6 +121,7 @@ export async function fetchCoursesPage(params: CoursePageParams): Promise<Course
   if (params.sortBy) searchParams.set("sort_by", params.sortBy)
   if (params.sortDir) searchParams.set("sort_dir", params.sortDir)
   if (params.hasData !== undefined) searchParams.set("has_data", String(params.hasData))
+  if (params.availability?.length) searchParams.set("availability", params.availability.join(","))
 
   const res = await fetch(`/api/courses?${searchParams.toString()}`)
   if (!res.ok) {

@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import {
+  BarChart3,
   ChevronDown,
   ChevronUp,
   Filter,
+  MessageSquare,
   Search,
   SlidersHorizontal,
   X,
@@ -28,6 +30,7 @@ import {
 } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
 import { fetchCoursesPage, fetchDepartments, fetchSubjects } from "@/lib/db";
+import { getCourseDataAvailability } from "@/lib/course-availability";
 import type { CourseWithStats } from "@/types";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -59,7 +62,7 @@ export default function QueensCourses() {
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: "ascending" | "descending";
-  } | null>(() => {
+  }>(() => {
     const sortBy = searchParams.get("sort_by");
     const sortDir = searchParams.get("sort_dir");
     if (sortBy) {
@@ -68,7 +71,7 @@ export default function QueensCourses() {
         direction: sortDir === "desc" ? "descending" : "ascending",
       };
     }
-    return null;
+    return { key: "availability", direction: "descending" };
   });
   const [enrollmentRange, setEnrollmentRange] = useState([
     parseFloat(searchParams.get("enroll_min") || "0"),
@@ -81,6 +84,18 @@ export default function QueensCourses() {
   const [departmentOpen, setDepartmentOpen] = useState(false);
   const [levelOpen, setLevelOpen] = useState(false);
   const [subjectOpen, setSubjectOpen] = useState(false);
+  const [availabilityOpen, setAvailabilityOpen] = useState(false);
+  const [selectedAvailability, setSelectedAvailability] = useState<
+    ("data" | "comments")[]
+  >(() => {
+    const raw =
+      searchParams.get("availability")?.split(",").filter(Boolean) ?? [];
+    const v = raw.filter(
+      (x): x is "data" | "comments" => x === "data" || x === "comments",
+    );
+    if (v.length === 0) return ["data", "comments"];
+    return v;
+  });
   const hasData = true;
   const [departments, setDepartments] = useState<string[]>([]);
   const [subjects, setSubjects] = useState<string[]>([]);
@@ -155,14 +170,20 @@ export default function QueensCourses() {
           enrollmentMin: enrollmentRange[0],
           enrollmentMax: enrollmentRange[1],
           sortBy:
-            (sortConfig?.key as "code" | "name" | "gpa" | "enrollment") ||
-            undefined,
-          sortDir: sortConfig
-            ? sortConfig.direction === "ascending"
-              ? "asc"
-              : "desc"
-            : undefined,
+            sortConfig.key as
+              | "code"
+              | "name"
+              | "gpa"
+              | "enrollment"
+              | "availability",
+          sortDir:
+            sortConfig.direction === "ascending" ? "asc" : "desc",
           hasData,
+          availability:
+            selectedAvailability.includes("data") &&
+            selectedAvailability.includes("comments")
+              ? undefined
+              : selectedAvailability,
         });
         if (!cancelled) {
           setCourses(result.courses);
@@ -195,12 +216,14 @@ export default function QueensCourses() {
         enrollmentRange[0] > 0 ? String(enrollmentRange[0]) : undefined,
       enroll_max:
         enrollmentRange[1] > 0 ? String(enrollmentRange[1]) : undefined,
-      sort_by: sortConfig?.key || undefined,
-      sort_dir: sortConfig
-        ? sortConfig.direction === "ascending"
-          ? "asc"
-          : "desc"
-        : undefined,
+      sort_by: sortConfig.key || undefined,
+      sort_dir:
+        sortConfig.direction === "ascending" ? "asc" : "desc",
+      availability:
+        selectedAvailability.includes("data") &&
+        selectedAvailability.includes("comments")
+          ? undefined
+          : selectedAvailability.join(","),
     });
 
     return () => {
@@ -212,14 +235,16 @@ export default function QueensCourses() {
     selectedDepartments,
     selectedLevels,
     selectedSubjects,
+    selectedAvailability,
     gpaRange,
     enrollmentRange,
     sortConfig,
   ]);
 
   const requestSort = (key: string) => {
-    // GPA and enrollment default to descending first (show highest values first)
-    const defaultDesc = key === "gpa" || key === "enrollment";
+    // GPA, enrollment, availability: first click = descending (highest / data-first)
+    const defaultDesc =
+      key === "gpa" || key === "enrollment" || key === "availability";
     let direction: "ascending" | "descending" = defaultDesc
       ? "descending"
       : "ascending";
@@ -251,6 +276,31 @@ export default function QueensCourses() {
     return "text-red-600";
   };
 
+  function AvailabilityBadge({ course }: { course: CourseWithStats }) {
+    const tier = getCourseDataAvailability(course);
+    if (tier === "data") {
+      return (
+        <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 px-2 py-0.5 rounded-full whitespace-nowrap">
+          <BarChart3 className="h-3 w-3 shrink-0" />
+          Data available
+        </span>
+      );
+    }
+    if (tier === "comments") {
+      return (
+        <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-sky-100 dark:bg-sky-900/30 text-sky-800 dark:text-sky-300 px-2 py-0.5 rounded-full whitespace-nowrap">
+          <MessageSquare className="h-3 w-3 shrink-0" />
+          Comments only
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full whitespace-nowrap">
+        No data
+      </span>
+    );
+  }
+
   const resetFilters = () => {
     setSearchTerm("");
     setDebouncedSearch("");
@@ -259,7 +309,8 @@ export default function QueensCourses() {
     setSelectedSubjects([]);
     setGpaRange([0, 4.3]);
     setEnrollmentRange([0, 0]);
-    setSortConfig(null);
+    setSelectedAvailability(["data", "comments"]);
+    setSortConfig({ key: "availability", direction: "descending" });
     setCurrentPage(1);
   };
 
@@ -288,6 +339,17 @@ export default function QueensCourses() {
     setCurrentPage(1);
   };
 
+  const toggleAvailabilityTier = (tier: "data" | "comments") => {
+    setSelectedAvailability((prev) => {
+      const next = prev.includes(tier)
+        ? prev.filter((t) => t !== tier)
+        : [...prev, tier];
+      if (next.length === 0) return ["data", "comments"];
+      return next;
+    });
+    setCurrentPage(1);
+  };
+
   const handleCatalogSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (catalogSearch.trim()) {
@@ -297,11 +359,16 @@ export default function QueensCourses() {
     }
   };
 
+  const availabilityFilterActive =
+    !selectedAvailability.includes("data") ||
+    !selectedAvailability.includes("comments");
+
   const hasActiveFilters =
     debouncedSearch !== "" ||
     selectedDepartments.length > 0 ||
     selectedLevels.length > 0 ||
     selectedSubjects.length > 0 ||
+    availabilityFilterActive ||
     gpaRange[0] > 0 ||
     gpaRange[1] < 4.3 ||
     enrollmentRange[0] > 0 ||
@@ -590,6 +657,70 @@ export default function QueensCourses() {
                   </Popover>
                 </div>
 
+                {/* Data availability */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block text-brand-navy dark:text-white">
+                    Data availability
+                  </label>
+                  <Popover
+                    open={availabilityOpen}
+                    onOpenChange={setAvailabilityOpen}
+                  >
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        role="combobox"
+                        aria-expanded={availabilityOpen}
+                        className="w-full justify-between glass-btn border-0 text-brand-navy dark:text-white hover:bg-white/30"
+                      >
+                        {selectedAvailability.includes("data") &&
+                        selectedAvailability.includes("comments")
+                          ? "All types"
+                          : selectedAvailability.includes("data")
+                            ? "Data available only"
+                            : "Comments only"}
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0" align="start">
+                      <Command>
+                        <CommandList>
+                          <CommandGroup heading="Show courses with">
+                            <CommandItem
+                              value="data-available"
+                              onSelect={() =>
+                                toggleAvailabilityTier("data")
+                              }
+                              className="flex items-center"
+                            >
+                              <div className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary">
+                                {selectedAvailability.includes("data") && (
+                                  <Check className="h-3 w-3" />
+                                )}
+                              </div>
+                              <span>Data available (grade stats)</span>
+                            </CommandItem>
+                            <CommandItem
+                              value="comments-only"
+                              onSelect={() =>
+                                toggleAvailabilityTier("comments")
+                              }
+                              className="flex items-center"
+                            >
+                              <div className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary">
+                                {selectedAvailability.includes(
+                                  "comments",
+                                ) && <Check className="h-3 w-3" />}
+                              </div>
+                              <span>Comments only</span>
+                            </CommandItem>
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
                 {/* Department Dropdown */}
                 <div>
                   <label className="text-sm font-medium mb-2 block text-brand-navy dark:text-white">
@@ -756,6 +887,22 @@ export default function QueensCourses() {
                     Active Filters:
                   </div>
                   <div className="flex flex-wrap gap-2">
+                    {availabilityFilterActive && (
+                      <Badge className="bg-brand-navy/10 dark:bg-blue-400/10 text-brand-navy dark:text-white hover:bg-brand-navy/20 dark:hover:bg-blue-400/20 flex items-center">
+                        {selectedAvailability.includes("data")
+                          ? "Data available only"
+                          : "Comments only"}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedAvailability(["data", "comments"])
+                          }
+                          className="ml-1 hover:text-brand-red"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    )}
                     {selectedDepartments.map((dept) => (
                       <Badge
                         key={dept}
@@ -873,6 +1020,16 @@ export default function QueensCourses() {
                         </th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-brand-navy dark:text-white">
                           <button
+                            type="button"
+                            className="flex items-center"
+                            onClick={() => requestSort("availability")}
+                          >
+                            Data Availability{" "}
+                            {getSortIcon("availability")}
+                          </button>
+                        </th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-brand-navy dark:text-white">
+                          <button
                             className="flex items-center"
                             onClick={() => requestSort("gpa")}
                           >
@@ -906,6 +1063,9 @@ export default function QueensCourses() {
                             </td>
                             <td className="px-4 py-3 text-sm">
                               {course.course_name}
+                            </td>
+                            <td className="px-4 py-3 text-sm">
+                              <AvailabilityBadge course={course} />
                             </td>
                             <td className="px-4 py-3 text-sm">
                               <span
@@ -942,7 +1102,7 @@ export default function QueensCourses() {
                       ) : (
                         <tr>
                           <td
-                            colSpan={4}
+                            colSpan={5}
                             className="px-4 py-8 text-center text-muted-foreground"
                           >
                             No courses found matching your filters. Try

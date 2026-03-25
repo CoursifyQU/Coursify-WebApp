@@ -5,8 +5,9 @@ import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search, ArrowLeft, Upload, BarChart3 } from "lucide-react"
+import { Search, ArrowLeft, Upload, BarChart3, MessageSquare } from "lucide-react"
 import { fetchCoursesPage } from "@/lib/db"
+import { getCourseDataAvailability } from "@/lib/course-availability"
 import type { CourseWithStats } from "@/types"
 
 export default function CourseSearchPage() {
@@ -32,6 +33,8 @@ export default function CourseSearchPage() {
       hasData: false,
       limit: 50,
       page: 1,
+      sortBy: "code",
+      sortDir: "asc",
     }).then((result) => {
       if (!cancelled) {
         setResults(result.courses)
@@ -181,7 +184,7 @@ export default function CourseSearchPage() {
             {results.length > 0 ? (
               <div className="space-y-3">
                 {results.map((course) => {
-                  const hasGpaData = course.averageGPA > 0
+                  const tier = getCourseDataAvailability(course)
                   const slug = course.course_code.replace(/\s+/g, "-").toLowerCase()
 
                   return (
@@ -192,16 +195,23 @@ export default function CourseSearchPage() {
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
                             <span className="text-sm font-semibold text-brand-red">{course.course_code}</span>
-                            {hasGpaData ? (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full">
-                                <BarChart3 className="h-3 w-3" />
+                            {tier === "data" && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 px-2 py-0.5 rounded-full">
+                                <BarChart3 className="h-3 w-3 shrink-0" />
                                 Data available
                               </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
-                                No data yet
+                            )}
+                            {tier === "comments" && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-sky-100 dark:bg-sky-900/30 text-sky-800 dark:text-sky-300 px-2 py-0.5 rounded-full">
+                                <MessageSquare className="h-3 w-3 shrink-0" />
+                                Comments only
+                              </span>
+                            )}
+                            {tier === "none" && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full">
+                                No data available
                               </span>
                             )}
                           </div>
@@ -210,7 +220,7 @@ export default function CourseSearchPage() {
                             <p className="text-xs text-muted-foreground mt-1">{course.department}</p>
                           )}
                         </div>
-                        {hasGpaData && (
+                        {tier === "data" && (
                           <div className="flex items-center gap-4 text-sm shrink-0">
                             <div>
                               <span className="text-xs text-muted-foreground block">Avg. GPA</span>
@@ -226,6 +236,11 @@ export default function CourseSearchPage() {
                                 </span>
                               </div>
                             )}
+                          </div>
+                        )}
+                        {tier === "comments" && (
+                          <div className="text-xs text-muted-foreground shrink-0 sm:text-right">
+                            Grade stats not on file — student reviews may be available on the course page.
                           </div>
                         )}
                       </div>
