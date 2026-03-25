@@ -450,6 +450,12 @@ export default function QueensCourses() {
         }
 
         /* ── Dark-mode overrides ── */
+        @keyframes gradient-shift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
         :is(.dark) .mesh-gradient {
           background-color: hsla(220, 20%, 10%, 1);
           background-image:
@@ -476,6 +482,16 @@ export default function QueensCourses() {
             #4a9eff 1px,
             transparent 1px
           );
+        }
+
+        :is(.dark) .gradient-text {
+          background: linear-gradient(-45deg, #4a9eff, #ff4d5e, #ffc940, #4a9eff);
+          background-size: 300% 300%;
+          animation: gradient-shift 6s ease infinite;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          color: transparent;
         }
 
         :is(.dark) .glass-card-deep {
@@ -1056,7 +1072,7 @@ export default function QueensCourses() {
                             <td className="px-4 py-3 text-sm font-medium">
                               <a
                                 href={`/schools/queens/${course.course_code.replace(/\s+/g, "-").toLowerCase()}`}
-                                className="text-brand-red hover:underline"
+                                className="text-brand-red hover:underline dark:text-brand-navy-light dark:hover:text-white"
                               >
                                 {course.course_code}
                               </a>
@@ -1068,13 +1084,13 @@ export default function QueensCourses() {
                               <AvailabilityBadge course={course} />
                             </td>
                             <td className="px-4 py-3 text-sm">
-                              <span
-                                className={`font-medium ${getGpaColor(course.averageGPA)}`}
-                              >
-                                {course.averageGPA > 0
-                                  ? course.averageGPA.toFixed(1)
-                                  : "N/A"}
-                              </span>
+                              {course.averageGPA > 0 ? (
+                                <span className={`font-medium ${getGpaColor(course.averageGPA)}`}>
+                                  {course.averageGPA.toFixed(1)}
+                                </span>
+                              ) : (
+                                <span className="font-medium text-muted-foreground">N/A</span>
+                              )}
                             </td>
                             <td className="px-4 py-3 text-sm">
                               <div className="flex items-center">

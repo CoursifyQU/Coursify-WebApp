@@ -17,6 +17,15 @@ const config: Config = {
       },
     },
     extend: {
+      fontFamily: {
+        display: [
+          "var(--font-display)",
+          "var(--font-manrope)",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+      },
       screens: {
         'lg-filters': '1060px',
         'nav': '850px',

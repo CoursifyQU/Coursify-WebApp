@@ -111,16 +111,11 @@ export default function CourseCommentsPage() {
       <style dangerouslySetInnerHTML={{ __html: `
         .comments-page-bg {
           background-color: #fff;
-          background-image:
-            radial-gradient(at 21% 33%, hsla(225,100%,19%,0.09) 0px, transparent 50%),
-            radial-gradient(at 79% 76%, hsla(352,71%,54%,0.08) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43,83%,51%,0.07) 0px, transparent 50%);
+          background-image: none;
         }
         :is(.dark) .comments-page-bg {
-          background-color: #1a1a1a;
-          background-image:
-            radial-gradient(at 79% 76%, hsla(352,71%,40%,0.06) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43,83%,40%,0.04) 0px, transparent 50%);
+          background-color: #171717;
+          background-image: none;
         }
         .glass-card-deep {
           background: rgba(255,255,255,0.72);
@@ -174,7 +169,7 @@ export default function CourseCommentsPage() {
       ` }} />
 
       {/* Background blobs */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
+      <div className="fixed inset-0 -z-10 pointer-events-none dark:hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/8 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-navy/8 dark:bg-blue-400/8 rounded-full blur-3xl" />
         <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-brand-gold/6 rounded-full blur-3xl" />
@@ -189,8 +184,8 @@ export default function CourseCommentsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-[#d62839]/8 pointer-events-none" />
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#0066CC]/15 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
+          <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-br from-white/5 via-transparent to-[#d62839]/8 dark:block" />
+          <div className="pointer-events-none absolute -right-16 -top-16 hidden h-64 w-64 rounded-full bg-[#0066CC]/15 blur-3xl dark:block" />
 
           <div className="relative px-8 py-7">
             <button
@@ -253,8 +248,18 @@ export default function CourseCommentsPage() {
                 </svg>
               )}
               {tab.id === 'rmp' && (
-                <div className={`w-4 h-4 rounded-full flex items-center justify-center ${activeTab === 'rmp' ? 'bg-white/20' : 'bg-brand-navy/10 dark:bg-blue-400/10'}`}>
-                  <svg viewBox="0 0 20 20" fill={activeTab === 'rmp' ? 'white' : '#00305f'} className="w-3 h-3">
+                <div
+                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
+                    activeTab === 'rmp'
+                      ? 'bg-white/20'
+                      : 'bg-brand-navy/10 dark:bg-white/15'
+                  }`}
+                >
+                  <svg
+                    viewBox="0 0 20 20"
+                    className={`h-3 w-3 ${activeTab === 'rmp' ? 'text-white' : 'text-brand-navy dark:text-sky-200'}`}
+                    fill="currentColor"
+                  >
                     <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                   </svg>
                 </div>

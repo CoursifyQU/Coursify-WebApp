@@ -117,19 +117,6 @@ export default function AddCoursesPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden mesh-gradient pt-20">
-      {/* Background elements */}
-      <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-navy/5 dark:bg-blue-400/5 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-brand-gold/5 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute w-96 h-96 bg-brand-red/5 rounded-full blur-3xl -top-10 -right-20"></div>
-        <div className="absolute w-80 h-80 bg-brand-navy/5 dark:bg-blue-400/5 rounded-full blur-3xl -bottom-10 -left-20"></div>
-        <div className="dot-pattern absolute inset-0 opacity-[0.08]"></div>
-      </div>
-
       <div className="container mx-auto py-12 px-4 md:px-6 relative z-10">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
@@ -309,11 +296,11 @@ export default function AddCoursesPage() {
                     )}
                   </div>
 
-                  <div className="mt-6 flex items-start p-4 bg-brand-gold/15 border border-brand-gold/30 rounded-lg shadow-sm">
-                    <AlertTriangle className="h-5 w-5 text-brand-gold mr-3 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <span className="font-semibold text-gray-800">Important:</span> Currently, we only support on-campus courses.
-                      Online course distributions will be supported in future updates.
+                  <div className="mt-6 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 shadow-sm dark:border-amber-400/35 dark:bg-amber-950/55">
+                    <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-700 dark:text-amber-300" aria-hidden />
+                    <p className="text-sm leading-relaxed text-amber-950 dark:text-amber-50">
+                      <span className="font-bold text-amber-900 dark:text-amber-100">Important:</span>{" "}
+                      Currently, we only support on-campus courses. Online course distributions will be supported in future updates.
                     </p>
                   </div>
                 </div>
@@ -335,17 +322,11 @@ export default function AddCoursesPage() {
       <style jsx global>{`
         .mesh-gradient {
           background-color: hsla(0, 0%, 100%, 1);
-          background-image:
-            radial-gradient(at 21% 33%, hsla(225, 100%, 19%, 0.05) 0px, transparent 50%),
-            radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.05) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.05) 0px, transparent 50%);
+          background-image: none;
         }
         :is(.dark) .mesh-gradient {
-          background-color: hsla(220, 20%, 10%, 1);
-          background-image:
-            radial-gradient(at 21% 33%, hsla(225, 100%, 30%, 0.08) 0px, transparent 50%),
-            radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.06) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.06) 0px, transparent 50%);
+          background-color: #171717;
+          background-image: none;
         }
       `}</style>
     </div>

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type CSSProperties } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import {
   Brain,
   BarChart3,
@@ -25,6 +26,31 @@ import {
   AIAssistantMockup,
   CourseAnalyticsMockup,
 } from "@/components/landing-mockups";
+import { BRAND_NAVY_LIGHT } from "@/constants/brand";
+import { cn } from "@/lib/utils";
+
+const featureTabSpring = { type: "spring" as const, stiffness: 320, damping: 30, mass: 0.55 };
+
+const featurePanelTransition = {
+  duration: 0.5,
+  ease: [0.25, 0.1, 0.25, 1] as const,
+};
+
+const featurePanelVariants = {
+  initial: { opacity: 0, y: 12, scale: 0.992 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { ...featurePanelTransition, opacity: { duration: 0.42 } },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    scale: 0.996,
+    transition: { duration: 0.28, ease: [0.4, 0, 1, 1] as const },
+  },
+};
 
 function SectionGlow({ className, gradient }: { className: string; gradient: string }) {
   return <div aria-hidden className={`pointer-events-none absolute rounded-full ${className}`} style={{ background: gradient }} />;
@@ -49,7 +75,15 @@ export default function Home() {
 
   const steps = [
     { num: "01", title: "Create an Account", desc: "Sign up for free and personalize your course planning experience.", icon: <UserPlus className="h-6 w-6" />, color: "#d62839" },
-    { num: "02", title: "Upload Grade Distributions", desc: "Contribute data to help the community make smarter decisions.", icon: <Upload className="h-6 w-6" />, color: "#00305f" },
+    {
+      num: "02",
+      title: "Upload Grade Distributions",
+      desc: "Contribute data to help the community make smarter decisions.",
+      icon: <Upload className="h-6 w-6" />,
+      color: "#00305f",
+      darkColor: "#5a93c9",
+      darkIconBg: "rgba(90, 147, 201, 0.22)",
+    },
     { num: "03", title: "View Course Data", desc: "Explore real grade breakdowns, enrollment trends, and student reviews.", icon: <Eye className="h-6 w-6" />, color: "#efb215" },
     { num: "04", title: "Ask Our AI", desc: "Chat with the AI assistant for personalized course and professor recommendations.", icon: <Sparkles className="h-6 w-6" />, color: "#d62839" },
   ];
@@ -95,6 +129,7 @@ export default function Home() {
       program: "Class of 2026",
       initial: "A",
       color: "#00305f",
+      darkColor: BRAND_NAVY_LIGHT,
     },
     {
       quote: "Being able to see how course difficulty changed over different semesters helped me pick the best time to take COMM 151.",
@@ -141,6 +176,13 @@ export default function Home() {
           background-clip: text;
           color: transparent;
         }
+        @keyframes bounce-slow {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+        .animate-bounce-slow {
+          animation: bounce-slow 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
       `}</style>
 
       {/* ═══════════════ HERO ═══════════════ */}
@@ -177,8 +219,11 @@ export default function Home() {
                     Ask AI Assistant
                   </span>
                 </Link>
-                <Link href="/schools/queens" className="glass-pill text-brand-navy dark:text-white px-7 py-3 rounded-xl inline-block font-medium w-full sm:w-auto text-center border border-white/60 dark:border-white/10 hover:bg-white/60 dark:hover:bg-white/10">
-                  Browse Courses
+                <Link href="/schools/queens" className="liquid-btn-blue text-white px-7 py-3 rounded-xl inline-block font-medium w-full sm:w-auto text-center">
+                  <span className="relative z-10 flex items-center justify-center">
+                    <BarChart className="mr-2 h-5 w-5" />
+                    Browse Courses
+                  </span>
                 </Link>
               </div>
 
@@ -187,7 +232,7 @@ export default function Home() {
                   { label: "Real grade data", color: "bg-red-500" },
                   { label: "AI-powered insights", color: "bg-yellow-400" },
                   { label: "Queen's focused", color: "bg-blue-500" },
-                  { label: "Completely free", color: "bg-yellow-600" },
+                  { label: "Completely free", color: "bg-red-500" },
                 ].map(({ label, color }) => (
                   <div key={label} className="flex items-center glass-pill px-3 py-1.5 rounded-full">
                     <div className={`w-1.5 h-1.5 rounded-full mr-2 flex-shrink-0 ${color}`} />
@@ -244,12 +289,18 @@ export default function Home() {
 
           <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {steps.map((step) => (
-              <div key={step.num} className="glass-card rounded-2xl p-6 relative overflow-hidden">
+              <div key={step.num} className="glass-card group rounded-2xl p-6 relative overflow-hidden">
                 <span className="absolute top-3 right-4 text-6xl font-black opacity-[0.04] text-brand-navy dark:text-white select-none">{step.num}</span>
-                <div className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: step.color }}>{step.num}</div>
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                  style={{ background: `${step.color}15`, color: step.color }}
+                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg text-[color:var(--step-fg)] dark:text-[color:var(--step-fg-dark)] bg-[color:var(--step-icon-bg)] dark:bg-[color:var(--step-icon-bg-dark)]"
+                  style={
+                    {
+                      "--step-fg": step.color,
+                      "--step-fg-dark": step.darkColor ?? step.color,
+                      "--step-icon-bg": `${step.color}15`,
+                      "--step-icon-bg-dark": step.darkIconBg ?? `${step.color}15`,
+                    } as CSSProperties
+                  }
                 >
                   {step.icon}
                 </div>
@@ -282,45 +333,84 @@ export default function Home() {
           </div>
 
           <div className="max-w-5xl mx-auto">
-            {/* Tab buttons */}
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
-              {featureTabs.map((tab, i) => (
-                <button
-                  key={tab.label}
-                  onClick={() => setActiveFeatureTab(i)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium ${
-                    i === activeFeatureTab
-                      ? "bg-brand-red text-white shadow-lg shadow-brand-red/20"
-                      : "glass-pill text-gray-600 dark:text-gray-400 hover:text-brand-navy dark:hover:text-white"
-                  }`}
-                >
-                  {tab.icon}
-                  <span className="hidden sm:inline">{tab.label}</span>
-                </button>
-              ))}
-            </div>
-
-            <div className="glass-card rounded-3xl p-6 sm:p-10 overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-brand-navy dark:text-white mb-4 leading-snug">{activeTab.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-6">{activeTab.description}</p>
-                  <Link
-                    href={activeFeatureTab === 2 ? "/queens-answers" : "/schools/queens"}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-brand-red"
+            {/* Tab buttons — shared layoutId slides red pill between tabs */}
+            <LayoutGroup>
+              <div className="mb-8 flex flex-wrap justify-center gap-2">
+                {featureTabs.map((tab, i) => (
+                  <button
+                    key={tab.label}
+                    type="button"
+                    onClick={() => setActiveFeatureTab(i)}
+                    className={cn(
+                      "relative flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium [-webkit-tap-highlight-color:transparent]",
+                      "outline-none focus-visible:ring-2 focus-visible:ring-brand-red/45 focus-visible:ring-inset",
+                      "transition-colors duration-200",
+                      i === activeFeatureTab
+                        ? "text-white"
+                        : "text-gray-700 hover:text-brand-navy dark:text-gray-300 dark:hover:text-white",
+                      i !== activeFeatureTab &&
+                        "bg-gray-100/95 hover:bg-gray-200/90 dark:bg-white/[0.07] dark:hover:bg-white/[0.11]"
+                    )}
                   >
-                    {activeFeatureTab === 2 ? "Try AI Assistant" : "Explore Courses"}
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-                <div className="rounded-2xl flex items-center justify-center">
-                  {activeFeatureTab === 0 && <GradeDistributionMockup compact />}
-                  {activeFeatureTab === 1 && <StudentReviewsMockup compact />}
-                  {activeFeatureTab === 2 && <AIAssistantMockup compact />}
-                  {activeFeatureTab === 3 && <CourseAnalyticsMockup compact />}
-                </div>
+                    {i === activeFeatureTab && (
+                      <motion.span
+                        layoutId="feature-tab-pill"
+                        className="absolute inset-0 z-0 rounded-full bg-brand-red shadow-lg shadow-brand-red/25"
+                        transition={featureTabSpring}
+                        style={{ willChange: "transform" }}
+                      />
+                    )}
+                    <span className="relative z-10 flex items-center gap-2">
+                      {tab.icon}
+                      <span className="hidden sm:inline">{tab.label}</span>
+                    </span>
+                  </button>
+                ))}
               </div>
-            </div>
+            </LayoutGroup>
+
+            {/* Tab content — softer crossfade + light stagger */}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={activeFeatureTab}
+                variants={featurePanelVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                className="glass-card overflow-hidden rounded-3xl p-6 sm:p-10"
+              >
+                <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-2">
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.06, ease: [0.25, 0.1, 0.25, 1] }}
+                  >
+                    <h3 className="mb-4 text-xl font-bold leading-snug text-brand-navy dark:text-white sm:text-2xl">
+                      {activeTab.title}
+                    </h3>
+                    <p className="mb-6 leading-relaxed text-gray-600 dark:text-gray-400">{activeTab.description}</p>
+                    <Link
+                      href={activeFeatureTab === 2 ? "/queens-answers" : "/schools/queens"}
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-brand-red transition-all duration-300 hover:gap-3"
+                    >
+                      {activeFeatureTab === 2 ? "Try AI Assistant" : "Explore Courses"}
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    className="flex items-center justify-center rounded-2xl"
+                    initial={{ opacity: 0, y: 10, scale: 0.985 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.48, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    {activeFeatureTab === 0 && <GradeDistributionMockup compact />}
+                    {activeFeatureTab === 1 && <StudentReviewsMockup compact />}
+                    {activeFeatureTab === 2 && <AIAssistantMockup compact />}
+                    {activeFeatureTab === 3 && <CourseAnalyticsMockup compact />}
+                  </motion.div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </section>
@@ -347,8 +437,17 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {testimonials.map((t, i) => (
-              <div key={i} className="glass-card rounded-2xl p-6 sm:p-7 relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: t.color }} />
+              <div
+                key={i}
+                className="glass-card glass-shine rounded-2xl p-6 sm:p-7 relative overflow-hidden group"
+                style={
+                  {
+                    "--ti-accent": t.color,
+                    "--ti-accent-dark": t.darkColor ?? t.color,
+                  } as CSSProperties
+                }
+              >
+                <div className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl bg-[color:var(--ti-accent)] dark:bg-[color:var(--ti-accent-dark)]" />
                 <div className="flex items-center gap-1 text-brand-gold mb-5">
                   {[...Array(5)].map((_, j) => <Star key={j} className="h-4 w-4 fill-current" />)}
                 </div>
@@ -356,7 +455,7 @@ export default function Home() {
                   &ldquo;{t.quote}&rdquo;
                 </blockquote>
                 <div className="flex items-center gap-3 pt-5 border-t border-white/40 dark:border-white/[0.06]">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white" style={{ background: t.color }}>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white bg-[color:var(--ti-accent)] dark:bg-[color:var(--ti-accent-dark)]">
                     {t.initial}
                   </div>
                   <div>
@@ -371,7 +470,7 @@ export default function Home() {
       </section>
 
       {/* ═══════════════ FAQ ═══════════════ */}
-      <section className="section-glass py-12 sm:py-16 px-4 relative overflow-hidden">
+      <section className="section-glass py-12 sm:py-16 px-4 relative overflow-hidden [overflow-anchor:none]">
         <SectionGlow className="left-1/2 top-8 h-72 w-72 -translate-x-1/2 blur-[145px] opacity-80" gradient="radial-gradient(circle, rgba(214,40,57,0.12) 0%, rgba(214,40,57,0.04) 44%, transparent 76%)" />
         <SectionGlow className="right-[-2rem] bottom-10 h-72 w-72 blur-[140px] opacity-70" gradient="radial-gradient(circle, rgba(0,48,95,0.12) 0%, rgba(0,48,95,0.04) 46%, transparent 76%)" />
 
@@ -390,12 +489,17 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 [overflow-anchor:none]">
             {faqs.map((faq, index) => {
               const colorClasses = index % 3 === 0
                 ? { iconBg: "bg-brand-red/10", iconText: "text-brand-red", iconHoverBg: "group-hover:bg-brand-red", titleHover: "group-hover:text-brand-red" }
                 : index % 3 === 1
-                ? { iconBg: "bg-brand-navy/10", iconText: "text-brand-navy dark:text-white", iconHoverBg: "group-hover:bg-brand-navy", titleHover: "group-hover:text-brand-navy dark:text-white" }
+                ? {
+                    iconBg: "bg-brand-navy/10 dark:bg-brand-navy-light/20",
+                    iconText: "text-brand-navy dark:text-white",
+                    iconHoverBg: "group-hover:bg-brand-navy dark:group-hover:bg-brand-navy-light",
+                    titleHover: "group-hover:text-brand-navy dark:text-white",
+                  }
                 : { iconBg: "bg-brand-gold/10", iconText: "text-brand-gold", iconHoverBg: "group-hover:bg-brand-gold", titleHover: "group-hover:text-brand-gold" };
 
               return (
@@ -414,9 +518,17 @@ export default function Home() {
                       <h3 className="font-bold text-lg text-brand-navy dark:text-white mb-2">
                         {faq.question}
                       </h3>
-                      {activeAccordion === index && (
+                      <motion.div
+                        initial={false}
+                        animate={{
+                          height: activeAccordion === index ? "auto" : 0,
+                          opacity: activeAccordion === index ? 1 : 0,
+                        }}
+                        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                        className="overflow-hidden [overflow-anchor:none]"
+                      >
                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{faq.answer}</p>
-                      )}
+                      </motion.div>
                     </div>
                   </div>
                 </div>
@@ -443,15 +555,15 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-7">
               <Link href="/queens-answers" className="liquid-btn-red text-white px-7 py-3 rounded-xl inline-block font-medium w-full sm:w-auto text-center">
-                <span className="flex items-center justify-center">
-                  <Brain className="mr-2 h-4 w-4" />
-                  <span className="text-sm">Try AI Assistant</span>
+                <span className="relative z-10 flex items-center justify-center">
+                  <Brain className="mr-2 h-5 w-5" />
+                  Try AI Assistant
                 </span>
               </Link>
               <Link href="/schools/queens" className="liquid-btn-blue text-white px-7 py-3 rounded-xl inline-block font-medium w-full sm:w-auto text-center">
-                <span className="flex items-center justify-center">
-                  <BarChart className="mr-2 h-4 w-4" />
-                  <span className="text-sm">Browse Courses</span>
+                <span className="relative z-10 flex items-center justify-center">
+                  <BarChart className="mr-2 h-5 w-5" />
+                  Browse Courses
                 </span>
               </Link>
             </div>
@@ -460,7 +572,7 @@ export default function Home() {
                 { label: "Real grade distributions", color: "bg-red-500" },
                 { label: "AI-powered insights", color: "bg-yellow-400" },
                 { label: "Queen's focused", color: "bg-blue-500" },
-                { label: "Completely free", color: "bg-yellow-600" },
+                { label: "Completely free", color: "bg-red-500" },
               ].map(({ label, color }) => (
                 <div key={label} className="flex items-center glass-pill px-3 py-1.5 rounded-full">
                   <div className={`w-1.5 h-1.5 rounded-full mr-2 flex-shrink-0 ${color}`} />
@@ -473,14 +585,13 @@ export default function Home() {
       </section>
 
       {/* ═══════════════ FOOTER ═══════════════ */}
-      <footer className="relative overflow-hidden border-t border-white/60 dark:border-white/5 py-4 bg-white/45 dark:bg-slate-900/45 backdrop-blur-[28px]">
+      <footer className="relative overflow-hidden border-t border-white/60 dark:border-white/5 py-4 bg-white/45 dark:bg-neutral-900/55 backdrop-blur-[28px]">
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/80 dark:via-white/10 to-transparent" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
             <div className="mb-1 md:mb-0">
               <div className="inline-block mb-1">
-                <span className="font-bold text-brand-navy dark:text-white text-sm tracking-tight">Cours</span>
-                <span className="font-bold text-brand-red text-sm tracking-tight">ify</span>
+                <span className="text-sm font-bold tracking-tight gold-shine-text">Coursify</span>
               </div>
               <p className="text-xs text-gray-600 dark:text-gray-400">
                 Platform for{" "}
