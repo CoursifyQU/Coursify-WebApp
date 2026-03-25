@@ -352,7 +352,7 @@ export default function Home() {
                         ? "text-white"
                         : "text-gray-700 hover:text-brand-navy dark:text-gray-300 dark:hover:text-white",
                       i !== activeFeatureTab &&
-                        "bg-gray-100/95 hover:bg-gray-200/90 dark:bg-white/[0.07] dark:hover:bg-white/[0.11]"
+                        "glass-pill border border-brand-navy/12 dark:border-white/12 bg-white/72 hover:bg-white/84 dark:bg-white/[0.08] dark:hover:bg-white/[0.14] shadow-[0_2px_10px_rgba(0,48,95,0.08)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.22)]"
                     )}
                   >
                     {i === activeFeatureTab && (
