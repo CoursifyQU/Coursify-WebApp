@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { createPortal } from "react-dom"
 import { motion, useAnimation, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/lib/auth/auth-context"
 import { QUEENS_ANSWERS_DRAFT_STORAGE_KEY } from "@/constants/queens-answers"
@@ -29,23 +30,23 @@ export default function AIFeatures() {
   const howItWorksItems = [
     {
       icon: Search,
-      title: "Ask specific course or professor questions",
-      description: "Type anything you want to know about Queen's courses, workloads, grading, or teaching styles.",
+      title: "Ask about courses or professors",
+      description: "Courses, workload, grading, teaching style—ask anything.",
     },
     {
       icon: Bot,
-      title: "Get AI-assisted answers instantly",
-      description: "The system combines structured course data with AI reasoning to return useful, readable guidance.",
+      title: "Get AI-assisted answers",
+      description: "Course data plus AI, returned as clear guidance.",
     },
     {
       icon: MessageSquare,
-      title: "Pull in relevant student sentiment",
-      description: "Responses are informed by student discussions, review sources, and real course context where available.",
+      title: "Relevant student sentiment",
+      description: "Informed by discussions, reviews, and course context.",
     },
     {
       icon: Target,
-      title: "Make more confident decisions",
-      description: "Use the output to compare options and choose courses that better match your goals and learning style.",
+      title: "Make confident choices",
+      description: "Compare options and pick what fits your goals.",
     },
   ]
 
@@ -189,63 +190,6 @@ export default function AIFeatures() {
           >
             Learn how Queen's Answers works &gt;
           </button>
-
-          {/* How it works modal */}
-          <AnimatePresence>
-            {showHowItWorks && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="glass-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop"
-                onClick={(e) => {
-                  if (e.target === e.currentTarget) setShowHowItWorks(false)
-                }}
-              >
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="glass-modal-panel modal-content relative max-w-xl w-full rounded-[1.75rem] p-6 sm:p-7"
-                >
-                  <button
-                    className="glass-modal-close absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full text-2xl font-bold text-brand-navy/55 dark:text-white/55 hover:text-brand-red"
-                    onClick={() => setShowHowItWorks(false)}
-                    aria-label="Close"
-                  >
-                    &times;
-                  </button>
-                  <div className="glass-modal-accent h-1.5 w-24 rounded-full mb-5 mx-auto opacity-90" />
-                  <h2 className="text-3xl font-bold mb-3 text-center text-brand-navy dark:text-white">
-                    How <span className="gradient-text">Queen's Answers</span> Works
-                  </h2>
-                  <p className="mx-auto max-w-md text-center text-sm leading-6 text-brand-navy/68 dark:text-white/68">
-                    A quick overview of how the feature is designed to turn scattered course information into practical recommendations.
-                  </p>
-                  <ul className="space-y-3 mt-6">
-                    {howItWorksItems.map((item) => {
-                      const Icon = item.icon
-                      return (
-                        <li key={item.title} className="glass-card rounded-2xl p-4 flex items-start gap-4">
-                          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/55 dark:bg-white/[0.06] ring-1 ring-white/70 dark:ring-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:shadow-none">
-                            <Icon className="h-4.5 w-4.5 text-brand-navy dark:text-white" strokeWidth={1.9} />
-                          </div>
-                          <div>
-                            <div className="font-semibold text-brand-navy dark:text-white">{item.title}</div>
-                            <div className="text-brand-navy/70 dark:text-white/70 text-sm mt-1 leading-6">
-                              {item.description}
-                            </div>
-                          </div>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         {/* Ask a Question Input at the bottom */}
@@ -291,68 +235,141 @@ export default function AIFeatures() {
         </div>
       </div>
 
-      {/* Coming Soon Overlay */}
-      <AnimatePresence>
-        {showComingSoon && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="glass-modal-overlay fixed inset-0 z-40 flex flex-col items-center justify-center p-4"
-          >
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="glass-modal-panel relative max-w-xl w-full rounded-[1.75rem] p-6 sm:p-7"
-            >
-              <button
-                className="glass-modal-close absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full text-2xl font-bold text-brand-navy/55 dark:text-white/55 hover:text-brand-red"
-                onClick={() => setShowComingSoon(false)}
-                aria-label="Close"
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {showHowItWorks && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="glass-modal-overlay modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain p-3 sm:items-center sm:p-4"
+                onClick={(e) => {
+                  if (e.target === e.currentTarget) setShowHowItWorks(false)
+                }}
               >
-                &times;
-              </button>
-              <div className="flex flex-col items-center">
-                <div className="glass-modal-accent h-1.5 w-24 rounded-full mb-5 opacity-90" />
-                <h2 className="text-3xl font-bold text-brand-navy dark:text-white mb-2 text-center">Coming Soon</h2>
-                <p className="text-lg text-center text-brand-navy/72 dark:text-white/72 mb-5 leading-8">
-                  We're working hard to bring Queen's Answers to life. This feature will be available in the near future.
-                </p>
-                <div className="glass-card w-full h-3 rounded-full overflow-hidden mb-6 p-0.5">
-                  <motion.div 
-                    className="glass-modal-accent h-full rounded-full"
-                    initial={{ width: "0%" }}
-                    animate={{ width: "75%" }}
-                    transition={{ duration: 1.5, ease: "easeInOut" }}
-                  />
-                </div>
-                <p className="text-sm text-center text-brand-navy/60 dark:text-white/60 italic">
-                  Queen's Answers will provide AI-powered insights on courses, professors, and more!
-                </p>
-              </div>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ delay: 0.2, duration: 0.25 }}
-              className="mt-8 text-center"
-            >
-              <a 
-                href="/" 
-                className="liquid-btn-blue inline-flex items-center justify-center rounded-2xl px-6 py-3 font-medium text-white"
-              >
-                Return to Home
-                <ArrowRight className="ml-2 h-4 w-4" strokeWidth={1.8} />
-              </a>
-            </motion.div>
-          </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="glass-modal-panel relative my-auto w-full max-w-2xl rounded-[1.75rem] p-5 sm:p-6"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    className="glass-modal-close absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full text-2xl font-bold text-brand-navy/55 dark:text-white/55 hover:text-brand-red sm:right-4 sm:top-4"
+                    onClick={() => setShowHowItWorks(false)}
+                    aria-label="Close"
+                  >
+                    &times;
+                  </button>
+                  <div className="glass-modal-accent mx-auto mb-3 h-1.5 w-24 rounded-full opacity-90" />
+                  <h2 className="mb-2 text-center text-2xl font-bold text-brand-navy dark:text-white sm:text-3xl">
+                    How <span className="gradient-text">Queen&apos;s Answers</span> Works
+                  </h2>
+                  <p className="mx-auto max-w-xl text-center text-sm leading-snug text-brand-navy/68 dark:text-white/68">
+                    Course data and AI, distilled into answers you can use—four quick ideas below.
+                  </p>
+                  <ul className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3">
+                    {howItWorksItems.map((item) => {
+                      const Icon = item.icon
+                      return (
+                        <li
+                          key={item.title}
+                          className="glass-card flex items-center gap-2.5 rounded-xl p-2.5 sm:gap-3 sm:p-3"
+                        >
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/55 dark:bg-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] ring-1 ring-white/70 dark:shadow-none dark:ring-white/10">
+                            <Icon className="h-4 w-4 text-brand-navy dark:text-white" strokeWidth={1.85} />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-sm font-semibold leading-tight text-brand-navy dark:text-white">
+                              {item.title}
+                            </div>
+                            <div className="mt-0.5 text-xs leading-snug text-brand-navy/70 dark:text-white/70">
+                              {item.description}
+                            </div>
+                          </div>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
+
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {showComingSoon && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="glass-modal-overlay modal-backdrop fixed inset-0 z-40 flex min-h-0 flex-col items-center justify-start gap-6 overflow-y-auto overscroll-contain p-4 sm:justify-center sm:gap-8"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="glass-modal-panel relative my-auto flex w-full max-w-xl min-h-0 max-h-[min(90dvh,calc(100dvh-1.5rem-env(safe-area-inset-top)-env(safe-area-inset-bottom)))] flex-col overflow-hidden rounded-[1.75rem] p-6 sm:p-7"
+                >
+                  <button
+                    type="button"
+                    className="glass-modal-close absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-2xl font-bold text-brand-navy/55 dark:text-white/55 hover:text-brand-red"
+                    onClick={() => setShowComingSoon(false)}
+                    aria-label="Close"
+                  >
+                    &times;
+                  </button>
+                  <div className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]">
+                    <div className="glass-modal-accent mb-5 h-1.5 w-24 shrink-0 rounded-full opacity-90" />
+                    <h2 className="mb-2 shrink-0 text-center text-2xl font-bold text-brand-navy dark:text-white sm:text-3xl">
+                      Coming Soon
+                    </h2>
+                    <p className="mb-5 shrink-0 text-center text-lg leading-8 text-brand-navy/72 dark:text-white/72">
+                      We&apos;re working hard to bring Queen&apos;s Answers to life. This feature will be available in the near future.
+                    </p>
+                    <div className="glass-card mb-6 h-3 w-full shrink-0 overflow-hidden rounded-full p-0.5">
+                      <motion.div
+                        className="glass-modal-accent h-full rounded-full"
+                        initial={{ width: "0%" }}
+                        animate={{ width: "75%" }}
+                        transition={{ duration: 1.5, ease: "easeInOut" }}
+                      />
+                    </div>
+                    <p className="shrink-0 text-center text-sm italic text-brand-navy/60 dark:text-white/60">
+                      Queen&apos;s Answers will provide AI-powered insights on courses, professors, and more!
+                    </p>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ delay: 0.2, duration: 0.25 }}
+                  className="shrink-0 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-center"
+                >
+                  <a
+                    href="/"
+                    className="liquid-btn-blue inline-flex items-center justify-center rounded-2xl px-6 py-3 font-medium text-white"
+                  >
+                    Return to Home
+                    <ArrowRight className="ml-2 h-4 w-4" strokeWidth={1.8} />
+                  </a>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
 
       {/* Auth Modal */}
       <AuthModal 
@@ -461,19 +478,10 @@ export default function AIFeatures() {
         .modal-backdrop {
           animation: fadeIn 0.3s ease-in-out;
         }
-        
-        .modal-content {
-          animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
+
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
-        }
-        
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(40px) scale(0.96); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
         }
         
         @keyframes fadeInModal {
