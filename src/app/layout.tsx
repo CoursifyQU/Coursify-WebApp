@@ -27,11 +27,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="color-scheme" content="light dark" />
+      </head>
       <body className={manrope.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
-          enableSystem
         >
           <AuthProvider>
             <div className="flex min-h-screen flex-col">

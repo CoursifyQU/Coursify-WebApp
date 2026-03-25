@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    color-scheme: light;
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -38,6 +39,7 @@
   }
 
   .dark {
+    color-scheme: dark;
     --background: 0 0% 9%;
     --foreground: 210 40% 98%;
     --card: 0 0% 11%;
@@ -94,6 +96,7 @@
 
 .gold-shine-text {
   display: inline-block;
+  color: #efb215;
   background: linear-gradient(
     90deg,
     #b8860b 0%,
@@ -110,7 +113,6 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: transparent;
   animation: gold-shine 3s linear infinite;
 }
 
@@ -462,17 +464,18 @@
 }
 
 .gradient-text {
+  color: #00305f;
   background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
   background-size: 300% 300%;
   animation: coursify-gradient-shift 6s ease infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  color: transparent;
   display: inline-block;
 }
 
 .dark .gradient-text {
+  color: #e5e7eb;
   background: linear-gradient(-45deg, #e5e7eb, #ff4d5e, #ffc940, #e5e7eb);
   background-size: 300% 300%;
   animation: coursify-gradient-shift 6s ease infinite;
@@ -483,17 +486,18 @@
 }
 
 .coursify-gradient-text {
+  color: #00305f;
   background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
   background-size: 300% 300%;
   animation: coursify-gradient-shift 6s ease infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  color: transparent;
   display: inline-block;
 }
 
 .dark .coursify-gradient-text {
+  color: #e5e7eb;
   background: linear-gradient(-45deg, #e5e7eb, #ff4d5e, #ffc940, #e5e7eb);
   background-size: 300% 300%;
   animation: coursify-gradient-shift 6s ease infinite;
@@ -503,17 +507,18 @@
 }
 
 .moving-gradient {
+  color: #00305f;
   background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
   background-size: 300% 300%;
   animation: coursify-gradient-shift 6s ease infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  color: transparent;
   display: inline-block;
 }
 
 .dark .moving-gradient {
+  color: #e5e7eb;
   background: linear-gradient(-45deg, #e5e7eb, #ff4d5e, #ffc940, #e5e7eb);
   background-size: 300% 300%;
   animation: coursify-gradient-shift 6s ease infinite;
