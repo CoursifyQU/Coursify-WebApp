@@ -146,21 +146,30 @@ export default function AIFeatures() {
                   onClick={() => {
                     handleSampleQuestionClick(q.text);
                   }}
-                  className="carousel-item flex items-center bg-white dark:bg-[#262626] border border-gray-200 dark:border-white/10 rounded-full px-6 py-3 text-base font-medium shadow-sm text-brand-navy dark:text-white whitespace-nowrap hover:bg-gray-50 dark:hover:bg-[#2e2e2e]"
+                  className="relative mx-0.5 flex items-center rounded-full px-6 py-3 text-base font-medium whitespace-nowrap box-border
+                    border border-brand-navy/28 dark:border-white/[0.12]
+                    bg-white/82 dark:bg-zinc-800/82 backdrop-blur-md
+                    text-brand-navy dark:text-white
+                    shadow-[0_2px_6px_rgba(0,48,95,0.07),0_1px_2px_rgba(0,48,95,0.04)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.28),0_1px_2px_rgba(0,0,0,0.2)]
+                    transition-colors duration-[420ms] ease-in-out
+                    motion-reduce:transition-none
+                    hover:border-brand-navy/42 dark:hover:border-white/[0.18]
+                    hover:bg-white/92 dark:hover:bg-zinc-800/90
+                    hover:shadow-[0_4px_14px_rgba(0,48,95,0.1),0_2px_4px_rgba(0,48,95,0.05)] dark:hover:shadow-[0_4px_16px_rgba(0,0,0,0.38),0_2px_6px_rgba(0,0,0,0.22)]"
                   style={{ lineHeight: "1.2" }}
                   aria-label={q.text}
                   whileHover={{
-                    scale: 1.06,
-                    y: -4,
+                    scale: 1.026,
+                    y: -2.5,
                     zIndex: 20,
                   }}
                   transition={{
                     type: "spring",
-                    stiffness: 400,
-                    damping: 20,
-                    mass: 0.9,
+                    stiffness: 320,
+                    damping: 26,
+                    mass: 0.95,
                   }}
-                  whileTap={{ scale: 0.97 }}
+                  whileTap={{ scale: 0.985 }}
                 >
                   <span className="mr-2 text-lg">{q.emoji}</span>
                   {q.text}
@@ -239,14 +248,23 @@ export default function AIFeatures() {
 
         {/* Ask a Question Input at the bottom */}
         <div
-          className={`fixed bottom-8 left-1/2 -translate-x-1/2 w-[min(100%-2rem,36rem)] max-w-xl flex items-center box-border bg-[#f5f6f7] dark:bg-[#262626] border border-neutral-200/90 dark:border-white/10 rounded-full px-4 py-3 shadow-lg transition-[opacity,box-shadow,filter] duration-500 ${
-            showHowItWorks || showComingSoon ? "opacity-30 pointer-events-none blur-[1px]" : "opacity-100 hover:shadow-xl"
-          }`}
+          className={`fixed bottom-8 left-1/2 -translate-x-1/2 w-[min(100%-2rem,36rem)] max-w-xl flex items-center box-border rounded-full px-4 py-3
+            [transition-property:background-color,border-color,opacity] duration-[420ms] ease-in-out
+            motion-reduce:transition-none
+            bg-[#fcfcfd] dark:bg-[#262626]
+            border border-brand-navy/20 dark:border-white/10
+            shadow-[0_2px_12px_rgba(0,48,95,0.07),0_1px_4px_rgba(0,48,95,0.045),inset_0_1px_0_rgba(255,255,255,0.92)]
+            dark:shadow-[0_2px_14px_rgba(0,0,0,0.28),0_1px_4px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.06)]
+            ${
+              showHowItWorks || showComingSoon
+                ? "opacity-30 pointer-events-none blur-[1px]"
+                : "opacity-100 hover:shadow-[0_5px_20px_rgba(0,48,95,0.09),0_2px_6px_rgba(0,48,95,0.055),inset_0_1px_0_rgba(255,255,255,0.98)] dark:hover:shadow-[0_6px_22px_rgba(0,0,0,0.36),0_2px_8px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.08)]"
+            }`}
           style={{ zIndex: 30 }}
         >
           <input
             type="text"
-            className="flex-grow bg-transparent outline-none px-2 py-2 text-lg text-[#222] dark:text-gray-100 placeholder:text-[#b0b3b8] dark:placeholder:text-gray-500 placeholder:font-medium"
+            className="flex-grow bg-transparent outline-none px-2 py-2 text-lg text-[#222] dark:text-gray-100 placeholder:text-[#b0b3b8] dark:placeholder:text-gray-500 placeholder:font-medium transition-colors duration-[420ms] ease-in-out motion-reduce:transition-none"
             placeholder="Ask a question"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
@@ -262,7 +280,7 @@ export default function AIFeatures() {
           <button
             type="button"
             onClick={() => handleSubmitQuestion()}
-            className="ml-2 bg-brand-red hover:bg-red-800 text-white rounded-full w-12 h-10 flex items-center justify-center font-semibold text-lg transition-all duration-300 ease-in-out shadow hover:shadow-lg hover:scale-105"
+            className="ml-2 bg-brand-red hover:bg-red-800 text-white rounded-full w-12 h-10 flex items-center justify-center font-semibold text-lg shadow transition-[transform,background-color,box-shadow] duration-200 ease-out hover:shadow-lg hover:scale-105 motion-reduce:hover:scale-100"
             style={{ minWidth: "48px" }}
             disabled={showHowItWorks}
           >
@@ -352,37 +370,6 @@ export default function AIFeatures() {
           border-radius: 8px;
         }
         
-        .carousel-item {
-          position: relative;
-          transition-property: box-shadow, border-color, color, background, background-color;
-          transition-duration: 0.35s;
-          transition-timing-function: cubic-bezier(0.2, 0.85, 0.3, 1.1);
-          transform-origin: center;
-          will-change: transform, box-shadow, border-color;
-          margin: 0 3px;
-          backface-visibility: hidden;
-          -webkit-font-smoothing: subpixel-antialiased;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-          border: 1px solid #e5e7eb;
-          overflow: visible;
-        }
-        
-        :is(.dark) .carousel-item {
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .carousel-item:hover {
-          z-index: 20;
-          border-color: rgba(214, 40, 57, 0.35);
-          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-        }
-
-        :is(.dark) .carousel-item:hover {
-          border-color: rgba(252, 165, 165, 0.25);
-          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-        }
-
         .animated-title {
           position: relative;
           overflow: hidden;
