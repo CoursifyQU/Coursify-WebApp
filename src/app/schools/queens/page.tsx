@@ -378,32 +378,8 @@ export default function QueensCourses() {
     <div className="relative min-h-screen overflow-hidden mesh-gradient pt-20">
       <style jsx global>{`
         .mesh-gradient {
-          background-color: hsla(0, 0%, 100%, 1);
-          background-image:
-            radial-gradient(
-              at 21% 33%,
-              hsla(225, 100%, 19%, 0.09) 0px,
-              transparent 50%
-            ),
-            radial-gradient(
-              at 79% 76%,
-              hsla(352, 71%, 54%, 0.08) 0px,
-              transparent 50%
-            ),
-            radial-gradient(
-              at 96% 10%,
-              hsla(43, 83%, 51%, 0.07) 0px,
-              transparent 50%
-            );
-        }
-
-        .dot-pattern {
-          background-image: radial-gradient(
-            circle,
-            #00305f 1px,
-            transparent 1px
-          );
-          background-size: 20px 20px;
+          background-color: var(--page-bg);
+          background-image: none;
         }
 
         .glass-card-deep {
@@ -456,34 +432,6 @@ export default function QueensCourses() {
           100% { background-position: 0% 50%; }
         }
 
-        :is(.dark) .mesh-gradient {
-          background-color: hsla(220, 20%, 10%, 1);
-          background-image:
-            radial-gradient(
-              at 21% 33%,
-              hsla(225, 100%, 30%, 0.15) 0px,
-              transparent 50%
-            ),
-            radial-gradient(
-              at 79% 76%,
-              hsla(352, 71%, 40%, 0.12) 0px,
-              transparent 50%
-            ),
-            radial-gradient(
-              at 96% 10%,
-              hsla(43, 83%, 40%, 0.1) 0px,
-              transparent 50%
-            );
-        }
-
-        :is(.dark) .dot-pattern {
-          background-image: radial-gradient(
-            circle,
-            #4a9eff 1px,
-            transparent 1px
-          );
-        }
-
         :is(.dark) .gradient-text {
           background: linear-gradient(-45deg, #4a9eff, #ff4d5e, #ffc940, #4a9eff);
           background-size: 300% 300%;
@@ -532,17 +480,6 @@ export default function QueensCourses() {
             inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
       `}</style>
-
-      {/* Background elements */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/8 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-navy/8 dark:bg-blue-400/8 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-brand-gold/7 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="dot-pattern absolute inset-0 opacity-[0.06]"></div>
-      </div>
 
       <div className="container py-12 px-4 lg-filters:px-6 relative z-10">
         <div className="mb-12 text-center lg-filters:text-left">

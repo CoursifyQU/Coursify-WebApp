@@ -87,11 +87,8 @@ export default function CourseSearchPage() {
     <div className="relative min-h-screen overflow-hidden mesh-gradient pt-20">
       <style jsx global>{`
         .mesh-gradient {
-          background-color: hsla(0, 0%, 100%, 1);
-          background-image:
-            radial-gradient(at 21% 33%, hsla(225, 100%, 19%, 0.09) 0px, transparent 50%),
-            radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.08) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.07) 0px, transparent 50%);
+          background-color: var(--page-bg);
+          background-image: none;
         }
         .glass-card-deep {
           background: rgba(255, 255, 255, 0.72);
@@ -115,13 +112,6 @@ export default function CourseSearchPage() {
           border-radius: 0.75rem;
           padding: 0.5rem;
         }
-        :is(.dark) .mesh-gradient {
-          background-color: hsla(220, 20%, 10%, 1);
-          background-image:
-            radial-gradient(at 21% 33%, hsla(225, 100%, 30%, 0.15) 0px, transparent 50%),
-            radial-gradient(at 79% 76%, hsla(352, 71%, 40%, 0.12) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43, 83%, 40%, 0.10) 0px, transparent 50%);
-        }
         :is(.dark) .glass-card-deep {
           background: rgba(38, 38, 38, 0.82);
           backdrop-filter: blur(28px) saturate(170%);
@@ -143,11 +133,6 @@ export default function CourseSearchPage() {
             inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
       `}</style>
-
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/8 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-navy/8 dark:bg-blue-400/8 rounded-full blur-3xl"></div>
-      </div>
 
       <div className="container py-12 px-4 lg:px-6 relative z-10 max-w-4xl mx-auto">
         <Link

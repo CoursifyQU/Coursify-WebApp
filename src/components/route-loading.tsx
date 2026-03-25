@@ -1,8 +1,8 @@
-/** Full-viewport loading shell: solid bg hides global body gradients; nav stays above (z-50). */
+/** Full-viewport loading shell: flat page background; nav stays above (z-50). */
 export function RouteLoading() {
   return (
     <div
-      className="fixed inset-0 z-30 flex items-center justify-center bg-[var(--page-bg)] dark:bg-[#171717]"
+      className="fixed inset-0 z-30 flex items-center justify-center bg-[var(--page-bg)]"
       aria-busy="true"
       aria-live="polite"
     >

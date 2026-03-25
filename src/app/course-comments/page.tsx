@@ -110,7 +110,7 @@ export default function CourseCommentsPage() {
     >
       <style dangerouslySetInnerHTML={{ __html: `
         .comments-page-bg {
-          background-color: #fff;
+          background-color: var(--page-bg);
           background-image: none;
         }
         :is(.dark) .comments-page-bg {
@@ -168,13 +168,6 @@ export default function CourseCommentsPage() {
         :is(.dark) .tab-pill.active-rmp { background: rgba(59,130,246,0.9); border-color: rgba(59,130,246,0.3); }
       ` }} />
 
-      {/* Background blobs */}
-      <div className="fixed inset-0 -z-10 pointer-events-none dark:hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/8 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-navy/8 dark:bg-blue-400/8 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-brand-gold/6 rounded-full blur-3xl" />
-      </div>
-
       <div className="container mx-auto px-6 md:px-10 lg:px-20 max-w-5xl">
 
         {/* ── Hero Header ── */}
@@ -184,9 +177,6 @@ export default function CourseCommentsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-br from-white/5 via-transparent to-[#d62839]/8 dark:block" />
-          <div className="pointer-events-none absolute -right-16 -top-16 hidden h-64 w-64 rounded-full bg-[#0066CC]/15 blur-3xl dark:block" />
-
           <div className="relative px-8 py-7">
             <button
               onClick={() => router.back()}

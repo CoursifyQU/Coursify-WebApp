@@ -196,7 +196,7 @@ export default function CourseDetailPage() {
 
   if (error || !course) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-white/90 dark:bg-[#171717]">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--page-bg)]">
         <div className="text-center glass-card-deep rounded-2xl p-12">
           <h1 className="text-3xl font-bold text-brand-red mb-4">Course Not Found</h1>
           <p className="text-gray-600 dark:text-gray-400 mb-8">We couldn't find a course with code "{courseCode}".</p>
@@ -254,7 +254,7 @@ export default function CourseDetailPage() {
     <div className="relative min-h-screen overflow-hidden pb-16 pt-20 course-detail-bg">
       <style jsx global>{`
         .course-detail-bg {
-          background-color: hsla(0,0%,100%,1);
+          background-color: var(--page-bg);
           background-image: none;
         }
         :is(.dark) .course-detail-bg {
@@ -432,11 +432,6 @@ export default function CourseDetailPage() {
         variants={fadeIn}
       >
         <motion.div className="glass-hero rounded-2xl overflow-hidden relative" variants={slideUp}>
-          {/* Subtle light effects — dark mode only (skip light-mode glow) */}
-          <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-br from-white/5 via-transparent to-[#d62839]/8 dark:block" />
-          <div className="pointer-events-none absolute -right-16 -top-16 hidden h-72 w-72 rounded-full bg-[#0066CC]/15 blur-3xl dark:block" />
-          <div className="pointer-events-none absolute bottom-0 left-20 -mb-20 hidden h-48 w-48 rounded-full bg-brand-red/10 blur-3xl dark:block" />
-
           <div className="relative p-8 md:p-10">
             {/* Breadcrumb */}
             <motion.div

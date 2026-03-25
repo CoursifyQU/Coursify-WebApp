@@ -124,7 +124,7 @@ export default function AIFeatures() {
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-white dark:bg-[#171717] pt-20">
+    <div className="h-screen overflow-hidden bg-[var(--page-bg)] pt-20">
       <div className="h-full flex flex-col items-center justify-center px-4 overflow-hidden">
         <div className="w-full max-w-2xl flex flex-col items-center">
           {/* Header */}
@@ -137,10 +137,6 @@ export default function AIFeatures() {
 
           {/* Continuous Carousel */}
           <div className="w-full mb-8 overflow-hidden relative carousel-container" ref={containerRef}>
-            {/* Light gradient overlays for smooth edge fading */}
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-[#171717] to-transparent z-10"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-[#171717] to-transparent z-10"></div>
-
             <motion.div className="flex gap-4 px-4" animate={controls} style={{ width: "max-content" }}>
               {duplicatedQuestions.map((q, i) => (
                 <motion.button
@@ -150,7 +146,7 @@ export default function AIFeatures() {
                   onClick={() => {
                     handleSampleQuestionClick(q.text);
                   }}
-                  className="carousel-item flex items-center bg-white dark:bg-[#262626] border border-gray-200 dark:border-white/10 rounded-full px-6 py-3 text-base font-medium shadow-sm text-brand-navy dark:text-white whitespace-nowrap"
+                  className="carousel-item flex items-center bg-white dark:bg-[#262626] border border-gray-200 dark:border-white/10 rounded-full px-6 py-3 text-base font-medium shadow-sm text-brand-navy dark:text-white whitespace-nowrap hover:bg-gray-50 dark:hover:bg-[#2e2e2e]"
                   style={{ lineHeight: "1.2" }}
                   aria-label={q.text}
                   whileHover={{
@@ -376,89 +372,17 @@ export default function AIFeatures() {
           border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        /* Lift/scale: Framer only. Colors + gradient border: CSS only (inline whileHover used to force white/navy in dark mode). */
         .carousel-item:hover {
           z-index: 20;
-          animation: elegantGlow 2s infinite alternate;
-          border: 1px solid transparent;
-          background-image: linear-gradient(white, white), linear-gradient(90deg, #00305f, #d62839, #efb215);
-          background-origin: border-box;
-          background-clip: padding-box, border-box;
-          color: #00305f;
+          border-color: rgba(214, 40, 57, 0.35);
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
         }
-        
+
         :is(.dark) .carousel-item:hover {
-          animation: elegantGlowDark 2s infinite alternate;
-          background-image: linear-gradient(#262626, #262626), linear-gradient(90deg, #f87171, #d62839, #ffc940);
-          background-origin: border-box;
-          background-clip: padding-box, border-box;
-          color: #f3f4f6;
-        }
-        
-        .carousel-item:hover::before {
-          content: '';
-          position: absolute;
-          inset: -2px;
-          z-index: -1;
-          border-radius: 9999px;
-          background: radial-gradient(circle at center, 
-            rgba(0, 48, 95, 0.05) 0%, 
-            rgba(214, 40, 57, 0.03) 40%, 
-            rgba(239, 178, 21, 0.01) 70%, 
-            transparent 100%);
-          animation: pulseGlow 2s infinite;
-          pointer-events: none;
+          border-color: rgba(252, 165, 165, 0.25);
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
         }
 
-        :is(.dark) .carousel-item:hover::before {
-          display: none;
-        }
-        
-        @keyframes elegantGlow {
-          0% {
-            box-shadow: 0 0 10px 2px rgba(0, 48, 95, 0.15), 
-                        0 2px 6px rgba(0, 0, 0, 0.08);
-          }
-          50% {
-            box-shadow: 0 0 15px 5px rgba(214, 40, 57, 0.25), 
-                        0 2px 8px rgba(0, 0, 0, 0.06);
-          }
-          100% {
-            box-shadow: 0 0 18px 4px rgba(239, 178, 21, 0.2), 
-                        0 3px 10px rgba(0, 0, 0, 0.07);
-          }
-        }
-
-        @keyframes elegantGlowDark {
-          0% {
-            box-shadow: 0 0 10px 2px rgba(214, 40, 57, 0.14),
-                        0 2px 6px rgba(0, 0, 0, 0.25);
-          }
-          50% {
-            box-shadow: 0 0 15px 5px rgba(214, 40, 57, 0.22),
-                        0 2px 8px rgba(0, 0, 0, 0.22);
-          }
-          100% {
-            box-shadow: 0 0 18px 4px rgba(239, 178, 21, 0.16),
-                        0 3px 10px rgba(0, 0, 0, 0.24);
-          }
-        }
-        
-        @keyframes pulseGlow {
-          0% {
-            opacity: 0.4;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.8;
-            transform: scale(1.01);
-          }
-          100% {
-            opacity: 0.4;
-            transform: scale(1);
-          }
-        }
-        
         .animated-title {
           position: relative;
           overflow: hidden;
