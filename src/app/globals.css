@@ -35,6 +35,11 @@
     --nav-border: rgba(255, 255, 255, 0.85);
     --nav-shadow: rgba(0, 48, 95, 0.14);
     --nav-shadow-scrolled: rgba(0, 48, 95, 0.18);
+
+    --text-heading: 222.2 84% 4.9%;
+    --text-body: 215 16% 35%;
+    --text-muted: 215.4 16.3% 46.9%;
+    --text-caption: 215 12% 58%;
   }
 
   .dark {
@@ -64,6 +69,11 @@
     --nav-border: rgba(255, 255, 255, 0.08);
     --nav-shadow: rgba(0, 0, 0, 0.3);
     --nav-shadow-scrolled: rgba(0, 0, 0, 0.45);
+
+    --text-heading: 210 40% 98%;
+    --text-body: 215 16% 75%;
+    --text-muted: 215 16% 62%;
+    --text-caption: 215 12% 50%;
   }
 
   * {
@@ -72,6 +82,11 @@
 
   body {
     @apply text-foreground;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    line-height: 1.65;
     background-color: var(--page-bg);
     background-image:
       radial-gradient(ellipse 700px 800px at 95% 100%, rgba(214, 40, 57, 0.09) 0%, transparent 65%),
@@ -88,6 +103,35 @@
       radial-gradient(ellipse 600px 600px at 75% 15%, rgba(239, 178, 21, 0.03) 0%, transparent 60%),
       radial-gradient(ellipse 500px 500px at 20% 85%, rgba(255, 255, 255, 0.02) 0%, transparent 55%),
       radial-gradient(ellipse 800px 400px at 50% 0%, rgba(214, 40, 57, 0.03) 0%, transparent 70%);
+  }
+}
+
+/* ===================== TYPOGRAPHY UTILITIES ===================== */
+
+@layer utilities {
+  .tabular-data {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "kern" 1;
+  }
+
+  .prose-measure {
+    max-width: 65ch;
+  }
+
+  .text-heading {
+    color: hsl(var(--text-heading));
+  }
+
+  .text-body {
+    color: hsl(var(--text-body));
+  }
+
+  .text-muted-custom {
+    color: hsl(var(--text-muted));
+  }
+
+  .text-caption {
+    color: hsl(var(--text-caption));
   }
 }
 

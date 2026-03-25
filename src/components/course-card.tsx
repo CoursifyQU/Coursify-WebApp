@@ -49,7 +49,7 @@ export const CourseCard = ({ course, index, total }: CourseCardProps) => {
             <h3 className="font-bold text-lg text-brand-navy dark:text-white">{course.code}</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">{course.name}</p>
           </div>
-          <div className={`text-xl font-bold ${getGpaColor(course.gpa)}`}>{course.gpa.toFixed(1)}</div>
+          <div className={`text-xl font-bold tabular-data ${getGpaColor(course.gpa)}`}>{course.gpa.toFixed(1)}</div>
         </div>
 
         <div className="flex items-center mb-3">

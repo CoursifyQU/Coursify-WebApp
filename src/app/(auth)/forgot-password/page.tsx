@@ -97,7 +97,7 @@ export default function ForgotPassword() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <h1 className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight text-brand-navy dark:text-white">
+            <h1 className="font-display text-display-md text-brand-navy dark:text-white">
               Reset Password
             </h1>
             <p className="text-gray-500 dark:text-gray-400 mt-2">

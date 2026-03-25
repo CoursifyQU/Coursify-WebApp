@@ -1,6 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import { Manrope, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -10,6 +10,13 @@ import { AuthProvider } from "@/lib/auth/auth-context";
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
+  display: "swap",
+});
+
+const instrumentSerif = Instrument_Serif({
+  weight: ["400"],
+  subsets: ["latin"],
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -27,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={manrope.className}>
+      <body className={`${manrope.variable} ${instrumentSerif.variable} font-sans`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

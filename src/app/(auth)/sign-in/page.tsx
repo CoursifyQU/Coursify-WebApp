@@ -53,7 +53,7 @@ export default function SignIn() {
         <div className="flex flex-col gap-7">
           {/* Heading */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }}>
-            <h1 className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight text-brand-navy dark:text-white">
+            <h1 className="font-display text-display-md text-brand-navy dark:text-white">
               Welcome
             </h1>
             <p className="text-gray-500 dark:text-gray-400 mt-2">

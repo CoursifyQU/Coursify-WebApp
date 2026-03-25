@@ -278,7 +278,7 @@ export default function CourseCommentsPage() {
         {loading && (
           <div className="flex justify-center items-center py-24">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-navy dark:border-blue-400" />
-            <span className="ml-3 text-gray-500 dark:text-gray-400">Loading comments...</span>
+            <span className="ml-3 text-muted-custom">Loading comments...</span>
           </div>
         )}
 
@@ -415,7 +415,7 @@ export default function CourseCommentsPage() {
                     {/* Professor */}
                     {comment.professor_name && comment.professor_name !== 'general_prof' && (
                       <div className="flex items-center gap-1.5 mb-3">
-                        <span className="text-xs text-gray-400 dark:text-gray-500">Professor:</span>
+                        <span className="text-xs text-caption">Professor:</span>
                         {isReddit ? (
                           <span className="text-xs text-brand-navy dark:text-white font-medium">{comment.professor_name}</span>
                         ) : (
@@ -433,7 +433,7 @@ export default function CourseCommentsPage() {
                     )}
 
                     {/* Comment text */}
-                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-3">{comment.text}</p>
+                    <p className="text-sm text-body leading-relaxed mb-3">{comment.text}</p>
 
                     {/* Tags */}
                     {comment.tags && comment.tags.length > 0 && (
@@ -457,7 +457,7 @@ export default function CourseCommentsPage() {
                     <div className="flex items-center justify-between pt-3 border-t border-white/60 dark:border-white/[0.06]">
                       <div className="flex items-center gap-3">
                         {isReddit && (
-                          <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
+                          <div className="flex items-center gap-1 text-xs text-caption">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-[#FF4500]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
                             </svg>
@@ -500,7 +500,7 @@ export default function CourseCommentsPage() {
         {/* ── Pagination ── */}
         {totalPages > 1 && (
           <div className="mt-6 glass-card-deep rounded-xl px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <div className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="text-sm text-muted-custom">
               Showing {startIndex + 1}–{Math.min(startIndex + commentsPerPage, filteredComments.length)} of {filteredComments.length} comments
             </div>
             <div className="flex items-center gap-2">
@@ -511,7 +511,7 @@ export default function CourseCommentsPage() {
               >
                 Previous
               </button>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-muted-custom">
                 Page {currentPage} of {totalPages}
               </span>
               <button
@@ -533,10 +533,10 @@ export default function CourseCommentsPage() {
             animate={{ opacity: 1 }}
           >
             <MessageSquare className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-500 dark:text-gray-400 text-base mb-2">
+            <p className="text-muted-custom text-base mb-2">
               {courseCode ? 'No comments found for this filter.' : 'No course code provided.'}
             </p>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">
+            <p className="text-caption text-sm">
               {courseCode ? 'Try switching to a different tab.' : 'Navigate here from a course page.'}
             </p>
             {courseCode && activeTab !== 'all' && (
@@ -553,7 +553,7 @@ export default function CourseCommentsPage() {
           </div>
         )}
 
-        <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-8">
+        <p className="text-center text-xs text-caption mt-8">
           Comments are aggregated from public sources and may not reflect current course structure.
         </p>
       </div>

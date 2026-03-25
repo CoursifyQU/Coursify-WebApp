@@ -111,7 +111,7 @@ export default function About() {
             <span className="text-sm font-semibold text-brand-navy dark:text-white">Our Story</span>
             <Sparkles className="h-3.5 w-3.5 shrink-0 text-brand-gold" strokeWidth={2} aria-hidden />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
+          <h1 className="font-display text-display-md mb-4">
             <span className="text-brand-navy dark:text-white">About</span> <span className="gradient-text">Coursify</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-6">
@@ -132,18 +132,18 @@ export default function About() {
         {/* Mission & Stats */}
         <div className="mx-auto mb-20 grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2 md:gap-10">
           <div className="glass-card flex h-full flex-col gap-6 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-brand-navy dark:text-white">Our Mission</h2>
+            <h2 className="font-display text-display-sm text-brand-navy dark:text-white">Our Mission</h2>
             <div className="min-h-0 flex-1 space-y-4">
-              <p className="text-gray-700 dark:text-gray-300">
+              <p className="text-body">
                 Coursify was created to address a critical gap in the Queen&apos;s University student experience: the
                 lack of comprehensive, accessible data about courses and their historical performance.
               </p>
-              <p className="text-gray-700 dark:text-gray-300">
+              <p className="text-body">
                 We believe that students should have access to detailed information about courses, including grade
                 distributions, professor performance, and peer experiences, to make informed decisions about their
                 academic journey.
               </p>
-              <p className="text-gray-700 dark:text-gray-300">
+              <p className="text-body">
                 By combining official university data with cutting-edge AI technology, we&apos;ve built a platform that
                 empowers students to optimize their course selections and academic planning.
               </p>
@@ -162,7 +162,7 @@ export default function About() {
           </div>
 
           <div className="glass-card flex h-full flex-col rounded-2xl p-8">
-            <h2 className="mb-6 text-2xl font-bold tracking-tight text-brand-navy dark:text-white">
+            <h2 className="mb-6 font-display text-display-sm text-brand-navy dark:text-white">
               Platform Stats
             </h2>
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
@@ -222,7 +222,7 @@ export default function About() {
                   <p className="text-3xl font-bold tabular-nums tracking-tight text-brand-navy dark:text-white">
                     {value}
                   </p>
-                  <p className="mt-1.5 text-sm text-gray-600 dark:text-gray-400">{label}</p>
+                  <p className="mt-1.5 text-sm text-muted-custom">{label}</p>
                 </div>
               ))}
             </div>
@@ -246,8 +246,8 @@ export default function About() {
               <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full glass-pill mb-4">
                 <span className="text-brand-red text-sm font-semibold">Our Team</span>
               </div>
-              <h2 className="text-3xl font-bold mb-4 text-brand-navy dark:text-white">Meet the Team</h2>
-              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              <h2 className="font-display text-display-sm mb-4 text-brand-navy dark:text-white">Meet the Team</h2>
+              <p className="text-muted-custom max-w-2xl mx-auto">
                 We&apos;re a group of passionate Queen&apos;s students dedicated to improving the academic experience.
               </p>
             </div>
@@ -261,7 +261,7 @@ export default function About() {
                     </div>
                     <h3 className="text-lg font-bold text-brand-navy dark:text-white">Amaan Javed</h3>
                     <p className="text-brand-red mb-3">Team Lead</p>
-                    <p className="mb-4 text-gray-600 dark:text-gray-400 text-sm flex-grow">Queen&apos;s Computing &apos;27</p>
+                    <p className="mb-4 text-muted-custom text-sm flex-grow">Queen&apos;s Computing &apos;27</p>
                     <div className="flex space-x-3 mt-auto">
                       <a
                         href="https://github.com/amaanjaved1"
@@ -298,7 +298,7 @@ export default function About() {
                     </div>
                     <h3 className="text-lg font-bold text-brand-navy dark:text-white">Aayush Aryal</h3>
                     <p className="text-brand-red mb-3">Lead Web Developer</p>
-                    <p className="mb-4 text-gray-600 dark:text-gray-400 text-sm flex-grow">Queen&apos;s Computing &apos;28</p>
+                    <p className="mb-4 text-muted-custom text-sm flex-grow">Queen&apos;s Computing &apos;28</p>
                     <div className="flex space-x-3 mt-auto">
                       <a
                         href="https://github.com/aayusha59"
@@ -346,8 +346,8 @@ export default function About() {
             <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full glass-pill mb-4">
               <span className="text-brand-gold text-sm font-semibold">Features</span>
             </div>
-            <h2 className="text-3xl font-bold mb-6 text-brand-navy dark:text-white">What Coursify Offers</h2>
-            <p className="mb-10 text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            <h2 className="font-display text-display-sm mb-6 text-brand-navy dark:text-white">What Coursify Offers</h2>
+            <p className="mb-10 text-muted-custom max-w-3xl mx-auto">
               Everything you need to make smarter course decisions, all in one place.
             </p>
 
@@ -357,7 +357,7 @@ export default function About() {
                   <BarChart3 className="h-5 w-5 text-brand-navy dark:text-blue-400" />
                 </div>
                 <h3 className="font-bold text-lg text-brand-navy dark:text-white mb-3">Grade Distributions & Enrollment</h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-muted-custom">
                   View historical course grade distributions and enrollment data to understand course difficulty and class sizes before you register.
                 </p>
               </div>
@@ -367,7 +367,7 @@ export default function About() {
                   <MessageSquare className="h-5 w-5 text-brand-red" />
                 </div>
                 <h3 className="font-bold text-lg text-brand-navy dark:text-white mb-3">Real Student Comments</h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-muted-custom">
                   Read past student comments sourced from RateMyProfessors and Reddit to get honest, unfiltered perspectives on courses and professors.
                 </p>
               </div>
@@ -377,7 +377,7 @@ export default function About() {
                   <Brain className="h-5 w-5 text-brand-gold" />
                 </div>
                 <h3 className="font-bold text-lg text-brand-navy dark:text-white mb-3">AI Chat Assistant</h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-muted-custom">
                   Chat with our custom AI trained on real student comments to get instant, personalized answers about any course or professor.
                 </p>
               </div>
@@ -396,10 +396,10 @@ export default function About() {
               <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full glass-pill mb-4">
                 <span className="text-brand-navy dark:text-blue-400 text-sm font-semibold">Open Source</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 leading-tight text-brand-navy dark:text-white">
+              <h2 className="font-display text-display-sm mb-3 text-brand-navy dark:text-white">
                 Built in the Open
               </h2>
-              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-7 max-w-2xl mx-auto">
+              <p className="text-sm sm:text-base text-body mb-7 max-w-2xl mx-auto">
                 We&apos;ve open-sourced our entire codebase so students can contribute improvements and so other schools can set up a similar platform for their own students.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-7">
@@ -426,7 +426,7 @@ export default function About() {
                   </span>
                 </a>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-muted-custom">
                 Visit our <a href="https://github.com/CoursifyQU" target="_blank" rel="noopener noreferrer" className="text-brand-navy dark:text-blue-400 hover:text-brand-red dark:hover:text-red-400 font-medium transition-colors duration-200">GitHub organization</a> to see all repositories.
               </p>
             </div>
@@ -443,7 +443,7 @@ export default function About() {
               <div className="inline-block mb-1">
                 <span className="text-sm font-bold tracking-tight gold-shine-text">Coursify</span>
               </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
+              <p className="text-xs text-muted-custom">
                 Platform for{" "}
                 <span className="moving-gradient font-medium">
                   Queen&apos;s Students
@@ -453,12 +453,12 @@ export default function About() {
                   Queen&apos;s Students
                 </span>
               </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 italic">
+              <p className="text-xs text-caption mt-0.5 italic">
                 Not affiliated with or endorsed by Queen&apos;s University
               </p>
             </div>
 
-            <div className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2">
+            <div className="text-xs text-muted-custom flex items-center gap-2">
               <span className="moving-gradient font-medium">
                 © {new Date().getFullYear()} Coursify
               </span>

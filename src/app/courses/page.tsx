@@ -24,7 +24,7 @@ export default async function CoursesPage() {
     console.error("Error fetching courses:", error)
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Courses</h1>
+        <h1 className="font-display text-display-sm mb-6">Courses</h1>
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
           Error loading courses. Please try again later.
         </div>
@@ -47,7 +47,7 @@ export default async function CoursesPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Queen's University Courses</h1>
+      <h1 className="font-display text-display-sm mb-6">Queen's University Courses</h1>
       {formattedCourses && formattedCourses.length > 0 ? (
         <CourseList courses={formattedCourses} />
       ) : (

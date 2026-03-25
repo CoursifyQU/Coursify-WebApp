@@ -52,7 +52,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
       <div className="container mx-auto px-6 md:px-10 lg:px-20 max-w-full mt-6">
         <div className="flex justify-center items-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-navy dark:border-blue-400"></div>
-          <span className="ml-3 text-gray-500 dark:text-gray-400">Loading comments...</span>
+          <span className="ml-3 text-muted-custom">Loading comments...</span>
         </div>
       </div>
     );
@@ -70,10 +70,10 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
           Student Comments
         </h2>
         <div className="glass-card-deep rounded-xl p-8 text-center">
-          <p className="text-gray-500 dark:text-gray-400">No student comments found for this course yet.</p>
+          <p className="text-muted-custom">No student comments found for this course yet.</p>
         </div>
         <div className="mt-10 flex flex-col items-center justify-center">
-          <p className="text-base font-medium mb-4 text-gray-700 dark:text-gray-300">Talk with our chatbot to get more insights!</p>
+          <p className="text-base font-medium mb-4 text-body">Talk with our chatbot to get more insights!</p>
           <Link href="/queens-answers" className="liquid-btn-red text-white px-6 py-2.5 rounded-xl inline-flex items-center font-medium">
             <Brain className="mr-2 h-4 w-4" />
             <span className="text-sm">Try AI Assistant</span>
@@ -161,7 +161,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                   <div className="h-8 w-8 rounded-full mr-2 overflow-hidden flex-shrink-0">
                     <img src="/queens_reddit_icon.png" alt="Queen's Reddit" className="h-full w-full object-cover" />
                   </div>
-                  <div className="text-sm font-medium text-gray-700 dark:text-gray-300">r/queensuniversity</div>
+                  <div className="text-sm font-medium text-body">r/queensuniversity</div>
                   <span
                     className={`ml-auto text-xs font-medium px-2.5 py-0.5 rounded-full capitalize shrink-0 ${sentimentBadge(currentRedditComment.sentiment_label)}`}
                   >
@@ -171,22 +171,22 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
 
                 {currentRedditComment.professor_name && currentRedditComment.professor_name !== "general_prof" && (
                   <div className="flex items-center">
-                    <span className="text-xs text-gray-400 dark:text-gray-500 mr-1">Professor:</span>
+                    <span className="text-xs text-caption mr-1">Professor:</span>
                     <span className="text-xs text-brand-navy dark:text-white font-medium">{currentRedditComment.professor_name}</span>
                   </div>
                 )}
 
-                <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-4">{currentRedditComment.text}</p>
+                <p className="text-sm text-body line-clamp-4 prose-measure">{currentRedditComment.text}</p>
 
                 {currentRedditComment.tags && currentRedditComment.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1">
                     {currentRedditComment.tags.map((tag, index) => (
-                      <span key={index} className="text-xs glass-pill px-2 py-0.5 rounded-full text-gray-600 dark:text-gray-400">{tag}</span>
+                      <span key={index} className="text-xs glass-pill px-2 py-0.5 rounded-full text-muted-custom">{tag}</span>
                     ))}
                   </div>
                 )}
 
-                <div className="flex items-center text-xs text-gray-400 dark:text-gray-500">
+                <div className="flex items-center text-xs text-caption">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1 text-[#FF4500]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
                   </svg>
@@ -280,7 +280,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
               >
                 <div className="flex items-center">
                   <div className="flex items-center gap-2">
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Anonymous</div>
+                    <div className="text-sm font-medium text-body">Anonymous</div>
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
                         <svg
@@ -303,7 +303,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                 </div>
 
                 <div className="flex items-center">
-                  <span className="text-xs text-gray-400 dark:text-gray-500 mr-1">Professor:</span>
+                  <span className="text-xs text-caption mr-1">Professor:</span>
                   <a
                     href={currentRmpComment.source_url}
                     target="_blank"
@@ -317,7 +317,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
                   </a>
                 </div>
 
-                <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-4">{currentRmpComment.text}</p>
+                <p className="text-sm text-body line-clamp-4 prose-measure">{currentRmpComment.text}</p>
 
                 {currentRmpComment.tags && currentRmpComment.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1">
@@ -379,7 +379,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
       </motion.div>
 
       <motion.div
-        className="text-center text-xs text-gray-400 dark:text-gray-500 mb-2"
+        className="text-center text-xs text-caption mb-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.7, delay: 0.4 }}
@@ -389,7 +389,7 @@ export function CourseComments({ courseCode }: CourseCommentsProps) {
 
       {/* Chatbot CTA */}
       <div className="mt-8 mb-4 flex flex-col items-center justify-center">
-        <p className="text-sm font-medium mb-3 text-gray-600 dark:text-gray-400">Talk with our chatbot to get more insights!</p>
+        <p className="text-sm font-medium mb-3 text-muted-custom">Talk with our chatbot to get more insights!</p>
         <Link href="/queens-answers" className="liquid-btn-red text-white px-6 py-2.5 rounded-xl inline-flex items-center font-medium">
           <Brain className="mr-2 h-4 w-4" />
           <span className="text-sm">Try AI Assistant</span>

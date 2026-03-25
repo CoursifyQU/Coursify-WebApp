@@ -18,13 +18,28 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        display: [
-          "var(--font-display)",
+        sans: [
           "var(--font-manrope)",
           "ui-sans-serif",
           "system-ui",
           "sans-serif",
         ],
+        display: [
+          "var(--font-display)",
+          "Georgia",
+          "ui-serif",
+          "serif",
+        ],
+      },
+      fontSize: {
+        "display-xl": ["clamp(3rem, 2.2rem + 3.5vw, 5rem)", { lineHeight: "1.05", letterSpacing: "-0.025em" }],
+        "display-lg": ["clamp(2.25rem, 1.7rem + 2.5vw, 3.75rem)", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
+        "display-md": ["clamp(1.875rem, 1.5rem + 1.5vw, 2.5rem)", { lineHeight: "1.15", letterSpacing: "-0.015em" }],
+        "display-sm": ["clamp(1.5rem, 1.25rem + 1vw, 2rem)", { lineHeight: "1.2", letterSpacing: "-0.01em" }],
+        "body-lg": ["1.125rem", { lineHeight: "1.65" }],
+        "body-md": ["1rem", { lineHeight: "1.65" }],
+        "body-sm": ["0.875rem", { lineHeight: "1.6" }],
+        "label": ["0.75rem", { lineHeight: "1.5", letterSpacing: "0.02em" }],
       },
       screens: {
         'lg-filters': '1060px',

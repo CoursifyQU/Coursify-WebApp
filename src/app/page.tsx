@@ -215,7 +215,7 @@ export default function Home() {
                 <span className="text-xs font-semibold text-brand-navy dark:text-white">Built for Queen&apos;s Students</span>
               </motion.div>
 
-              <motion.h1 variants={heroChildVariants} className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-5 leading-[1.05] tracking-tight">
+              <motion.h1 variants={heroChildVariants} className="font-display text-display-xl mb-5">
                 <span className="gradient-text">Course selection</span>
                 <br />
                 <span className="text-brand-navy dark:text-white">powered by</span>
@@ -223,7 +223,7 @@ export default function Home() {
                 <span className="gradient-text">AI</span>
               </motion.h1>
 
-              <motion.p variants={heroChildVariants} className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-lg leading-relaxed">
+              <motion.p variants={heroChildVariants} className="text-body-lg text-body mb-8 max-w-lg">
                 Make data-driven decisions with real grade distributions, student reviews, and an AI assistant — all for Queen&apos;s University courses.
               </motion.p>
 
@@ -251,7 +251,7 @@ export default function Home() {
                 ].map(({ label, color }) => (
                   <div key={label} className="flex items-center glass-pill px-3 py-1.5 rounded-full">
                     <div className={`w-1.5 h-1.5 rounded-full mr-2 flex-shrink-0 ${color}`} />
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{label}</span>
+                    <span className="text-xs font-medium text-muted-custom">{label}</span>
                   </div>
                 ))}
               </motion.div>
@@ -316,11 +316,11 @@ export default function Home() {
               <Award className="h-3.5 w-3.5 text-brand-gold" />
               <span className="text-brand-gold text-xs font-semibold">How It Works</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-brand-navy dark:text-white">
+            <h2 className="font-display text-display-sm mb-2 text-brand-navy dark:text-white">
               Your path to{" "}
               <span className="moving-gradient">smarter decisions</span>
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-sm text-muted-custom max-w-2xl mx-auto">
               Get started in minutes. Here&apos;s how Coursify helps you plan your courses.
             </p>
           </div>
@@ -354,7 +354,7 @@ export default function Home() {
                   {step.icon}
                 </div>
                 <h3 className="font-bold text-base mb-2 text-brand-navy dark:text-white">{step.title}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{step.desc}</p>
+                <p className="text-sm text-muted-custom leading-relaxed">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -372,11 +372,11 @@ export default function Home() {
               <Zap className="h-3.5 w-3.5 text-brand-red" />
               <span className="text-brand-red text-xs font-semibold">Features</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold mb-2">
+            <h2 className="font-display text-display-sm mb-2">
               <span className="text-brand-navy dark:text-white">Built for </span>
               <span className="gradient-text">smarter decisions</span>
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-sm text-muted-custom max-w-2xl mx-auto">
               Everything you need to research, compare, and choose the best courses at Queen&apos;s.
             </p>
           </div>
@@ -437,7 +437,7 @@ export default function Home() {
                     <h3 className="mb-4 text-xl font-bold leading-snug text-brand-navy dark:text-white sm:text-2xl">
                       {activeTab.title}
                     </h3>
-                    <p className="mb-6 leading-relaxed text-gray-600 dark:text-gray-400">{activeTab.description}</p>
+                    <p className="mb-6 leading-relaxed text-muted-custom">{activeTab.description}</p>
                     <Link
                       href={activeFeatureTab === 2 ? "/queens-answers" : "/schools/queens"}
                       className="inline-flex items-center gap-2 text-sm font-semibold text-brand-red transition-all duration-300 hover:gap-3"
@@ -475,11 +475,11 @@ export default function Home() {
               <Star className="h-3.5 w-3.5 text-brand-navy dark:text-white" />
               <span className="text-brand-navy dark:text-white text-xs font-semibold">Testimonials</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-brand-navy dark:text-white">
+            <h2 className="font-display text-display-sm mb-2 text-brand-navy dark:text-white">
               Trusted by{" "}
               <span className="moving-gradient">Queen&apos;s students</span>
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-sm text-muted-custom max-w-2xl mx-auto">
               See how Coursify has helped students make better academic decisions.
             </p>
           </div>
@@ -509,7 +509,7 @@ export default function Home() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-brand-navy dark:text-white">{t.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{t.program}</p>
+                    <p className="text-xs text-muted-custom">{t.program}</p>
                   </div>
                 </div>
               </div>
@@ -529,11 +529,11 @@ export default function Home() {
               <span className="text-brand-red text-xs font-semibold mr-2">FAQs</span>
               <Info className="h-3 w-3 text-brand-red" />
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold mb-2 text-brand-navy dark:text-white">
+            <h2 className="font-display text-display-sm mb-2 text-brand-navy dark:text-white">
               Your questions,{" "}
               <span className="moving-gradient">answered</span>
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-sm text-muted-custom max-w-2xl mx-auto">
               Get quick answers to the most common questions about Coursify.
             </p>
           </div>
@@ -576,7 +576,7 @@ export default function Home() {
                         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                         className="overflow-hidden [overflow-anchor:none]"
                       >
-                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{faq.answer}</p>
+                        <p className="text-body leading-relaxed prose-measure">{faq.answer}</p>
                       </motion.div>
                     </div>
                   </div>
@@ -594,12 +594,12 @@ export default function Home() {
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col items-center">
           <div className="text-center max-w-2xl">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 leading-tight">
+            <h2 className="font-display text-display-md mb-3">
               <span className="gradient-text">Ready to make smarter</span>
               <br />
               <span className="text-brand-navy dark:text-white">course decisions?</span>
             </h2>
-            <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-7">
+            <p className="text-sm sm:text-base text-body mb-7">
               Join thousands of Queen&apos;s students who are using Coursify to plan their academic journey.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-7">
@@ -625,7 +625,7 @@ export default function Home() {
               ].map(({ label, color }) => (
                 <div key={label} className="flex items-center glass-pill px-3 py-1.5 rounded-full">
                   <div className={`w-1.5 h-1.5 rounded-full mr-2 flex-shrink-0 ${color}`} />
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{label}</span>
+                  <span className="text-xs font-medium text-muted-custom">{label}</span>
                 </div>
               ))}
             </div>
@@ -642,17 +642,17 @@ export default function Home() {
               <div className="inline-block mb-1">
                 <span className="text-sm font-bold tracking-tight gold-shine-text">Coursify</span>
               </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
+              <p className="text-xs text-muted-custom">
                 Platform for{" "}
                 <span className="moving-gradient font-medium">Queen&apos;s Students</span>{" "}
                 by{" "}
                 <span className="moving-gradient font-medium">Queen&apos;s Students</span>
               </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 italic">
+              <p className="text-xs text-caption mt-0.5 italic">
                 Not affiliated with or endorsed by Queen&apos;s University
               </p>
             </div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2">
+            <div className="text-xs text-muted-custom flex items-center gap-2">
               <span className="moving-gradient font-medium">© {new Date().getFullYear()} Coursify</span>
               <span className="text-gray-300 dark:text-gray-600">•</span>
               <Link href="/about" className="text-brand-navy dark:text-white hover:text-brand-red transition-colors duration-200 font-medium">

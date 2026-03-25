@@ -364,7 +364,7 @@ export default function QueensCourses() {
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-red"></span>
             </span>
           </div>
-          <h1 className="text-3xl lg-filters:text-4xl font-bold mb-4">
+          <h1 className="font-display text-display-sm mb-4">
             <span className="text-brand-navy dark:text-white">Queen's University</span> <span className="gradient-text">Courses</span>
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto lg-filters:mx-0">
@@ -537,8 +537,8 @@ export default function QueensCourses() {
                       className="mb-6"
                     />
                     <div className="flex justify-between text-sm text-brand-navy dark:text-white">
-                      <span className="font-medium">{gpaRange[0].toFixed(1)}</span>
-                      <span className="font-medium">{gpaRange[1].toFixed(1)}</span>
+                      <span className="font-medium tabular-data">{gpaRange[0].toFixed(1)}</span>
+                      <span className="font-medium tabular-data">{gpaRange[1].toFixed(1)}</span>
                     </div>
                     <div className="flex justify-between text-xs text-muted-foreground mt-1">
                       <span>Min</span>
@@ -652,7 +652,7 @@ export default function QueensCourses() {
                             <td className="px-4 py-3 text-sm">{course.course_name}</td>
                             <td className="px-4 py-3 text-sm">
                               {course.averageGPA > 0 ? (
-                                <span className={`font-medium ${getGpaColor(course.averageGPA)}`}>
+                                <span className={`font-medium tabular-data ${getGpaColor(course.averageGPA)}`}>
                                   {course.averageGPA.toFixed(1)}
                                 </span>
                               ) : (
@@ -669,7 +669,7 @@ export default function QueensCourses() {
                                         style={{ width: `${Math.min((course.totalEnrollment / 600) * 100, 100)}%` }}
                                       />
                                     </div>
-                                    {Math.round(course.totalEnrollment)}
+                                    <span className="tabular-data">{Math.round(course.totalEnrollment)}</span>
                                   </>
                                 ) : (
                                   <span className="text-muted-foreground">N/A</span>

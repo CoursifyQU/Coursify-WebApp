@@ -198,8 +198,8 @@ export default function CourseDetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-white/90 dark:bg-[#171717]">
         <div className="text-center glass-card-deep rounded-2xl p-12">
-          <h1 className="text-3xl font-bold text-brand-red mb-4">Course Not Found</h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-8">We couldn't find a course with code "{courseCode}".</p>
+          <h1 className="font-display text-display-sm text-brand-red mb-4">Course Not Found</h1>
+          <p className="text-muted-custom mb-8">We couldn't find a course with code "{courseCode}".</p>
           <Link href="/schools/queens" className="px-6 py-3 bg-brand-navy text-white rounded-xl hover:bg-[#002244] transition">
             Return to Courses List
           </Link>
@@ -464,7 +464,7 @@ export default function CourseDetailPage() {
 
             {/* Course code + name */}
             <motion.h1
-              className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight"
+              className="font-display text-display-md text-white mb-2"
               variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.3 } } }}
             >
               {course.course_code}
@@ -487,7 +487,7 @@ export default function CourseDetailPage() {
                 <h3 className="text-sm font-medium text-white/60 uppercase tracking-wider">Course Description</h3>
               </div>
               <div className="bg-white/8 border border-white/10 rounded-xl p-4 backdrop-blur-sm">
-                <p className="text-white/85 text-sm leading-relaxed">
+                <p className="text-white/85 text-sm leading-relaxed prose-measure">
                   {course.description
                     ? (typeof course.description === 'string' ? course.description : String(course.description))
                     : 'No description available for this course.'}
@@ -566,7 +566,7 @@ export default function CourseDetailPage() {
               <div className="course-detail-inset-glass rounded-xl p-3.5">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-semibold text-brand-navy dark:text-white">Average GPA</span>
-                  <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${gpaBadgeClass(course.averageGPA)}`}>
+                  <span className={`text-xs font-bold tabular-data px-2.5 py-0.5 rounded-full ${gpaBadgeClass(course.averageGPA)}`}>
                     {course.averageGPA.toFixed(2)}
                   </span>
                 </div>
@@ -579,7 +579,7 @@ export default function CourseDetailPage() {
               <div className="course-detail-inset-glass rounded-xl p-3.5">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-semibold text-brand-navy dark:text-white">Average Enrollment</span>
-                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-brand-navy/12 dark:bg-blue-400/12 text-brand-navy dark:text-white">
+                  <span className="text-xs font-bold tabular-data px-2.5 py-0.5 rounded-full bg-brand-navy/12 dark:bg-blue-400/12 text-brand-navy dark:text-white">
                     {enrollmentRounded}
                   </span>
                 </div>
@@ -620,7 +620,7 @@ export default function CourseDetailPage() {
               </div>
               <div>
                 <h3 className="text-base font-semibold text-brand-navy dark:text-white leading-tight">GPA Trend</h3>
-                <p className="text-xs text-gray-400 dark:text-gray-500">
+                <p className="text-xs text-caption">
                   Average GPA across academic terms
                 </p>
               </div>
@@ -774,7 +774,7 @@ export default function CourseDetailPage() {
               </div>
               <div>
                 <h3 className="text-base font-semibold text-brand-navy dark:text-white leading-tight">Grade Distribution</h3>
-                <p className="text-xs text-gray-400 dark:text-gray-500">Percentage of students per grade</p>
+                <p className="text-xs text-caption">Percentage of students per grade</p>
               </div>
             </div>
             {course.distributions && course.distributions.length > 0 && (
@@ -854,8 +854,8 @@ export default function CourseDetailPage() {
               {/* Stats row — glass cards; Avg GPA includes mini scale bar */}
               <div className="mt-4 shrink-0 grid grid-cols-3 gap-2.5">
                 <div className="course-detail-inset-glass rounded-xl p-3 text-center flex flex-col">
-                  <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">Avg GPA</div>
-                  <div className={`text-base font-bold ${gpaValueTextClass(selectedDistribution.average_gpa)}`}>
+                  <div className="text-xs text-caption mb-1">Avg GPA</div>
+                  <div className={`text-base font-bold tabular-data ${gpaValueTextClass(selectedDistribution.average_gpa)}`}>
                     {selectedDistribution.average_gpa.toFixed(2)}
                   </div>
                   <GpaSpectrumBar
@@ -869,8 +869,8 @@ export default function CourseDetailPage() {
                   </div>
                 </div>
                 <div className="course-detail-inset-glass rounded-xl p-3 text-center flex flex-col">
-                  <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">Enrollment</div>
-                  <div className="text-base font-bold text-brand-navy dark:text-white">{selectedDistribution.enrollment}</div>
+                  <div className="text-xs text-caption mb-1">Enrollment</div>
+                  <div className="text-base font-bold tabular-data text-brand-navy dark:text-white">{selectedDistribution.enrollment}</div>
                   <div className="w-full mt-2 overflow-hidden h-1.5 rounded-full bg-brand-navy/[0.09] dark:bg-blue-400/[0.09] border border-brand-navy/[0.06] dark:border-blue-400/[0.06]">
                     <motion.div
                       className="h-full rounded-full bg-gradient-to-r from-[#00305f]/50 via-[#0066CC] to-[#d62839]/90"
@@ -885,7 +885,7 @@ export default function CourseDetailPage() {
                   </div>
                 </div>
                 <div className="course-detail-inset-glass rounded-xl p-3 text-center">
-                  <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">Term</div>
+                  <div className="text-xs text-caption mb-1">Term</div>
                   <div className="text-base font-bold text-brand-navy dark:text-white">{selectedDistribution.term}</div>
                 </div>
               </div>

@@ -119,7 +119,7 @@ export default function AIFeatures() {
       <div className="h-full flex flex-col items-center justify-center px-4 overflow-hidden">
         <div className="w-full max-w-2xl flex flex-col items-center">
           {/* Header */}
-          <h1 className="text-5xl font-extrabold text-center mb-3 tracking-tight animated-title">
+          <h1 className="font-display text-display-lg text-center mb-3 animated-title">
             <span className="gradient-text">Queen's Answers</span>
           </h1>
           <p className="text-xl font-semibold text-center mb-10 text-brand-navy dark:text-white max-w-2xl">
