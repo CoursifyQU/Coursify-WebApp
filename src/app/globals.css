@@ -70,6 +70,10 @@
     @apply border-border;
   }
 
+  html {
+    scrollbar-gutter: stable;
+  }
+
   body {
     @apply text-foreground;
     background-color: var(--page-bg);

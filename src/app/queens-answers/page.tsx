@@ -239,8 +239,8 @@ export default function AIFeatures() {
 
         {/* Ask a Question Input at the bottom */}
         <div
-          className={`fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-xl flex items-center bg-[#f5f6f7] dark:bg-[#262626] dark:border dark:border-white/10 rounded-full px-4 py-3 shadow-lg transition-all duration-500 ${
-            showHowItWorks || showComingSoon ? "opacity-30 pointer-events-none filter blur-[1px]" : "opacity-100 hover:shadow-xl"
+          className={`fixed bottom-8 left-1/2 -translate-x-1/2 w-[min(100%-2rem,36rem)] max-w-xl flex items-center box-border bg-[#f5f6f7] dark:bg-[#262626] border border-neutral-200/90 dark:border-white/10 rounded-full px-4 py-3 shadow-lg transition-[opacity,box-shadow,filter] duration-500 ${
+            showHowItWorks || showComingSoon ? "opacity-30 pointer-events-none blur-[1px]" : "opacity-100 hover:shadow-xl"
           }`}
           style={{ zIndex: 30 }}
         >
