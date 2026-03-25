@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { computeDataAvailability } from "@/lib/course-availability"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
@@ -12,11 +13,17 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search") || ""
   const departments = searchParams.get("departments")?.split(",").filter(Boolean) || []
   const levels = searchParams.get("levels")?.split(",").filter(Boolean) || []
+  const subjects = searchParams.get("subjects")?.split(",").filter(Boolean) || []
   const gpaMin = parseFloat(searchParams.get("gpa_min") || "0")
   const gpaMax = parseFloat(searchParams.get("gpa_max") || "4.3")
-  const sortBy = searchParams.get("sort_by") || "code"
-  const sortDir = searchParams.get("sort_dir") || "asc"
+  const enrollMin = parseFloat(searchParams.get("enroll_min") || "0")
+  const enrollMax = parseFloat(searchParams.get("enroll_max") || "0")
+  const sortBy = searchParams.get("sort_by") || "availability"
+  const sortDir = searchParams.get("sort_dir") || "desc"
   const hasData = searchParams.get("has_data") !== "false" // default true
+  const availabilityFilter = (
+    searchParams.get("availability")?.split(",").filter(Boolean) ?? []
+  ).filter((x): x is "data" | "comments" => x === "data" || x === "comments")
 
   try {
     const supabase = createClient(supabaseUrl, supabaseKey)
@@ -42,6 +49,14 @@ export async function GET(request: NextRequest) {
       query = query.in("course_level", levels.map(Number))
     }
 
+    // Subject prefix filter (e.g. CISC, APSC, ANAT)
+    if (subjects.length > 0) {
+      const subjectFilter = subjects
+        .map((s) => `course_code.ilike.${s} %`)
+        .join(",")
+      query = query.or(subjectFilter)
+    }
+
     // GPA range filter (only if not default range)
     if (gpaMin > 0 || gpaMax < 4.3) {
       query = query
@@ -49,20 +64,49 @@ export async function GET(request: NextRequest) {
         .lte("computed_avg_gpa", gpaMax)
     }
 
-    // Only courses with data
+    // Enrollment range filter
+    if (enrollMin > 0) {
+      query = query.gte("computed_avg_enrollment", enrollMin)
+    }
+    if (enrollMax > 0) {
+      query = query.lte("computed_avg_enrollment", enrollMax)
+    }
+
+    // Main table: grade data OR aggregated comments; exclude courses with neither
     if (hasData) {
       query = query.or("computed_avg_gpa.gt.0,has_comments.eq.true")
     }
 
-    // Sorting
-    const sortColumn = {
-      code: "course_code",
-      name: "course_name",
-      gpa: "computed_avg_gpa",
-      enrollment: "computed_avg_enrollment",
-    }[sortBy] || "course_code"
+    // Optional: restrict to tier(s) — values data | comments (comma-separated)
+    if (availabilityFilter.length > 0) {
+      const wantData = availabilityFilter.includes("data")
+      const wantComments = availabilityFilter.includes("comments")
+      if (wantData && !wantComments) {
+        query = query.gt("computed_avg_gpa", 0)
+      } else if (!wantData && wantComments) {
+        query = query
+          .eq("has_comments", true)
+          .lte("computed_avg_gpa", 0)
+      }
+      // both selected: no extra tier filter
+    }
 
-    query = query.order(sortColumn, { ascending: sortDir === "asc" })
+    // Sorting — availability: data first when sort_dir=desc (gpa high→low puts >0 before 0); comments first when asc
+    if (sortBy === "availability") {
+      const dataFirst = sortDir === "desc"
+      query = query
+        .order("computed_avg_gpa", { ascending: !dataFirst })
+        .order("course_code", { ascending: true })
+    } else {
+      const sortColumn = {
+        code: "course_code",
+        name: "course_name",
+        gpa: "computed_avg_gpa",
+        enrollment: "computed_avg_enrollment",
+      }[sortBy] || "course_code"
+
+      query = query.order(sortColumn, { ascending: sortDir === "asc" })
+    }
 
     // Pagination
     const offset = (page - 1) * limit
@@ -79,18 +123,23 @@ export async function GET(request: NextRequest) {
     const totalPages = Math.ceil(total / limit)
 
     // Map to CourseWithStats shape
-    const courses = (data || []).map((row: any) => ({
-      id: String(row.id),
-      course_code: row.course_code || "",
-      course_name: row.course_name || "",
-      description: row.course_description || undefined,
-      credits: Number(row.course_units || 0),
-      department: row.offering_faculty || "",
-      distributions: [],
-      averageGPA: Number(row.computed_avg_gpa) || 0,
-      totalEnrollment: Number(row.computed_avg_enrollment) || 0,
-      hasComments: row.has_comments || false,
-    }))
+    const courses = (data || []).map((row: any) => {
+      const averageGPA = Number(row.computed_avg_gpa) || 0
+      const hasComments = Boolean(row.has_comments)
+      return {
+        id: String(row.id),
+        course_code: row.course_code || "",
+        course_name: row.course_name || "",
+        description: row.course_description || undefined,
+        credits: Number(row.course_units || 0),
+        department: row.offering_faculty || "",
+        distributions: [],
+        averageGPA,
+        totalEnrollment: Number(row.computed_avg_enrollment) || 0,
+        hasComments,
+        dataAvailability: computeDataAvailability(averageGPA, hasComments),
+      }
+    })
 
     return NextResponse.json({ courses, total, page, totalPages })
   } catch (err) {

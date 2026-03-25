@@ -42,11 +42,15 @@ export interface Message {
   timestamp: Date
 }
 
+/** Grade stats (GPA) vs reviews-only vs nothing in catalog/list APIs */
+export type CourseDataAvailability = "none" | "comments" | "data"
+
 export type CourseWithStats = Course & {
   distributions: GradeDistribution[];
   averageGPA: number;
   totalEnrollment: number;
   hasComments?: boolean;
+  dataAvailability?: CourseDataAvailability;
 };
 
 // Server-side pagination types
@@ -56,11 +60,16 @@ export interface CoursePageParams {
   search?: string;
   departments?: string[];
   levels?: string[];
+  subjects?: string[];
   gpaMin?: number;
   gpaMax?: number;
-  sortBy?: "code" | "name" | "gpa" | "enrollment";
+  enrollmentMin?: number;
+  enrollmentMax?: number;
+  sortBy?: "code" | "name" | "gpa" | "enrollment" | "availability";
   sortDir?: "asc" | "desc";
   hasData?: boolean;
+  /** When set, only these tiers (empty = both). Values: data | comments */
+  availability?: ("data" | "comments")[];
 }
 
 export interface CoursePageResult {

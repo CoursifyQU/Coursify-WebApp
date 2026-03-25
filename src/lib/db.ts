@@ -113,11 +113,15 @@ export async function fetchCoursesPage(params: CoursePageParams): Promise<Course
   if (params.search) searchParams.set("search", params.search)
   if (params.departments?.length) searchParams.set("departments", params.departments.join(","))
   if (params.levels?.length) searchParams.set("levels", params.levels.join(","))
+  if (params.subjects?.length) searchParams.set("subjects", params.subjects.join(","))
   if (params.gpaMin !== undefined && params.gpaMin > 0) searchParams.set("gpa_min", String(params.gpaMin))
   if (params.gpaMax !== undefined && params.gpaMax < 4.3) searchParams.set("gpa_max", String(params.gpaMax))
+  if (params.enrollmentMin !== undefined && params.enrollmentMin > 0) searchParams.set("enroll_min", String(params.enrollmentMin))
+  if (params.enrollmentMax !== undefined && params.enrollmentMax > 0) searchParams.set("enroll_max", String(params.enrollmentMax))
   if (params.sortBy) searchParams.set("sort_by", params.sortBy)
   if (params.sortDir) searchParams.set("sort_dir", params.sortDir)
   if (params.hasData !== undefined) searchParams.set("has_data", String(params.hasData))
+  if (params.availability?.length) searchParams.set("availability", params.availability.join(","))
 
   const res = await fetch(`/api/courses?${searchParams.toString()}`)
   if (!res.ok) {
@@ -136,6 +140,17 @@ export async function fetchDepartments(): Promise<string[]> {
   }
   const data = await res.json()
   return data.departments || []
+}
+
+// Fetch subject prefixes (e.g. CISC, APSC, ANAT) from API
+export async function fetchSubjects(): Promise<string[]> {
+  const res = await fetch("/api/courses/subjects")
+  if (!res.ok) {
+    console.error("Failed to fetch subjects:", res.statusText)
+    return []
+  }
+  const data = await res.json()
+  return data.subjects || []
 }
 
 // Get a single course by code (via server API so signed-in users are not blocked by RLS on direct client queries)
