@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTheme } from "next-themes";
+import { useMotionTier, type MotionTier } from "@/lib/motion-prefs";
 
 const GRADE_LABELS = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
 
@@ -32,20 +33,20 @@ const GRADE_COLORS = {
   'F': '#D32F2F',
 };
 
-const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.5 } }
-};
-
-const slideUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-};
+function pageMotionVariants(tier: MotionTier) {
+  const lite = tier === "lite";
+  return {
+    fadeIn: lite
+      ? { hidden: { opacity: 1 }, visible: { opacity: 1, transition: { duration: 0 } } }
+      : { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.5 } } },
+    slideUp: lite
+      ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0, transition: { duration: 0 } } }
+      : { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } } },
+    staggerContainer: lite
+      ? { hidden: { opacity: 1 }, visible: { opacity: 1, transition: { staggerChildren: 0 } } }
+      : { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } },
+  };
+}
 
 const GPA_SCALE_MIN = 1;
 const GPA_SCALE_MAX = 4.3;
@@ -156,8 +157,11 @@ const GPA_TREND_Y_TICKS = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.3];
 
 export default function CourseDetailPage() {
   const params = useParams();
+  const motionTier = useMotionTier();
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
+  const { fadeIn, slideUp, staggerContainer } = pageMotionVariants(motionTier);
+  const chartsAnimate = motionTier === "full";
   const courseCode = params?.courseCode ? (params.courseCode as string).replace(/-/g, ' ').toUpperCase() : '';
   const [selectedTerm, setSelectedTerm] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
@@ -249,6 +253,27 @@ export default function CourseDetailPage() {
   };
 
   const facultyName = course.department?.replace(/^Offering Faculty:/, '') || 'Faculty of Arts and Science';
+
+  const liteMotion = motionTier === "lite";
+  const heroBreadcrumb = liteMotion
+    ? { hidden: { opacity: 1, x: 0 }, visible: { opacity: 1, x: 0, transition: { duration: 0 } } }
+    : { hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { duration: 0.4, delay: 0.1 } } };
+  const heroFaculty = liteMotion
+    ? { hidden: { opacity: 1, x: 0 }, visible: { opacity: 1, x: 0, transition: { duration: 0 } } }
+    : { hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { duration: 0.5, delay: 0.2 } } };
+  const heroH1 = liteMotion
+    ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0, transition: { duration: 0 } } }
+    : { hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.3 } } };
+  const heroH2 = liteMotion
+    ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0, transition: { duration: 0 } } }
+    : { hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.4 } } };
+  const heroDesc = liteMotion
+    ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0, transition: { duration: 0 } } }
+    : { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.5 } } };
+  const barMotionTransition = chartsAnimate ? { duration: 1, delay: 0.5 } : { duration: 0, delay: 0 };
+  const barMotionShort = chartsAnimate ? { duration: 0.8, delay: 0.2 } : { duration: 0, delay: 0 };
+  const barMotionEnroll = chartsAnimate ? { duration: 0.8, delay: 0.25 } : { duration: 0, delay: 0 };
+  const tooltipGlass = chartsAnimate ? ("blur(12px)" as const) : ("none" as const);
 
   return (
     <div className="relative min-h-screen overflow-hidden pb-16 pt-20 course-detail-bg">
@@ -436,7 +461,7 @@ export default function CourseDetailPage() {
             {/* Breadcrumb */}
             <motion.div
               className="flex items-center gap-2 mb-5"
-              variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { duration: 0.4, delay: 0.1 } } }}
+              variants={heroBreadcrumb}
             >
               <Link href="/schools/queens" className="text-white/60 hover:text-white/90 text-sm transition-colors flex items-center gap-1">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -449,9 +474,7 @@ export default function CourseDetailPage() {
             </motion.div>
 
             {/* Faculty badge */}
-            <motion.div
-              variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { duration: 0.5, delay: 0.2 } } }}
-            >
+            <motion.div variants={heroFaculty}>
               <span className="inline-block px-3 py-1 bg-brand-red text-white text-xs font-medium rounded-lg mb-4">
                 {facultyName}
               </span>
@@ -460,21 +483,19 @@ export default function CourseDetailPage() {
             {/* Course code + name */}
             <motion.h1
               className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight"
-              variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.3 } } }}
+              variants={heroH1}
             >
               {course.course_code}
             </motion.h1>
             <motion.h2
               className="text-xl md:text-2xl font-medium text-white/80 mb-6"
-              variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.4 } } }}
+              variants={heroH2}
             >
               {course.course_name}
             </motion.h2>
 
             {/* Description */}
-            <motion.div
-              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.5 } } }}
-            >
+            <motion.div variants={heroDesc}>
               <div className="flex items-center gap-2 mb-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -565,7 +586,7 @@ export default function CourseDetailPage() {
                     {course.averageGPA.toFixed(2)}
                   </span>
                 </div>
-                <GpaSpectrumBar gpa={course.averageGPA} heightClass="h-2" transition={{ duration: 1, delay: 0.5 }} />
+                <GpaSpectrumBar gpa={course.averageGPA} heightClass="h-2" transition={barMotionTransition} />
                 <div className="flex justify-between text-xs text-brand-navy/45 dark:text-white/45 mt-0.5">
                   <span>1.0</span>
                   <span>4.3</span>
@@ -583,7 +604,7 @@ export default function CourseDetailPage() {
                     className="h-full rounded-full bg-gradient-to-r from-[#00305f]/50 via-[#0066CC] to-[#d62839]/90"
                     initial={{ width: 0 }}
                     animate={{ width: `${enrollmentBarPct}%` }}
-                    transition={{ duration: 1, delay: 0.55 }}
+                    transition={chartsAnimate ? { duration: 1, delay: 0.55 } : { duration: 0, delay: 0 }}
                   />
                 </div>
                 <div className="flex justify-between text-xs text-brand-navy/45 dark:text-white/45 mt-0.5">
@@ -695,7 +716,7 @@ export default function CourseDetailPage() {
                     ]}
                     contentStyle={{
                       backgroundColor: isDark ? 'rgba(32,32,32,0.97)' : 'rgba(255,255,255,0.92)',
-                      backdropFilter: 'blur(12px)',
+                      backdropFilter: tooltipGlass,
                       borderRadius: '10px',
                       border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.8)',
                       boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,48,95,0.12)',
@@ -704,6 +725,7 @@ export default function CourseDetailPage() {
                     }}
                   />
                   <Area
+                    isAnimationActive={chartsAnimate}
                     type="monotone"
                     dataKey="gpa"
                     stroke="#94a3b8"
@@ -834,7 +856,7 @@ export default function CourseDetailPage() {
                       }}
                       contentStyle={{
                         backgroundColor: isDark ? 'rgba(32,32,32,0.97)' : 'rgba(255,255,255,0.92)',
-                        backdropFilter: 'blur(12px)',
+                        backdropFilter: tooltipGlass,
                         borderRadius: '10px',
                         border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.8)',
                         boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,48,95,0.12)',
@@ -842,7 +864,13 @@ export default function CourseDetailPage() {
                         color: isDark ? '#e2e8f0' : '#0f172a',
                       }}
                     />
-                    <Bar dataKey="count" name="Students" animationDuration={1200} radius={[4, 4, 0, 0]}>
+                    <Bar
+                      dataKey="count"
+                      name="Students"
+                      isAnimationActive={chartsAnimate}
+                      animationDuration={chartsAnimate ? 1200 : 0}
+                      radius={[4, 4, 0, 0]}
+                    >
                       {gradeDistributionData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.fill} fillOpacity={0.85} />
                       ))}
@@ -862,7 +890,7 @@ export default function CourseDetailPage() {
                   <GpaSpectrumBar
                     gpa={selectedDistribution.average_gpa}
                     heightClass="h-1.5"
-                    transition={{ duration: 0.8, delay: 0.2 }}
+                    transition={barMotionShort}
                   />
                   <div className="flex justify-between w-full text-[10px] text-brand-navy/40 dark:text-white/40 mt-0.5">
                     <span>1.0</span>
@@ -877,7 +905,7 @@ export default function CourseDetailPage() {
                       className="h-full rounded-full bg-gradient-to-r from-[#00305f]/50 via-[#0066CC] to-[#d62839]/90"
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min((selectedDistribution.enrollment / enrollmentBarMax) * 100, 100)}%` }}
-                      transition={{ duration: 0.8, delay: 0.25 }}
+                      transition={barMotionEnroll}
                     />
                   </div>
                   <div className="flex justify-between w-full text-[10px] text-brand-navy/40 dark:text-white/40 mt-0.5">

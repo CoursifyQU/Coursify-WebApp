@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth/auth-context"
 import { QUEENS_ANSWERS_DRAFT_STORAGE_KEY } from "@/constants/queens-answers"
 import { AuthModal } from "@/components/auth-modal"
 import { Bot, Search, MessageSquare, Target, ArrowRight } from "lucide-react"
+import { useMotionTier } from "@/lib/motion-prefs"
 
 export default function AIFeatures() {
   const [question, setQuestion] = useState("")
@@ -14,6 +15,8 @@ export default function AIFeatures() {
   const [showComingSoon, setShowComingSoon] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
   const controls = useAnimation()
+  const motionTier = useMotionTier()
+  const marqueeLite = motionTier === "lite"
   const { user } = useAuth()
 
   useEffect(() => {
@@ -76,11 +79,16 @@ export default function AIFeatures() {
     { emoji: "🧑‍🏫", text: "strictest graders" },
   ]
 
-  // Duplicate the array to create a seamless loop effect
+  // Duplicate the array to create a seamless loop effect (desktop only)
   const duplicatedQuestions = [...sampleQuestions, ...sampleQuestions, ...sampleQuestions]
 
-  // Set up continuous animation
   useEffect(() => {
+    if (marqueeLite) {
+      controls.stop()
+      void controls.set({ x: 0 })
+      return
+    }
+
     const startAnimation = async () => {
       await controls.start({
         x: [0, -3000],
@@ -93,12 +101,12 @@ export default function AIFeatures() {
       })
     }
 
-    startAnimation()
+    void startAnimation()
 
     return () => {
       controls.stop()
     }
-  }, [controls])
+  }, [controls, marqueeLite])
 
   // Function to handle click on sample questions (just set the question text, no auth check)
   const handleSampleQuestionClick = (questionText: string) => {
@@ -135,47 +143,66 @@ export default function AIFeatures() {
             Got a question? Ask it and get answers, perspectives, and recommendations from all of Queen's
           </p>
 
-          {/* Continuous Carousel */}
+          {/* Sample prompts: static wrap on mobile / reduced motion; marquee on desktop */}
           <div className="w-full mb-8 overflow-hidden relative carousel-container" ref={containerRef}>
-            <motion.div className="flex gap-4 px-4" animate={controls} style={{ width: "max-content" }}>
-              {duplicatedQuestions.map((q, i) => (
-                <motion.button
-                  key={i}
-                  type="button"
-                  tabIndex={0}
-                  onClick={() => {
-                    handleSampleQuestionClick(q.text);
-                  }}
-                  className="relative mx-0.5 flex items-center rounded-full px-6 py-3 text-base font-medium whitespace-nowrap box-border
-                    border border-brand-navy/28 dark:border-white/[0.12]
-                    bg-white/82 dark:bg-zinc-800/82 backdrop-blur-md
-                    text-brand-navy dark:text-white
-                    shadow-[0_2px_6px_rgba(0,48,95,0.07),0_1px_2px_rgba(0,48,95,0.04)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.28),0_1px_2px_rgba(0,0,0,0.2)]
-                    transition-colors duration-[420ms] ease-in-out
-                    motion-reduce:transition-none
-                    hover:border-brand-navy/42 dark:hover:border-white/[0.18]
-                    hover:bg-white/92 dark:hover:bg-zinc-800/90
-                    hover:shadow-[0_4px_14px_rgba(0,48,95,0.1),0_2px_4px_rgba(0,48,95,0.05)] dark:hover:shadow-[0_4px_16px_rgba(0,0,0,0.38),0_2px_6px_rgba(0,0,0,0.22)]"
-                  style={{ lineHeight: "1.2" }}
-                  aria-label={q.text}
-                  whileHover={{
-                    scale: 1.026,
-                    y: -2.5,
-                    zIndex: 20,
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 320,
-                    damping: 26,
-                    mass: 0.95,
-                  }}
-                  whileTap={{ scale: 0.985 }}
-                >
-                  <span className="mr-2 text-lg">{q.emoji}</span>
-                  {q.text}
-                </motion.button>
-              ))}
-            </motion.div>
+            {marqueeLite ? (
+              <div className="flex flex-wrap justify-center gap-2 px-2 max-h-40 overflow-y-auto overscroll-contain">
+                {sampleQuestions.map((q, i) => (
+                  <button
+                    key={`${q.text}-${i}`}
+                    type="button"
+                    tabIndex={0}
+                    onClick={() => handleSampleQuestionClick(q.text)}
+                    className="relative flex items-center rounded-full px-4 py-2.5 text-sm font-medium whitespace-nowrap box-border border border-brand-navy/28 dark:border-white/[0.12] bg-white/95 dark:bg-zinc-800/95 text-brand-navy dark:text-white shadow-[0_2px_6px_rgba(0,48,95,0.07),0_1px_2px_rgba(0,48,95,0.04)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.28),0_1px_2px_rgba(0,0,0,0.2)] transition-colors duration-200 ease-out active:opacity-90"
+                    style={{ lineHeight: "1.2" }}
+                    aria-label={q.text}
+                  >
+                    <span className="mr-2 text-base">{q.emoji}</span>
+                    {q.text}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <motion.div className="flex gap-4 px-4" animate={controls} style={{ width: "max-content" }}>
+                {duplicatedQuestions.map((q, i) => (
+                  <motion.button
+                    key={i}
+                    type="button"
+                    tabIndex={0}
+                    onClick={() => {
+                      handleSampleQuestionClick(q.text);
+                    }}
+                    className="relative mx-0.5 flex items-center rounded-full px-6 py-3 text-base font-medium whitespace-nowrap box-border
+                      border border-brand-navy/28 dark:border-white/[0.12]
+                      bg-white/82 dark:bg-zinc-800/82 backdrop-blur-md
+                      text-brand-navy dark:text-white
+                      shadow-[0_2px_6px_rgba(0,48,95,0.07),0_1px_2px_rgba(0,48,95,0.04)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.28),0_1px_2px_rgba(0,0,0,0.2)]
+                      transition-colors duration-[420ms] ease-in-out
+                      motion-reduce:transition-none
+                      hover:border-brand-navy/42 dark:hover:border-white/[0.18]
+                      hover:bg-white/92 dark:hover:bg-zinc-800/90
+                      hover:shadow-[0_4px_14px_rgba(0,48,95,0.1),0_2px_4px_rgba(0,48,95,0.05)] dark:hover:shadow-[0_4px_16px_rgba(0,0,0,0.38),0_2px_6px_rgba(0,0,0,0.22)]"
+                    style={{ lineHeight: "1.2" }}
+                    aria-label={q.text}
+                    whileHover={{
+                      scale: 1.026,
+                      y: -2.5,
+                      zIndex: 20,
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 320,
+                      damping: 26,
+                      mass: 0.95,
+                    }}
+                    whileTap={{ scale: 0.985 }}
+                  >
+                    <span className="mr-2 text-lg">{q.emoji}</span>
+                    {q.text}
+                  </motion.button>
+                ))}
+              </motion.div>
+            )}
           </div>
 
           {/* How it works link */}

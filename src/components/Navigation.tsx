@@ -20,16 +20,34 @@ const Navigation = () => {
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [isMobileViewport, setIsMobileViewport] = useState(false)
   const { user, signOut } = useAuth()
   const { theme, setTheme } = useTheme()
   const router = useRouter()
   /** After pointer interaction, ignore scroll-up–based nav reveal (avoids layout/anchoring jumps from accordions, etc.). */
   const ignoreRevealUntilRef = useRef(0)
+  const lastYRef = useRef(0)
+  const scrollRafRef = useRef<number | null>(null)
+  const scrolledRef = useRef(false)
+  const hiddenRef = useRef(false)
+  const isMenuOpenRef = useRef(false)
+
+  scrolledRef.current = scrolled
+  hiddenRef.current = hidden
+  isMenuOpenRef.current = isMenuOpen
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
   useEffect(() => {
     setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)")
+    const syncMobile = () => setIsMobileViewport(mq.matches)
+    syncMobile()
+    mq.addEventListener("change", syncMobile)
+    return () => mq.removeEventListener("change", syncMobile)
   }, [])
 
   useEffect(() => {
@@ -43,30 +61,55 @@ const Navigation = () => {
   }, [])
 
   useEffect(() => {
-    let lastY = window.scrollY
-    /** Ignore small deltas from layout/scroll-anchoring so fixed UI (e.g. accordions) doesn’t fake a “scroll up” and pop the bar in. */
-    const DIRECTION_THRESHOLD = 14
+    lastYRef.current = window.scrollY
+    const mqMobile = window.matchMedia("(max-width: 767px)")
 
-    const onScroll = () => {
+    const flushScroll = () => {
+      scrollRafRef.current = null
       const currentY = window.scrollY
+      const lastY = lastYRef.current
       const delta = currentY - lastY
+      const directionThreshold = mqMobile.matches ? 22 : 14
 
-      setScrolled(currentY > 20)
+      const nextScrolled = currentY > 20
+      let nextHidden = hiddenRef.current
 
       if (currentY < 80) {
-        setHidden(false)
-      } else if (delta > DIRECTION_THRESHOLD) {
-        setHidden(true)
-        setIsMenuOpen(false)
-      } else if (delta < -DIRECTION_THRESHOLD && Date.now() >= ignoreRevealUntilRef.current) {
-        setHidden(false)
+        nextHidden = false
+      } else if (delta > directionThreshold) {
+        nextHidden = true
+      } else if (delta < -directionThreshold && Date.now() >= ignoreRevealUntilRef.current) {
+        nextHidden = false
       }
 
-      lastY = currentY
+      if (nextScrolled !== scrolledRef.current) {
+        scrolledRef.current = nextScrolled
+        setScrolled(nextScrolled)
+      }
+      if (nextHidden !== hiddenRef.current) {
+        hiddenRef.current = nextHidden
+        setHidden(nextHidden)
+      }
+      if (delta > directionThreshold && nextHidden && isMenuOpenRef.current) {
+        isMenuOpenRef.current = false
+        setIsMenuOpen(false)
+      }
+
+      lastYRef.current = currentY
+    }
+
+    const onScroll = () => {
+      if (scrollRafRef.current !== null) return
+      scrollRafRef.current = window.requestAnimationFrame(flushScroll)
     }
 
     window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      if (scrollRafRef.current !== null) {
+        window.cancelAnimationFrame(scrollRafRef.current)
+      }
+    }
   }, [])
 
   const handleSignOut = async () => {
@@ -100,8 +143,16 @@ const Navigation = () => {
         className="max-w-4xl mx-auto rounded-full px-5 py-2.5 motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-[cubic-bezier(0.22_1_0.36_1)] motion-reduce:duration-200"
         style={{
           background: scrolled ? "var(--nav-bg-scrolled)" : "var(--nav-bg)",
-          backdropFilter: scrolled ? "blur(48px) saturate(220%)" : "blur(32px) saturate(200%)",
-          WebkitBackdropFilter: scrolled ? "blur(48px) saturate(220%)" : "blur(32px) saturate(200%)",
+          backdropFilter: isMobileViewport
+            ? "none"
+            : scrolled
+              ? "blur(48px) saturate(220%)"
+              : "blur(32px) saturate(200%)",
+          WebkitBackdropFilter: isMobileViewport
+            ? "none"
+            : scrolled
+              ? "blur(48px) saturate(220%)"
+              : "blur(32px) saturate(200%)",
           border: "1px solid var(--nav-border)",
           boxShadow: scrolled
             ? `0 16px 48px var(--nav-shadow-scrolled), 0 4px 12px var(--nav-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.05)`
