@@ -2,7 +2,7 @@ import Link from "next/link"
 
 const Footer = () => {
   return (
-    <footer className="relative overflow-hidden border-t border-white/60 dark:border-white/5 py-4 bg-white/45 dark:bg-neutral-900/55 backdrop-blur-[28px] backdrop-saturate-[180%]">
+    <footer className="relative border-t border-black/[0.06] dark:border-white/10 py-4 bg-[var(--page-bg)]">
       <style jsx global>{`
         .moving-gradient {
           background: linear-gradient(
@@ -28,15 +28,13 @@ const Footer = () => {
         }
       `}</style>
 
-      {/* Subtle glass highlight at top edge */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent" />
-
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-center gap-2">
           <div className="mb-1 md:mb-0">
-            <div className="inline-block mb-1">
-              <span className="text-sm font-bold tracking-tight gold-shine-text">Coursify</span>
-            </div>
+            <Link href="/" className="inline-flex items-center mb-1 shrink-0">
+              <span className="text-sm font-bold tracking-tight text-brand-navy dark:text-white">Cours</span>
+              <span className="text-sm font-bold tracking-tight text-brand-red">ify</span>
+            </Link>
             <p className="text-xs text-gray-600 dark:text-gray-400">
               Platform for{" "}
               <span className="moving-gradient font-medium">
