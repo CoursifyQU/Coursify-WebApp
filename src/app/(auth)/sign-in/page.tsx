@@ -48,13 +48,13 @@ export default function SignIn() {
 
       <motion.div
         className="w-full max-w-md relative z-10"
-        initial={lite ? false : { opacity: 0, y: 30 }}
+        initial={false}
         animate={lite ? undefined : { opacity: 1, y: 0 }}
         transition={lite ? { duration: 0 } : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="flex flex-col gap-7">
           {/* Heading */}
-          <motion.div initial={lite ? false : { opacity: 0, y: 20 }} animate={lite ? undefined : { opacity: 1, y: 0 }} transition={lite ? { duration: 0 } : { duration: 0.6, delay: 0.15 }}>
+          <motion.div initial={false} animate={lite ? undefined : { opacity: 1, y: 0 }} transition={lite ? { duration: 0 } : { duration: 0.6, delay: 0.15 }}>
             <h1 className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight text-brand-navy dark:text-white">
               Welcome
             </h1>
@@ -65,7 +65,7 @@ export default function SignIn() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
-            <motion.div initial={lite ? false : { opacity: 0, y: 20 }} animate={lite ? undefined : { opacity: 1, y: 0 }} transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.25 }}>
+            <motion.div initial={false} animate={lite ? undefined : { opacity: 1, y: 0 }} transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.25 }}>
               <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">Email Address</label>
               <div className="glass-card rounded-2xl transition-all duration-300 focus-within:border-brand-navy/30 dark:focus-within:border-blue-400/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
                 <input
@@ -79,7 +79,7 @@ export default function SignIn() {
               </div>
             </motion.div>
 
-            <motion.div initial={lite ? false : { opacity: 0, y: 20 }} animate={lite ? undefined : { opacity: 1, y: 0 }} transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.35 }}>
+            <motion.div initial={false} animate={lite ? undefined : { opacity: 1, y: 0 }} transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.35 }}>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Password</label>
                 <Link href="/forgot-password" className="text-sm text-brand-red hover:text-brand-navy dark:hover:text-blue-400 transition-colors duration-300">
@@ -104,7 +104,7 @@ export default function SignIn() {
             <motion.button
               type="submit"
               disabled={isLoading}
-              initial={lite ? false : { opacity: 0, y: 20 }}
+              initial={false}
               animate={lite ? undefined : { opacity: 1, y: 0 }}
               transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.45 }}
               className="liquid-btn-red w-full rounded-2xl py-4 font-medium text-white text-sm disabled:opacity-60 disabled:cursor-not-allowed"
@@ -121,7 +121,7 @@ export default function SignIn() {
             </motion.button>
           </form>
 
-          <motion.p className="text-center text-sm text-gray-500 dark:text-gray-400" initial={lite ? false : { opacity: 0 }} animate={lite ? undefined : { opacity: 1 }} transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.5 }}>
+          <motion.p className="text-center text-sm text-gray-500 dark:text-gray-400" initial={false} animate={lite ? undefined : { opacity: 1 }} transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.5 }}>
             New to our platform?{" "}
             <Link href="/sign-up" className="text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium transition-colors duration-300">
               Create Account

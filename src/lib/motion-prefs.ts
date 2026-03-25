@@ -24,7 +24,9 @@ export function useMotionTier(): MotionTier {
   }, []);
 
   // Keep SSR and first client render identical to avoid hydration mismatches.
-  if (!hydrated) return "full";
+  // For critical UX (auth screens, etc.), prefer "lite" before hydration so
+  // content isn't rendered with opacity=0 during SSR/first paint.
+  if (!hydrated) return "lite";
   if (reducedMotion === true || narrow) return "lite";
   return "full";
 }

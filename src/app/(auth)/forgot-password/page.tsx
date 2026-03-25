@@ -73,14 +73,14 @@ export default function ForgotPassword() {
 
       <motion.div
         className="w-full max-w-md relative z-10"
-        initial={lite ? false : { opacity: 0, y: 30 }}
+        initial={false}
         animate={lite ? undefined : { opacity: 1, y: 0 }}
         transition={lite ? { duration: 0 } : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="flex flex-col gap-7">
           {/* Back link */}
           <motion.div
-            initial={lite ? false : { opacity: 0, x: -10 }}
+            initial={false}
             animate={lite ? undefined : { opacity: 1, x: 0 }}
             transition={lite ? { duration: 0 } : { duration: 0.4, delay: 0.1 }}
           >
@@ -95,7 +95,7 @@ export default function ForgotPassword() {
 
           {/* Heading */}
           <motion.div
-            initial={lite ? false : { opacity: 0, y: 20 }}
+            initial={false}
             animate={lite ? undefined : { opacity: 1, y: 0 }}
             transition={lite ? { duration: 0 } : { duration: 0.6, delay: 0.2 }}
           >
@@ -109,7 +109,7 @@ export default function ForgotPassword() {
 
           {isSuccess ? (
             <motion.div
-              initial={lite ? false : { opacity: 0, y: 10 }}
+              initial={false}
               animate={lite ? undefined : { opacity: 1, y: 0 }}
               transition={lite ? { duration: 0 } : { duration: 0.5 }}
               className="space-y-5"
@@ -131,7 +131,7 @@ export default function ForgotPassword() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <motion.div
-                initial={lite ? false : { opacity: 0, y: 20 }}
+                initial={false}
                 animate={lite ? undefined : { opacity: 1, y: 0 }}
                 transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.3 }}
               >
@@ -153,7 +153,7 @@ export default function ForgotPassword() {
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                initial={lite ? false : { opacity: 0, y: 20 }}
+                initial={false}
                 animate={lite ? undefined : { opacity: 1, y: 0 }}
                 transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.4 }}
                 className="liquid-btn-red w-full rounded-2xl py-4 font-medium text-white text-sm disabled:opacity-60 disabled:cursor-not-allowed"
@@ -177,7 +177,7 @@ export default function ForgotPassword() {
           {!isSuccess && (
             <motion.p
               className="text-center text-sm text-gray-500 dark:text-gray-400"
-              initial={lite ? false : { opacity: 0 }}
+              initial={false}
               animate={lite ? undefined : { opacity: 1 }}
               transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.5 }}
             >
