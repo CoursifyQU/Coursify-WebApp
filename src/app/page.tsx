@@ -261,7 +261,7 @@ export default function Home() {
         </div>
 
         <div
-          className="absolute bottom-8 left-0 right-0 flex justify-center cursor-pointer"
+          className="absolute bottom-8 left-0 right-0 hidden md:flex justify-center cursor-pointer"
           onClick={handleScrollClick}
         >
           <div className="glass-pill rounded-full p-2 hover:bg-white/70 dark:hover:bg-white/10">

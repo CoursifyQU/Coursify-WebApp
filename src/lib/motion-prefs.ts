@@ -12,8 +12,10 @@ export type MotionTier = "full" | "lite";
 export function useMotionTier(): MotionTier {
   const reducedMotion = useReducedMotion();
   const [narrow, setNarrow] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    setHydrated(true);
     const mq = window.matchMedia("(max-width: 767px)");
     const apply = () => setNarrow(mq.matches);
     apply();
@@ -21,6 +23,8 @@ export function useMotionTier(): MotionTier {
     return () => mq.removeEventListener("change", apply);
   }, []);
 
+  // Keep SSR and first client render identical to avoid hydration mismatches.
+  if (!hydrated) return "full";
   if (reducedMotion === true || narrow) return "lite";
   return "full";
 }
