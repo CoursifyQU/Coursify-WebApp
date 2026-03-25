@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,12 +10,22 @@ import { fetchCoursesPage } from "@/lib/db"
 import { getCourseDataAvailability } from "@/lib/course-availability"
 import type { CourseWithStats } from "@/types"
 
+const COURSES_PER_PAGE = 25
+
 export default function CourseSearchPage() {
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
   const initialQuery = searchParams.get("q") || ""
+  const initialPage = Math.max(
+    1,
+    parseInt(searchParams.get("page") || "1", 10) || 1,
+  )
 
   const [query, setQuery] = useState(initialQuery)
   const [submittedQuery, setSubmittedQuery] = useState(initialQuery)
+  const [currentPage, setCurrentPage] = useState(initialPage)
+  const [totalPages, setTotalPages] = useState(0)
   const [results, setResults] = useState<CourseWithStats[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -24,6 +34,12 @@ export default function CourseSearchPage() {
   useEffect(() => {
     if (!submittedQuery.trim()) return
 
+    const params = new URLSearchParams()
+    params.set("q", submittedQuery)
+    if (currentPage > 1) params.set("page", String(currentPage))
+    const qs = params.toString()
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+
     let cancelled = false
     setLoading(true)
     setSearched(true)
@@ -31,27 +47,32 @@ export default function CourseSearchPage() {
     fetchCoursesPage({
       search: submittedQuery,
       hasData: false,
-      limit: 50,
-      page: 1,
+      limit: COURSES_PER_PAGE,
+      page: currentPage,
       sortBy: "code",
       sortDir: "asc",
     }).then((result) => {
       if (!cancelled) {
         setResults(result.courses)
         setTotal(result.total)
+        setTotalPages(result.totalPages)
+        const maxPage = Math.max(1, result.totalPages)
+        if (currentPage > maxPage) {
+          setCurrentPage(maxPage)
+        }
       }
     }).finally(() => {
       if (!cancelled) setLoading(false)
     })
 
     return () => { cancelled = true }
-  }, [submittedQuery])
+  }, [submittedQuery, currentPage, router, pathname])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (query.trim()) {
+      setCurrentPage(1)
       setSubmittedQuery(query.trim())
-      window.history.replaceState(null, "", `?q=${encodeURIComponent(query.trim())}`)
     }
   }
 
@@ -247,6 +268,52 @@ export default function CourseSearchPage() {
                     </Link>
                   )
                 })}
+
+                {total > 0 && (
+                  <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-white/50 dark:border-white/10">
+                    <p className="text-sm text-muted-foreground">
+                      Showing{" "}
+                      {results.length > 0
+                        ? (currentPage - 1) * COURSES_PER_PAGE + 1
+                        : 0}
+                      –{Math.min(currentPage * COURSES_PER_PAGE, total)} of{" "}
+                      {total} courses
+                    </p>
+                    {totalPages > 1 && (
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            setCurrentPage((p) => Math.max(1, p - 1))
+                          }
+                          disabled={currentPage <= 1}
+                          className="glass-btn border-0 text-brand-navy dark:text-white hover:bg-white/30"
+                        >
+                          Previous
+                        </Button>
+                        <span className="text-sm text-muted-foreground">
+                          Page {currentPage} of {totalPages}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            setCurrentPage((p) =>
+                              Math.min(p + 1, totalPages),
+                            )
+                          }
+                          disabled={currentPage >= totalPages}
+                          className="glass-btn border-0 text-brand-navy dark:text-white hover:bg-white/30"
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="glass-card-deep rounded-xl p-8 text-center">
