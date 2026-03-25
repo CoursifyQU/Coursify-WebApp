@@ -115,7 +115,7 @@ export default function AIFeatures() {
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-white dark:bg-gray-950 pt-20">
+    <div className="h-screen overflow-hidden bg-white dark:bg-[#171717] pt-20">
       <div className="h-full flex flex-col items-center justify-center px-4 overflow-hidden">
         <div className="w-full max-w-2xl flex flex-col items-center">
           {/* Header */}
@@ -129,8 +129,8 @@ export default function AIFeatures() {
           {/* Continuous Carousel */}
           <div className="w-full mb-8 overflow-hidden relative carousel-container" ref={containerRef}>
             {/* Light gradient overlays for smooth edge fading */}
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-gray-950 to-transparent z-10"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-gray-950 to-transparent z-10"></div>
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-[#171717] to-transparent z-10"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-[#171717] to-transparent z-10"></div>
 
             <motion.div className="flex gap-4 px-4" animate={controls} style={{ width: "max-content" }}>
               {duplicatedQuestions.map((q, i) => (
@@ -141,15 +141,13 @@ export default function AIFeatures() {
                   onClick={() => {
                     handleSampleQuestionClick(q.text);
                   }}
-                  className="carousel-item flex items-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full px-6 py-3 text-base font-medium shadow-sm text-brand-navy dark:text-white whitespace-nowrap"
+                  className="carousel-item flex items-center bg-white dark:bg-[#262626] border border-gray-200 dark:border-white/10 rounded-full px-6 py-3 text-base font-medium shadow-sm text-brand-navy dark:text-white whitespace-nowrap"
                   style={{ lineHeight: "1.2" }}
                   aria-label={q.text}
                   whileHover={{
                     scale: 1.06,
                     y: -4,
                     zIndex: 20,
-                    color: "#00305f",
-                    backgroundColor: "rgba(255, 255, 255, 0.99)",
                   }}
                   transition={{
                     type: "spring",
@@ -215,7 +213,7 @@ export default function AIFeatures() {
                       const Icon = item.icon
                       return (
                         <li key={item.title} className="glass-card rounded-2xl p-4 flex items-start gap-4">
-                          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/55 dark:bg-gray-800/55 ring-1 ring-white/70 dark:ring-gray-600/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+                          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/55 dark:bg-white/[0.06] ring-1 ring-white/70 dark:ring-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:shadow-none">
                             <Icon className="h-4.5 w-4.5 text-brand-navy dark:text-white" strokeWidth={1.9} />
                           </div>
                           <div>
@@ -236,7 +234,7 @@ export default function AIFeatures() {
 
         {/* Ask a Question Input at the bottom */}
         <div
-          className={`fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-xl flex items-center bg-[#f5f6f7] dark:bg-gray-800 rounded-full px-4 py-3 shadow-lg transition-all duration-500 ${
+          className={`fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-xl flex items-center bg-[#f5f6f7] dark:bg-[#262626] dark:border dark:border-white/10 rounded-full px-4 py-3 shadow-lg transition-all duration-500 ${
             showHowItWorks || showComingSoon ? "opacity-30 pointer-events-none filter blur-[1px]" : "opacity-100 hover:shadow-xl"
           }`}
           style={{ zIndex: 30 }}
@@ -266,12 +264,6 @@ export default function AIFeatures() {
             &gt;
           </button>
         </div>
-      </div>
-
-      {/* Subtle background accents */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red/5 dark:bg-red-400/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-navy/5 dark:bg-blue-400/5 rounded-full blur-3xl"></div>
       </div>
 
       {/* Coming Soon Overlay */}
@@ -357,7 +349,7 @@ export default function AIFeatures() {
         
         .carousel-item {
           position: relative;
-          transition-property: transform, box-shadow, border-color, color, background-color;
+          transition-property: box-shadow, border-color, color, background, background-color;
           transition-duration: 0.35s;
           transition-timing-function: cubic-bezier(0.2, 0.85, 0.3, 1.1);
           transform-origin: center;
@@ -367,37 +359,37 @@ export default function AIFeatures() {
           -webkit-font-smoothing: subpixel-antialiased;
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
           border: 1px solid #e5e7eb;
-          overflow: hidden;
+          overflow: visible;
         }
         
         :is(.dark) .carousel-item {
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-          border: 1px solid #374151;
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
+        /* Lift/scale: Framer only. Colors + gradient border: CSS only (inline whileHover used to force white/navy in dark mode). */
         .carousel-item:hover {
           z-index: 20;
-          transform: translateY(-4px) scale(1.06);
           animation: elegantGlow 2s infinite alternate;
-          border-color: transparent;
-          background: linear-gradient(white, white) padding-box,
-              linear-gradient(90deg, #00305f, #d62839, #efb215) border-box;
+          border: 1px solid transparent;
+          background-image: linear-gradient(white, white), linear-gradient(90deg, #00305f, #d62839, #efb215);
+          background-origin: border-box;
+          background-clip: padding-box, border-box;
           color: #00305f;
         }
         
         :is(.dark) .carousel-item:hover {
-          background: linear-gradient(#111827, #111827) padding-box,
-              linear-gradient(90deg, #4a9eff, #ff4d5e, #ffc940) border-box;
-          color: #e5e7eb;
+          animation: elegantGlowDark 2s infinite alternate;
+          background-image: linear-gradient(#262626, #262626), linear-gradient(90deg, #f87171, #d62839, #ffc940);
+          background-origin: border-box;
+          background-clip: padding-box, border-box;
+          color: #f3f4f6;
         }
         
         .carousel-item:hover::before {
           content: '';
           position: absolute;
-          top: -2px;
-          left: -2px;
-          right: -2px;
-          bottom: -2px;
+          inset: -2px;
           z-index: -1;
           border-radius: 9999px;
           background: radial-gradient(circle at center, 
@@ -406,6 +398,11 @@ export default function AIFeatures() {
             rgba(239, 178, 21, 0.01) 70%, 
             transparent 100%);
           animation: pulseGlow 2s infinite;
+          pointer-events: none;
+        }
+
+        :is(.dark) .carousel-item:hover::before {
+          display: none;
         }
         
         @keyframes elegantGlow {
@@ -420,6 +417,21 @@ export default function AIFeatures() {
           100% {
             box-shadow: 0 0 18px 4px rgba(239, 178, 21, 0.2), 
                         0 3px 10px rgba(0, 0, 0, 0.07);
+          }
+        }
+
+        @keyframes elegantGlowDark {
+          0% {
+            box-shadow: 0 0 10px 2px rgba(214, 40, 57, 0.14),
+                        0 2px 6px rgba(0, 0, 0, 0.25);
+          }
+          50% {
+            box-shadow: 0 0 15px 5px rgba(214, 40, 57, 0.22),
+                        0 2px 8px rgba(0, 0, 0, 0.22);
+          }
+          100% {
+            box-shadow: 0 0 18px 4px rgba(239, 178, 21, 0.16),
+                        0 3px 10px rgba(0, 0, 0, 0.24);
           }
         }
         
@@ -464,18 +476,18 @@ export default function AIFeatures() {
         
         :is(.dark) .gradient-text {
           background: linear-gradient(
-            90deg, 
-            #4a9eff 0%, 
-            #ff4d5e 30%, 
-            #ffc940 60%, 
-            #4a9eff 100%
+            90deg,
+            #e5e7eb 0%,
+            #ff4d5e 28%,
+            #ffc940 58%,
+            #e5e7eb 100%
           );
           background-size: 200% auto;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
           text-fill-color: transparent;
-          text-shadow: 0 0 3px rgba(74, 158, 255, 0.15);
+          text-shadow: none;
         }
         
         @keyframes shine {

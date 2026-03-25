@@ -134,7 +134,7 @@ export function StudentReviewsMockup({ compact = false }: { compact?: boolean })
       {/* RMP comment */}
       <div className={`glass-card rounded-2xl ${pad} w-full`}>
         <div className="flex items-center gap-2 mb-2">
-          <div className={`${compact ? "w-[18px] h-[18px]" : "w-[22px] h-[22px]"} rounded-full bg-brand-navy flex items-center justify-center flex-shrink-0`}>
+          <div className={`${compact ? "w-[18px] h-[18px]" : "w-[22px] h-[22px]"} rounded-full bg-brand-navy dark:bg-brand-navy-light flex items-center justify-center flex-shrink-0`}>
             <svg viewBox="0 0 20 20" fill="white" className={compact ? "w-2.5 h-2.5" : "w-3 h-3"}>
               <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
             </svg>
@@ -151,7 +151,7 @@ export function StudentReviewsMockup({ compact = false }: { compact?: boolean })
           </div>
           <div className="ml-auto flex items-center gap-1.5">
             <span className={`${textXs} font-medium px-2 py-0.5 rounded-full bg-green-100/80 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-200/60 dark:border-green-700/40`}>Positive</span>
-            <span className={`${textXs} px-2 py-0.5 rounded-full font-medium bg-brand-navy/10 dark:bg-blue-400/10 text-brand-navy dark:text-white border border-brand-navy/20 dark:border-blue-400/20`}>RateMyProfessors</span>
+            <span className={`${textXs} px-2 py-0.5 rounded-full font-medium bg-brand-navy/10 dark:bg-brand-navy-light/20 text-brand-navy dark:text-white border border-brand-navy/20 dark:border-brand-navy-light/30`}>RateMyProfessors</span>
           </div>
         </div>
         <p className={`${textSm} text-gray-700 dark:text-gray-300 leading-relaxed`}>
@@ -161,7 +161,7 @@ export function StudentReviewsMockup({ compact = false }: { compact?: boolean })
           }
         </p>
         <div className="flex items-center gap-2 mt-2">
-          <span className={`${textXs} font-medium px-2 py-0.5 rounded-md bg-brand-navy/8 dark:bg-blue-400/8 text-brand-navy dark:text-white`}>Quality: 4.2/5</span>
+          <span className={`${textXs} font-medium px-2 py-0.5 rounded-md bg-brand-navy/8 dark:bg-brand-navy-light/18 text-brand-navy dark:text-white`}>Quality: 4.2/5</span>
           <span className={`${textXs} font-medium px-2 py-0.5 rounded-md bg-brand-red/8 text-brand-red`}>Difficulty: 2.8/5</span>
         </div>
       </div>
@@ -187,7 +187,7 @@ export function AIAssistantMockup({ compact = false }: { compact?: boolean }) {
 
       {/* User message */}
       <div className="flex justify-end mb-3">
-        <div className={`${compact ? "max-w-[85%]" : "max-w-[80%]"} bg-brand-navy text-white rounded-2xl rounded-tr-sm ${compact ? "px-3 py-2" : "px-4 py-2.5"}`}>
+        <div className={`${compact ? "max-w-[85%]" : "max-w-[80%]"} bg-brand-navy dark:bg-brand-navy-light text-white rounded-2xl rounded-tr-sm ${compact ? "px-3 py-2" : "px-4 py-2.5"}`}>
           <p className={`${textSm} leading-relaxed`}>
             {compact
               ? "Which CISC elective is the easiest?"
@@ -323,7 +323,7 @@ export function CourseAnalyticsMockup({ compact = false }: { compact?: boolean }
           {ENROLL_DATA.map((d) => (
             <div key={d.term} className="flex flex-col items-center">
               <div
-                className="w-3.5 rounded-t-sm bg-gradient-to-t from-brand-navy/60 to-brand-navy/30 dark:from-blue-400/50 dark:to-blue-400/20"
+                className="w-3.5 rounded-t-sm bg-gradient-to-t from-brand-navy/60 to-brand-navy/30 dark:from-brand-navy-light/55 dark:to-brand-navy-light/22"
                 style={{ height: `${(d.n / 400) * 20}px` }}
               />
             </div>

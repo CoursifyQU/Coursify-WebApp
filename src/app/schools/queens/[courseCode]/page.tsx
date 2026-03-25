@@ -196,7 +196,7 @@ export default function CourseDetailPage() {
 
   if (error || !course) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-white/90 dark:bg-slate-900/90">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-white/90 dark:bg-[#171717]">
         <div className="text-center glass-card-deep rounded-2xl p-12">
           <h1 className="text-3xl font-bold text-brand-red mb-4">Course Not Found</h1>
           <p className="text-gray-600 dark:text-gray-400 mb-8">We couldn't find a course with code "{courseCode}".</p>
@@ -255,16 +255,11 @@ export default function CourseDetailPage() {
       <style jsx global>{`
         .course-detail-bg {
           background-color: hsla(0,0%,100%,1);
-          background-image:
-            radial-gradient(at 21% 33%, hsla(225,100%,19%,0.09) 0px, transparent 50%),
-            radial-gradient(at 79% 76%, hsla(352,71%,54%,0.08) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43,83%,51%,0.07) 0px, transparent 50%);
+          background-image: none;
         }
         :is(.dark) .course-detail-bg {
-          background-color: #1a1a1a;
-          background-image:
-            radial-gradient(at 79% 76%, hsla(352,71%,40%,0.06) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43,83%,40%,0.04) 0px, transparent 50%);
+          background-color: #171717;
+          background-image: none;
         }
         .glass-card-deep {
           background: rgba(255,255,255,0.72);
@@ -422,13 +417,6 @@ export default function CourseDetailPage() {
         }
       `}</style>
 
-      {/* Background blobs */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/8 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-navy/8 dark:bg-blue-400/8 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-brand-gold/6 rounded-full blur-3xl" />
-      </div>
-
       {/* Mock data banner */}
       {isUsingMockData && (
         <div className="fixed top-4 right-4 z-50 max-w-md bg-amber-100 border-l-4 border-amber-500 text-amber-700 p-4 shadow-md rounded-md">
@@ -444,10 +432,10 @@ export default function CourseDetailPage() {
         variants={fadeIn}
       >
         <motion.div className="glass-hero rounded-2xl overflow-hidden relative" variants={slideUp}>
-          {/* Subtle light effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-[#d62839]/8 pointer-events-none" />
-          <div className="absolute top-0 right-0 w-72 h-72 bg-[#0066CC]/15 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-20 w-48 h-48 bg-brand-red/10 -mb-20 blur-3xl pointer-events-none" />
+          {/* Subtle light effects — dark mode only (skip light-mode glow) */}
+          <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-br from-white/5 via-transparent to-[#d62839]/8 dark:block" />
+          <div className="pointer-events-none absolute -right-16 -top-16 hidden h-72 w-72 rounded-full bg-[#0066CC]/15 blur-3xl dark:block" />
+          <div className="pointer-events-none absolute bottom-0 left-20 -mb-20 hidden h-48 w-48 rounded-full bg-brand-red/10 blur-3xl dark:block" />
 
           <div className="relative p-8 md:p-10">
             {/* Breadcrumb */}

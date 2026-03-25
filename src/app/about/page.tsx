@@ -1,7 +1,6 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import {
   Github,
   Linkedin,
@@ -11,9 +10,12 @@ import {
   BarChart3,
   MessageSquare,
   Brain,
+  Sparkles,
 } from "lucide-react"
 import Link from "next/link"
 import { useToast } from "@/components/ui/use-toast"
+import { cn } from "@/lib/utils"
+import type { LucideIcon } from "lucide-react"
 
 export default function About() {
   const { toast } = useToast()
@@ -105,12 +107,9 @@ export default function About() {
             className="pointer-events-none absolute right-0 top-8 h-44 w-44 rounded-full blur-[120px] opacity-75"
             style={{ background: "radial-gradient(circle, rgba(214,40,57,0.14) 0%, rgba(214,40,57,0.05) 42%, transparent 74%)" }}
           />
-          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full glass-pill mb-4">
-            <span className="text-brand-navy dark:text-blue-400 text-sm font-semibold mr-2">Our Story</span>
-            <span className="flex h-1.5 w-1.5 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-red"></span>
-            </span>
+          <div className="inline-flex items-center justify-center gap-2 px-4 py-1.5 rounded-full glass-pill mb-4">
+            <span className="text-sm font-semibold text-brand-navy dark:text-white">Our Story</span>
+            <Sparkles className="h-3.5 w-3.5 shrink-0 text-brand-gold" strokeWidth={2} aria-hidden />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
             <span className="text-brand-navy dark:text-white">About</span> <span className="gradient-text">Coursify</span>
@@ -118,26 +117,23 @@ export default function About() {
           <p className="text-xl text-muted-foreground mb-6">
             Helping Queen&apos;s University students make informed academic decisions through data and AI.
           </p>
-          <Button
+          <button
+            type="button"
             onClick={scrollToFeatures}
-            variant="outline"
-            className="group border-brand-red text-brand-red hover:bg-brand-red hover:text-white dark:border-red-400 dark:text-red-400 dark:hover:bg-red-500 dark:hover:text-white"
+            className="liquid-btn-red group inline-block w-full text-center text-white px-7 py-3 rounded-xl font-medium sm:w-auto"
           >
-            <span className="flex items-center">
+            <span className="relative z-10 flex items-center justify-center">
               See Features
-              <ChevronDown className="ml-2 h-4 w-4 transform group-hover:translate-y-0.5 transition-transform duration-300" />
+              <ChevronDown className="ml-2 h-5 w-5 transform group-hover:translate-y-0.5 transition-transform duration-300" />
             </span>
-          </Button>
+          </button>
         </div>
 
         {/* Mission & Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20 max-w-5xl mx-auto">
-          <div>
-            <div className="relative">
-              <div className="absolute -left-4 -top-4 w-12 h-12 bg-brand-gold/20 rounded-full blur-lg"></div>
-              <h2 className="text-2xl font-bold mb-6 text-brand-navy dark:text-white relative z-10">Our Mission</h2>
-            </div>
-            <div className="space-y-4">
+        <div className="mx-auto mb-20 grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2 md:gap-10">
+          <div className="glass-card flex h-full flex-col gap-6 rounded-2xl p-8">
+            <h2 className="text-2xl font-bold text-brand-navy dark:text-white">Our Mission</h2>
+            <div className="min-h-0 flex-1 space-y-4">
               <p className="text-gray-700 dark:text-gray-300">
                 Coursify was created to address a critical gap in the Queen&apos;s University student experience: the
                 lack of comprehensive, accessible data about courses and their historical performance.
@@ -152,41 +148,81 @@ export default function About() {
                 empowers students to optimize their course selections and academic planning.
               </p>
             </div>
-            <div className="mt-6">
-              <Button
-                asChild
-                variant="outline"
-                className="group border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-500 dark:hover:text-white"
+            <div className="shrink-0">
+              <Link
+                href="/schools/queens"
+                className="liquid-btn-blue group inline-block w-full text-center text-white px-7 py-3 rounded-xl font-medium sm:w-auto"
               >
-                <Link href="/schools/queens">
-                  <span className="flex items-center">
-                    Explore Courses
-                    <ChevronRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-300" />
-                  </span>
-                </Link>
-              </Button>
+                <span className="relative z-10 flex items-center justify-center">
+                  Explore Courses
+                  <ChevronRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform duration-300" />
+                </span>
+              </Link>
             </div>
           </div>
 
-          <div className="glass-card rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-6 text-brand-navy dark:text-white">Platform Stats</h2>
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { icon: <BarChart3 className="h-5 w-5 text-brand-navy dark:text-blue-400" />, value: "500+", label: "Courses Tracked", valueColor: "text-brand-red", bg: "rgba(0,48,95,0.07)", darkBg: "rgba(74,158,255,0.1)" },
-                { icon: <BarChart3 className="h-5 w-5 text-brand-red" />, value: "8+", label: "Semesters of Data", valueColor: "text-brand-navy dark:text-blue-400", bg: "rgba(214,40,57,0.07)", darkBg: "rgba(214,40,57,0.1)" },
-                { icon: <MessageSquare className="h-5 w-5 text-brand-gold" />, value: "50+", label: "Departments", valueColor: "text-brand-red", bg: "rgba(239,178,21,0.07)", darkBg: "rgba(239,178,21,0.1)" },
-                { icon: <Brain className="h-5 w-5 text-brand-navy dark:text-blue-400" />, value: "1000s", label: "Students Helped", valueColor: "text-brand-navy dark:text-blue-400", bg: "rgba(0,48,95,0.07)", darkBg: "rgba(74,158,255,0.1)" },
-              ].map((stat) => (
+          <div className="glass-card flex h-full flex-col rounded-2xl p-8">
+            <h2 className="mb-6 text-2xl font-bold tracking-tight text-brand-navy dark:text-white">
+              Platform Stats
+            </h2>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              {(
+                [
+                  {
+                    Icon: BarChart3,
+                    value: "500+",
+                    label: "Courses Tracked",
+                    iconWrap: "bg-brand-navy/10 dark:bg-blue-400/10",
+                    iconClass: "text-brand-navy dark:text-blue-400",
+                  },
+                  {
+                    Icon: BarChart3,
+                    value: "8+",
+                    label: "Semesters of Data",
+                    iconWrap: "bg-brand-red/10",
+                    iconClass: "text-brand-red",
+                  },
+                  {
+                    Icon: MessageSquare,
+                    value: "50+",
+                    label: "Departments",
+                    iconWrap: "bg-brand-gold/10",
+                    iconClass: "text-brand-gold",
+                  },
+                  {
+                    Icon: Brain,
+                    value: "1000s",
+                    label: "Students Helped",
+                    iconWrap: "bg-brand-navy/10 dark:bg-blue-400/10",
+                    iconClass: "text-brand-navy dark:text-blue-400",
+                  },
+                ] satisfies {
+                  Icon: LucideIcon
+                  value: string
+                  label: string
+                  iconWrap: string
+                  iconClass: string
+                }[]
+              ).map(({ Icon, value, label, iconWrap, iconClass }) => (
                 <div
-                  key={stat.label}
-                  className="rounded-xl p-5 text-center bg-[--stat-bg]"
-                  style={{ "--stat-bg": stat.bg } as React.CSSProperties}
+                  key={label}
+                  className={cn(
+                    "group rounded-xl border border-black/[0.06] bg-black/[0.02] p-5 text-center transition-[transform,box-shadow] duration-300 dark:border-white/[0.08] dark:bg-white/[0.04]",
+                    "hover:-translate-y-0.5 hover:shadow-md hover:shadow-black/[0.06] dark:hover:shadow-lg dark:hover:shadow-black/25"
+                  )}
                 >
-                  <div className="w-11 h-11 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: stat.bg }}>
-                    {stat.icon}
+                  <div
+                    className={cn(
+                      "mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full",
+                      iconWrap
+                    )}
+                  >
+                    <Icon className={cn("h-5 w-5", iconClass)} aria-hidden />
                   </div>
-                  <p className={`text-3xl font-bold ${stat.valueColor}`}>{stat.value}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{stat.label}</p>
+                  <p className="text-3xl font-bold tabular-nums tracking-tight text-brand-navy dark:text-white">
+                    {value}
+                  </p>
+                  <p className="mt-1.5 text-sm text-gray-600 dark:text-gray-400">{label}</p>
                 </div>
               ))}
             </div>
@@ -399,14 +435,13 @@ export default function About() {
       </div>
 
       {/* Footer */}
-      <footer className="relative overflow-hidden border-t border-white/60 dark:border-white/5 py-4 bg-white/45 dark:bg-slate-900/45 backdrop-blur-[28px]">
+      <footer className="relative overflow-hidden border-t border-white/60 dark:border-white/5 py-4 bg-white/45 dark:bg-neutral-900/55 backdrop-blur-[28px]">
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/80 dark:via-white/10 to-transparent" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
             <div className="mb-1 md:mb-0">
               <div className="inline-block mb-1">
-                <span className="font-bold text-brand-navy dark:text-blue-400 text-sm tracking-tight">Cours</span>
-                <span className="font-bold text-brand-red text-sm tracking-tight">ify</span>
+                <span className="text-sm font-bold tracking-tight gold-shine-text">Coursify</span>
               </div>
               <p className="text-xs text-gray-600 dark:text-gray-400">
                 Platform for{" "}

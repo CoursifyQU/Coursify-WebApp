@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Menu, X, LogOut, User, Sun, Moon } from "lucide-react"
@@ -23,6 +23,8 @@ const Navigation = () => {
   const { user, signOut } = useAuth()
   const { theme, setTheme } = useTheme()
   const router = useRouter()
+  /** After pointer interaction, ignore scroll-up–based nav reveal (avoids layout/anchoring jumps from accordions, etc.). */
+  const ignoreRevealUntilRef = useRef(0)
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
@@ -31,7 +33,19 @@ const Navigation = () => {
   }, [])
 
   useEffect(() => {
+    /** Cover accordion open + any delayed scroll/anchoring events after pointer up */
+    const REVEAL_COOLDOWN_MS = 700
+    const onPointerDownCapture = () => {
+      ignoreRevealUntilRef.current = Date.now() + REVEAL_COOLDOWN_MS
+    }
+    document.addEventListener("pointerdown", onPointerDownCapture, true)
+    return () => document.removeEventListener("pointerdown", onPointerDownCapture, true)
+  }, [])
+
+  useEffect(() => {
     let lastY = window.scrollY
+    /** Ignore small deltas from layout/scroll-anchoring so fixed UI (e.g. accordions) doesn’t fake a “scroll up” and pop the bar in. */
+    const DIRECTION_THRESHOLD = 14
 
     const onScroll = () => {
       const currentY = window.scrollY
@@ -41,10 +55,10 @@ const Navigation = () => {
 
       if (currentY < 80) {
         setHidden(false)
-      } else if (delta > 6) {
+      } else if (delta > DIRECTION_THRESHOLD) {
         setHidden(true)
         setIsMenuOpen(false)
-      } else if (delta < -6) {
+      } else if (delta < -DIRECTION_THRESHOLD && Date.now() >= ignoreRevealUntilRef.current) {
         setHidden(false)
       }
 
@@ -78,12 +92,12 @@ const Navigation = () => {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 px-4 py-4 transition-transform duration-300 ease-in-out"
+      className="fixed top-0 left-0 right-0 z-50 px-4 py-4 will-change-transform motion-safe:transition-[transform] motion-safe:duration-500 motion-safe:ease-[cubic-bezier(0.22_1_0.36_1)] motion-reduce:duration-200 motion-reduce:ease-out"
       style={{ transform: hidden ? "translateY(-110%)" : "translateY(0)" }}
     >
       {/* Pill navbar */}
       <div
-        className="max-w-4xl mx-auto rounded-full px-5 py-2.5 transition-all duration-300"
+        className="max-w-4xl mx-auto rounded-full px-5 py-2.5 motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-[cubic-bezier(0.22_1_0.36_1)] motion-reduce:duration-200"
         style={{
           background: scrolled ? "var(--nav-bg-scrolled)" : "var(--nav-bg)",
           backdropFilter: scrolled ? "blur(48px) saturate(220%)" : "blur(32px) saturate(200%)",
@@ -103,7 +117,7 @@ const Navigation = () => {
           </Link>
 
           {/* Desktop nav links */}
-          <ul className="hidden nav:flex items-center gap-0.5 text-sm font-medium text-brand-navy/70 dark:text-slate-300/70">
+          <ul className="hidden nav:flex items-center gap-0.5 text-sm font-medium text-brand-navy/70 dark:text-white/70">
             {links.map((link) => (
               <li key={link.href}>
                 <Link
@@ -111,11 +125,11 @@ const Navigation = () => {
                   className={
                     link.href === "/queens-answers"
                       ? "px-3.5 py-1.5 rounded-full transition-all duration-200 hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
-                      : "px-3.5 py-1.5 rounded-full text-brand-navy/70 dark:text-slate-300/70 hover:text-brand-navy dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-all duration-200"
+                      : "px-3.5 py-1.5 rounded-full text-brand-navy/70 dark:text-white/70 hover:text-brand-navy dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-all duration-200"
                   }
                 >
                   {link.href === "/queens-answers" ? (
-                    <span className="coursify-gradient-text">
+                    <span className="gradient-text">
                       {link.label}
                     </span>
                   ) : (
@@ -131,7 +145,7 @@ const Navigation = () => {
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-black/[0.06] dark:bg-white/[0.10] hover:bg-black/[0.10] dark:hover:bg-white/[0.16] text-gray-600 dark:text-slate-300 border border-black/[0.06] dark:border-white/[0.10]"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-black/[0.06] dark:bg-white/[0.10] hover:bg-black/[0.10] dark:hover:bg-white/[0.16] text-gray-600 dark:text-white/75 border border-black/[0.06] dark:border-white/[0.10]"
               aria-label="Toggle theme"
             >
               {mounted && theme === "dark"
@@ -144,7 +158,7 @@ const Navigation = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 dark:text-slate-300 hover:text-brand-navy dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-all duration-200 border border-white/60 dark:border-white/10"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 dark:text-white/75 hover:text-brand-navy dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-all duration-200 border border-white/60 dark:border-white/10"
                     style={{ background: "var(--nav-bg)" }}
                   >
                     <User className="w-4 h-4" strokeWidth={1.5} />
@@ -157,9 +171,9 @@ const Navigation = () => {
                   align="end"
                   className="rounded-2xl border-0 shadow-xl mt-2 glass-card"
                 >
-                  <div className="p-2 text-xs font-medium text-gray-500 dark:text-slate-400">{user.email}</div>
+                  <div className="p-2 text-xs font-medium text-gray-500 dark:text-white/50">{user.email}</div>
                   <DropdownMenuSeparator className="bg-black/5 dark:bg-white/5" />
-                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-sm text-gray-600 dark:text-slate-300 hover:text-brand-red rounded-xl mx-1">
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-sm text-gray-600 dark:text-white/80 hover:text-brand-red rounded-xl mx-1">
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign out
                   </DropdownMenuItem>
@@ -176,7 +190,7 @@ const Navigation = () => {
 
             {/* Mobile hamburger */}
             <button
-              className="nav:hidden p-2 rounded-full hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-gray-500 dark:text-slate-400 hover:text-brand-navy dark:hover:text-white transition-all duration-200"
+              className="nav:hidden p-2 rounded-full hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-gray-500 dark:text-white/60 hover:text-brand-navy dark:hover:text-white transition-all duration-200"
               onClick={toggleMenu}
               aria-label="Toggle menu"
             >
@@ -196,7 +210,7 @@ const Navigation = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-gray-600 dark:text-slate-300 hover:text-brand-navy dark:hover:text-white px-4 py-2.5 rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors duration-200"
+                className="text-sm font-medium text-gray-600 dark:text-white/75 hover:text-brand-navy dark:hover:text-white px-4 py-2.5 rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors duration-200"
                 onClick={toggleMenu}
               >
                 {link.label}
@@ -204,10 +218,10 @@ const Navigation = () => {
             ))}
 
             <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/5 flex items-center justify-between px-4 py-2.5">
-              <span className="text-sm font-medium text-gray-600 dark:text-slate-300">Theme</span>
+              <span className="text-sm font-medium text-gray-600 dark:text-white/75">Theme</span>
               <button
                 onClick={toggleTheme}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-black/[0.06] dark:bg-white/[0.10] hover:bg-black/[0.10] dark:hover:bg-white/[0.16] text-gray-600 dark:text-slate-300 border border-black/[0.06] dark:border-white/[0.10]"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-black/[0.06] dark:bg-white/[0.10] hover:bg-black/[0.10] dark:hover:bg-white/[0.16] text-gray-600 dark:text-white/75 border border-black/[0.06] dark:border-white/[0.10]"
               >
                 {mounted && theme === "dark"
                   ? <><Sun size={15} /><span className="text-xs">Light mode</span></>
@@ -218,9 +232,9 @@ const Navigation = () => {
 
             {user ? (
               <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/5">
-                <div className="text-xs font-medium text-gray-400 dark:text-slate-500 mb-1 px-4">{user.email}</div>
+                <div className="text-xs font-medium text-gray-400 dark:text-white/45 mb-1 px-4">{user.email}</div>
                 <button
-                  className="w-full flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-slate-300 hover:text-brand-red rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors duration-200"
+                  className="w-full flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-white/80 hover:text-brand-red rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors duration-200"
                   onClick={handleSignOut}
                 >
                   <LogOut className="mr-2 h-4 w-4" />

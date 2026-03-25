@@ -218,15 +218,7 @@ export default function QueensCourses() {
       <style jsx global>{`
         .mesh-gradient {
           background-color: hsla(0, 0%, 100%, 1);
-          background-image:
-            radial-gradient(at 21% 33%, hsla(225, 100%, 19%, 0.09) 0px, transparent 50%),
-            radial-gradient(at 79% 76%, hsla(352, 71%, 54%, 0.08) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43, 83%, 51%, 0.07) 0px, transparent 50%);
-        }
-
-        .dot-pattern {
-          background-image: radial-gradient(circle, #00305f 1px, transparent 1px);
-          background-size: 20px 20px;
+          background-image: none;
         }
 
         .gradient-text {
@@ -298,15 +290,8 @@ export default function QueensCourses() {
 
         /* ── Dark-mode overrides ── */
         :is(.dark) .mesh-gradient {
-          background-color: hsla(220, 20%, 10%, 1);
-          background-image:
-            radial-gradient(at 21% 33%, hsla(225, 100%, 30%, 0.15) 0px, transparent 50%),
-            radial-gradient(at 79% 76%, hsla(352, 71%, 40%, 0.12) 0px, transparent 50%),
-            radial-gradient(at 96% 10%, hsla(43, 83%, 40%, 0.10) 0px, transparent 50%);
-        }
-
-        :is(.dark) .dot-pattern {
-          background-image: radial-gradient(circle, #4a9eff 1px, transparent 1px);
+          background-color: #171717;
+          background-image: none;
         }
 
         :is(.dark) .gradient-text {
@@ -363,19 +348,6 @@ export default function QueensCourses() {
             inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
       `}</style>
-
-      {/* Background elements */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/8 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-navy/8 dark:bg-blue-400/8 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-brand-gold/7 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="liquid-blob w-[420px] h-[320px] bg-brand-red -top-10 -right-20"></div>
-        <div className="liquid-blob-alt w-[360px] h-[280px] bg-brand-navy -bottom-10 -left-20"></div>
-        <div className="dot-pattern absolute inset-0 opacity-[0.06]"></div>
-      </div>
 
       <div className="container py-12 px-4 lg-filters:px-6 relative z-10">
         <motion.div
@@ -662,12 +634,7 @@ export default function QueensCourses() {
                         </th>
                       </tr>
                     </thead>
-                    <motion.tbody
-                      key={`${currentPage}-${debouncedSearch}-${sortConfig?.key}-${sortConfig?.direction}-${hasData}`}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.2 }}
-                    >
+                    <tbody>
                       {courses.length > 0 ? (
                         courses.map((course) => (
                           <tr
@@ -677,16 +644,20 @@ export default function QueensCourses() {
                             <td className="px-4 py-3 text-sm font-medium">
                               <a
                                 href={`/schools/queens/${course.course_code.replace(/\s+/g, "-").toLowerCase()}`}
-                                className="text-brand-red hover:underline"
+                                className="text-brand-red hover:underline dark:text-brand-navy-light dark:hover:text-white"
                               >
                                 {course.course_code}
                               </a>
                             </td>
                             <td className="px-4 py-3 text-sm">{course.course_name}</td>
                             <td className="px-4 py-3 text-sm">
-                              <span className={`font-medium ${getGpaColor(course.averageGPA)}`}>
-                                {course.averageGPA > 0 ? course.averageGPA.toFixed(1) : "N/A"}
-                              </span>
+                              {course.averageGPA > 0 ? (
+                                <span className={`font-medium ${getGpaColor(course.averageGPA)}`}>
+                                  {course.averageGPA.toFixed(1)}
+                                </span>
+                              ) : (
+                                <span className="font-medium text-muted-foreground">N/A</span>
+                              )}
                             </td>
                             <td className="px-4 py-3 text-sm">
                               <div className="flex items-center">
@@ -714,7 +685,7 @@ export default function QueensCourses() {
                           </td>
                         </tr>
                       )}
-                    </motion.tbody>
+                    </tbody>
                   </table>
                 </div>
 
@@ -757,7 +728,7 @@ export default function QueensCourses() {
               </div>
             )}
 
-            <div className="mt-6 p-6 glass-card-deep glass-shine rounded-xl relative overflow-hidden">
+            <div className="mt-6 rounded-xl p-6 glass-card-deep relative overflow-hidden">
               <h3 className="text-lg font-bold text-brand-navy dark:text-white mb-3">Need Help Choosing?</h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
                 Our AI assistant can provide personalized course recommendations based on your interests, learning

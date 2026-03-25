@@ -58,9 +58,9 @@
     --input: 0 0% 16%;
     --ring: 212.7 26.8% 83.9%;
 
-    --page-bg: #1a1a1a;
-    --nav-bg: rgba(24, 24, 24, 0.75);
-    --nav-bg-scrolled: rgba(24, 24, 24, 0.92);
+    --page-bg: #171717;
+    --nav-bg: rgba(23, 23, 23, 0.78);
+    --nav-bg-scrolled: rgba(23, 23, 23, 0.92);
     --nav-border: rgba(255, 255, 255, 0.08);
     --nav-shadow: rgba(0, 0, 0, 0.3);
     --nav-shadow-scrolled: rgba(0, 0, 0, 0.45);
@@ -103,6 +103,7 @@
 }
 
 .gold-shine-text {
+  display: inline-block;
   background: linear-gradient(
     90deg,
     #b8860b 0%,
@@ -471,18 +472,24 @@
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, #00305f, #d62839 50%, #efb215);
+  background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
+  background-size: 300% 300%;
+  animation: coursify-gradient-shift 6s ease infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: transparent;
+  display: inline-block;
 }
 
 .dark .gradient-text {
-  background: linear-gradient(90deg, #4a9eff, #ff4d5e 50%, #ffc940);
+  background: linear-gradient(-45deg, #e5e7eb, #ff4d5e, #ffc940, #e5e7eb);
+  background-size: 300% 300%;
+  animation: coursify-gradient-shift 6s ease infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  display: inline-block;
 }
 
 .coursify-gradient-text {
@@ -497,12 +504,33 @@
 }
 
 .dark .coursify-gradient-text {
-  background: linear-gradient(-45deg, #4a9eff, #ff4d5e, #ffc940, #4a9eff);
+  background: linear-gradient(-45deg, #e5e7eb, #ff4d5e, #ffc940, #e5e7eb);
   background-size: 300% 300%;
   animation: coursify-gradient-shift 6s ease infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.moving-gradient {
+  background: linear-gradient(-45deg, #00305f, #d62839, #efb215, #00305f);
+  background-size: 300% 300%;
+  animation: coursify-gradient-shift 6s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.dark .moving-gradient {
+  background: linear-gradient(-45deg, #e5e7eb, #ff4d5e, #ffc940, #e5e7eb);
+  background-size: 300% 300%;
+  animation: coursify-gradient-shift 6s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
 }
 
 @keyframes coursify-gradient-shift {

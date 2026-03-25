@@ -14,13 +14,13 @@ const Slider = React.forwardRef<
     className={cn("relative flex w-full touch-none select-none items-center", className)}
     {...props}
   >
-    <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-brand-navy">
-      <SliderPrimitive.Range className="absolute h-full bg-brand-navy" />
+    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-gray-200 dark:bg-white/12">
+      <SliderPrimitive.Range className="absolute h-full bg-brand-red dark:bg-brand-navy-light" />
     </SliderPrimitive.Track>
     {props.value?.map((_, i) => (
       <SliderPrimitive.Thumb
         key={i}
-        className="block h-5 w-5 rounded-full border-2 border-brand-navy dark:border-blue-400 bg-white focus:outline-none focus:ring-2 focus:ring-[#00305f] focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+        className="block h-5 w-5 rounded-full border-2 border-brand-red bg-white shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:border-brand-navy-light dark:shadow-md dark:shadow-black/40 dark:focus-visible:ring-brand-navy-light dark:focus-visible:ring-offset-zinc-900"
         aria-label={i === 0 ? "Min GPA" : "Max GPA"}
       />
     ))}
