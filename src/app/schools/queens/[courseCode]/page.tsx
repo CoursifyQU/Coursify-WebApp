@@ -826,6 +826,12 @@ export default function CourseDetailPage() {
                     <RechartsTooltip
                       formatter={(value) => [`${value}%`, 'Students']}
                       labelFormatter={(label) => `Grade ${label}`}
+                      itemStyle={{
+                        color: isDark ? '#e2e8f0' : '#0f172a',
+                      }}
+                      labelStyle={{
+                        color: isDark ? '#cbd5e1' : '#334155',
+                      }}
                       contentStyle={{
                         backgroundColor: isDark ? 'rgba(32,32,32,0.97)' : 'rgba(255,255,255,0.92)',
                         backdropFilter: 'blur(12px)',
@@ -833,7 +839,7 @@ export default function CourseDetailPage() {
                         border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.8)',
                         boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,48,95,0.12)',
                         fontSize: '12px',
-                        color: isDark ? '#e2e8f0' : undefined,
+                        color: isDark ? '#e2e8f0' : '#0f172a',
                       }}
                     />
                     <Bar dataKey="count" name="Students" animationDuration={1200} radius={[4, 4, 0, 0]}>
