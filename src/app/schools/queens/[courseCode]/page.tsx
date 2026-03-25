@@ -233,25 +233,6 @@ export default function CourseDetailPage() {
     ? course.distributions.map(dist => ({ term: dist.term, gpa: dist.average_gpa })).reverse()
     : [];
 
-  const createDistributionBreakdown = (distribution: any) => {
-    if (!distribution) return [];
-    return [
-      { label: 'A+: ' + Math.round(distribution.grade_counts[0]) + '%', color: '#4CAF50' },
-      { label: 'A: ' + Math.round(distribution.grade_counts[1]) + '%', color: '#4CAF50' },
-      { label: 'A-: ' + Math.round(distribution.grade_counts[2]) + '%', color: '#8BC34A' },
-      { label: 'B+: ' + Math.round(distribution.grade_counts[3]) + '%', color: '#CDDC39' },
-      { label: 'B: ' + Math.round(distribution.grade_counts[4]) + '%', color: '#CDDC39' },
-      { label: 'B-: ' + Math.round(distribution.grade_counts[5]) + '%', color: '#FFEB3B' },
-      { label: 'C+: ' + Math.round(distribution.grade_counts[6]) + '%', color: '#FFC107' },
-      { label: 'C: ' + Math.round(distribution.grade_counts[7]) + '%', color: '#FFC107' },
-      { label: 'C-: ' + Math.round(distribution.grade_counts[8]) + '%', color: '#FF9800' },
-      { label: 'D+: ' + Math.round(distribution.grade_counts[9]) + '%', color: '#FF5722' },
-      { label: 'D: ' + Math.round(distribution.grade_counts[10]) + '%', color: '#F44336' },
-      { label: 'D-: ' + Math.round(distribution.grade_counts[11]) + '%', color: '#E91E63' },
-      { label: 'F: ' + Math.round(distribution.grade_counts[12]) + '%', color: '#D32F2F' },
-    ];
-  };
-
   const facultyName = course.department?.replace(/^Offering Faculty:/, '') || 'Faculty of Arts and Science';
 
   const liteMotion = motionTier === "lite";
@@ -919,18 +900,6 @@ export default function CourseDetailPage() {
                 </div>
               </div>
 
-              {/* Grade breakdown — match GPA Trend legend: tight pills, flex-wrap, content-width */}
-              <div className="mt-3 shrink-0 flex flex-wrap justify-center gap-2">
-                {createDistributionBreakdown(selectedDistribution).map((item, index) => (
-                  <div
-                    key={index}
-                    className="course-detail-inset-glass inline-flex w-fit shrink-0 items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs max-w-full"
-                  >
-                    <span className="w-2 h-2 rounded-full flex-shrink-0 shadow-sm" style={{ backgroundColor: item.color }} />
-                    <span className="text-brand-navy/80 dark:text-white/80 font-medium whitespace-nowrap">{item.label}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           ) : (
             <div
