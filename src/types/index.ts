@@ -4,6 +4,7 @@ export interface Course {
   course_code: string;
   course_name: string;
   description?: string;
+  course_requirements?: string | null;
   credits: number;
   department: string;
   average_gpa?: number;

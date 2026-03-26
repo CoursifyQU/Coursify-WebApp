@@ -77,6 +77,10 @@ export async function GET(
       course_code: String(courseData.course_code),
       course_name: String(courseData.course_name),
       description: courseData.course_description ? String(courseData.course_description) : undefined,
+      course_requirements:
+        courseData.course_requirements !== null && courseData.course_requirements !== undefined
+          ? String(courseData.course_requirements)
+          : null,
       credits: Number(courseData.course_units || 0),
       department: String(courseData.offering_faculty || ""),
       distributions: uniqueDistributions,

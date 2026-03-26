@@ -214,8 +214,6 @@ export default function CourseDetailPage() {
 
   const selectedDistribution = course.distributions.find(dist => dist.term === selectedTerm);
   const hasDistributions = course.distributions && course.distributions.length > 0;
-  const courseCodeParts = courseCode.split(' ');
-  const department = courseCodeParts[0];
 
   const enrollmentRounded = Math.round(course.totalEnrollment);
   const enrollmentBarMax = 600;
@@ -540,11 +538,16 @@ export default function CourseDetailPage() {
             </div>
             <div className="course-detail-inset-glass p-4 rounded-xl flex-1 flex items-start min-h-[5.5rem]">
               <p className="text-sm leading-relaxed text-brand-navy/85 dark:text-white/85">
-                {course.description && course.description.toString().toLowerCase().includes('prerequisite')
-                  ? course.description.toString().split(/\n/).find(line =>
-                      line.toLowerCase().includes('prerequisite') || line.toLowerCase().includes('prereq')
-                    )
-                  : `Prerequisite Level 2 or above and a minimum grade of C- in ${department.toLowerCase()} 124.`}
+                {course.course_requirements
+                  ? String(course.course_requirements)
+                  : course.description && course.description.toString().toLowerCase().includes('prerequisite')
+                    ? course.description
+                        .toString()
+                        .split(/\n/)
+                        .find(line =>
+                          line.toLowerCase().includes('prerequisite') || line.toLowerCase().includes('prereq')
+                        ) || 'No prerequisites on file.'
+                    : 'No prerequisites on file.'}
               </p>
             </div>
           </motion.div>
