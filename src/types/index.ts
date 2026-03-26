@@ -95,4 +95,5 @@ export interface UploadDistributionResponse {
   skipped: string[];
   duplicates: string[];
   errors: string[];
+  contributionCount?: number;
 }

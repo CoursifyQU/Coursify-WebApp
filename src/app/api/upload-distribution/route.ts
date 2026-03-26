@@ -159,6 +159,29 @@ export async function POST(request: NextRequest) {
     processed_at: new Date().toISOString(),
   });
 
+  // 12. Credit all valid courses from this PDF (matched in our DB)
+  // Covers both newly inserted rows AND courses already in course_distributions.
+  // This ensures Person B gets credit for uploading a legitimate PDF even if
+  // Person A already uploaded the same term's data.
+  // UNIQUE(user_id, course_id, term) on user_contributions prevents double-counting
+  // if the same user re-uploads the same PDF.
+  const creditableRows = parsedCourses
+    .map((row) => codeToId.get(row.course_code))
+    .filter((courseId): courseId is string => !!courseId)
+    .map((courseId) => ({ user_id: user.id, course_id: courseId, term }));
+
+  if (creditableRows.length > 0) {
+    await supabase
+      .from("user_contributions")
+      .upsert(creditableRows, { onConflict: "user_id,course_id,term", ignoreDuplicates: true });
+  }
+
+  // 13. Fetch updated contribution count to return in response
+  const { count: contributionCount } = await supabase
+    .from("user_contributions")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id);
+
   const response: UploadDistributionResponse = {
     success: errors.length === 0,
     term,
@@ -166,6 +189,7 @@ export async function POST(request: NextRequest) {
     skipped,
     duplicates,
     errors,
+    contributionCount: contributionCount ?? 0,
   };
 
   return NextResponse.json(response);

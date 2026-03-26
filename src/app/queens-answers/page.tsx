@@ -6,14 +6,30 @@ import { motion, useAnimation, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/lib/auth/auth-context"
 import { QUEENS_ANSWERS_DRAFT_STORAGE_KEY } from "@/constants/queens-answers"
 import { AuthModal } from "@/components/auth-modal"
-import { Bot, Search, MessageSquare, Target, ArrowRight } from "lucide-react"
+import { Bot, Search, MessageSquare, Target, ArrowRight, UploadCloud, Zap } from "lucide-react"
 import { useMotionTier } from "@/lib/motion-prefs"
+import { getSupabaseClient } from "@/lib/supabase/client"
+import Link from "next/link"
+
+interface AccessStatus {
+  canAccess: boolean;
+  isFirstYear: boolean;
+  contributionCount: number;
+  remainingRequests: number;
+  maxRequests: number;
+  resetAt: string | null;
+}
 
 export default function AIFeatures() {
   const [question, setQuestion] = useState("")
   const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
-  const [showComingSoon, setShowComingSoon] = useState(true)
+  const [showDistributionRequired, setShowDistributionRequired] = useState(false)
+  const [showRateLimited, setShowRateLimited] = useState(false)
+  const [accessStatus, setAccessStatus] = useState<AccessStatus | null>(null)
+  const [accessLoading, setAccessLoading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [answer, setAnswer] = useState<string | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const controls = useAnimation()
   const motionTier = useMotionTier()
@@ -27,6 +43,35 @@ export default function AIFeatures() {
       sessionStorage.removeItem(QUEENS_ANSWERS_DRAFT_STORAGE_KEY)
     }
   }, [])
+
+  // Fetch access status when user is available
+  useEffect(() => {
+    if (!user) {
+      setAccessStatus(null);
+      return;
+    }
+    const fetchAccess = async () => {
+      setAccessLoading(true);
+      try {
+        const supabase = getSupabaseClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.access_token) return;
+        const res = await fetch("/api/ai/check-access", {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setAccessStatus(data);
+        }
+      } catch {
+        // silently fail
+      } finally {
+        setAccessLoading(false);
+      }
+    };
+    fetchAccess();
+  }, [user])
+
   const howItWorksItems = [
     {
       icon: Search,
@@ -52,19 +97,13 @@ export default function AIFeatures() {
 
   // Disable scrolling on component mount
   useEffect(() => {
-    // Save the current overflow style
     const originalStyle = window.getComputedStyle(document.body).overflow;
-    
-    // Disable scrolling on body
     document.body.style.overflow = 'hidden';
-    
-    // Re-enable scrolling on component unmount
     return () => {
       document.body.style.overflow = originalStyle;
     };
   }, []);
 
-  // Sample questions with emojis
   const sampleQuestions = [
     { emoji: "📊", text: "best electives for first-years" },
     { emoji: "🧑‍🏫", text: "easiest profs for MATH 121" },
@@ -80,7 +119,6 @@ export default function AIFeatures() {
     { emoji: "🧑‍🏫", text: "strictest graders" },
   ]
 
-  // Duplicate the array to create a seamless loop effect
   const duplicatedQuestions = [...sampleQuestions, ...sampleQuestions, ...sampleQuestions]
 
   useEffect(() => {
@@ -95,35 +133,91 @@ export default function AIFeatures() {
         },
       })
     }
-
     void startAnimation()
-
-    return () => {
-      controls.stop()
-    }
+    return () => { controls.stop() }
   }, [controls])
 
-  // Function to handle click on sample questions (just set the question text, no auth check)
   const handleSampleQuestionClick = (questionText: string) => {
     setQuestion(questionText);
   };
 
-  // Function to actually submit a question (includes auth check)
-  const handleSubmitQuestion = (questionText: string = question) => {
+  const handleSubmitQuestion = async (questionText: string = question) => {
+    if (!questionText.trim()) return;
+
     if (!user) {
-      // If not authenticated, show auth modal
       setShowAuthModal(true);
       return;
     }
 
-    // Handle question submission (only when authenticated)
-    console.log("Question submitted:", questionText);
-    // Implement your actual submission logic here
+    if (accessStatus && !accessStatus.canAccess) {
+      setShowDistributionRequired(true);
+      return;
+    }
+
+    if (accessStatus && accessStatus.remainingRequests <= 0) {
+      setShowRateLimited(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setAnswer(null);
+    try {
+      const supabase = getSupabaseClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        setShowAuthModal(true);
+        return;
+      }
+
+      const res = await fetch("/api/ai/query", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ question: questionText }),
+      });
+
+      const data = await res.json();
+
+      if (res.status === 403 && data.error === "contribution_required") {
+        setShowDistributionRequired(true);
+        return;
+      }
+
+      if (res.status === 429) {
+        // Refresh access status and show rate limit modal
+        if (data.resetAt) {
+          setAccessStatus((prev) => prev ? { ...prev, remainingRequests: 0, resetAt: data.resetAt } : prev);
+        }
+        setShowRateLimited(true);
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error(data.error || "Something went wrong");
+      }
+
+      setAnswer(data.answer);
+      // Update remaining count
+      if (data.remainingRequests !== undefined) {
+        setAccessStatus((prev) => prev ? { ...prev, remainingRequests: data.remainingRequests } : prev);
+      }
+    } catch (err) {
+      console.error("AI query error:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // Function to handle input focus
-  const handleInputFocus = () => {
-    setShowComingSoon(true);
+  const formatResetTime = (resetAt: string | null): string => {
+    if (!resetAt) return "24 hours";
+    const reset = new Date(resetAt);
+    const now = new Date();
+    const diffMs = reset.getTime() - now.getTime();
+    const diffHrs = Math.ceil(diffMs / (1000 * 60 * 60));
+    if (diffHrs <= 1) return "less than an hour";
+    return `${diffHrs} hours`;
   };
 
   return (
@@ -134,9 +228,29 @@ export default function AIFeatures() {
           <h1 className="text-5xl font-extrabold text-center mb-3 tracking-tight animated-title">
             <span className="gradient-text">Queen's Answers</span>
           </h1>
-          <p className="text-xl font-semibold text-center mb-10 text-brand-navy dark:text-white max-w-2xl">
+          <p className="text-xl font-semibold text-center mb-3 text-brand-navy dark:text-white max-w-2xl">
             Got a question? Ask it and get answers, perspectives, and recommendations from all of Queen's
           </p>
+
+          {/* Rate limit indicator */}
+          {user && accessStatus && accessStatus.canAccess && !accessLoading && (
+            <div className="flex items-center gap-1.5 mb-6 px-3 py-1.5 rounded-full bg-brand-navy/8 dark:bg-white/8 border border-brand-navy/12 dark:border-white/12">
+              <Zap className="w-3.5 h-3.5 text-brand-gold" />
+              <span className="text-xs font-medium text-brand-navy/70 dark:text-white/70">
+                {accessStatus.remainingRequests}/{accessStatus.maxRequests} requests today
+              </span>
+            </div>
+          )}
+
+          {/* Contribution required hint for non-first-years without contributions */}
+          {user && accessStatus && !accessStatus.canAccess && !accessLoading && (
+            <div className="flex items-center gap-2 mb-6 px-4 py-2 rounded-full bg-brand-red/10 border border-brand-red/20">
+              <UploadCloud className="w-4 h-4 text-brand-red" />
+              <span className="text-xs font-medium text-brand-red">
+                Upload a distribution to unlock AI features
+              </span>
+            </div>
+          )}
 
           {/* Continuous Carousel */}
           <div className="w-full mb-8 overflow-hidden relative carousel-container" ref={containerRef}>
@@ -146,9 +260,7 @@ export default function AIFeatures() {
                   key={i}
                   type="button"
                   tabIndex={0}
-                  onClick={() => {
-                    handleSampleQuestionClick(q.text);
-                  }}
+                  onClick={() => { handleSampleQuestionClick(q.text); }}
                   className={`relative mx-0.5 flex items-center rounded-full px-6 py-3 text-base font-medium whitespace-nowrap box-border
                     border border-brand-navy/28 dark:border-white/[0.12]
                     ${marqueeLite ? "bg-white/95 dark:bg-zinc-800/95" : "bg-white/82 dark:bg-zinc-800/82 backdrop-blur-md"}
@@ -157,21 +269,11 @@ export default function AIFeatures() {
                     transition-colors duration-[420ms] ease-in-out
                     motion-reduce:transition-none
                     hover:border-brand-navy/42 dark:hover:border-white/[0.18]
-                    hover:bg-white/92 dark:hover:bg-zinc-800/90
-                    hover:shadow-[0_4px_14px_rgba(0,48,95,0.1),0_2px_4px_rgba(0,48,95,0.05)] dark:hover:shadow-[0_4px_16px_rgba(0,0,0,0.38),0_2px_6px_rgba(0,0,0,0.22)]`}
+                    hover:bg-white/92 dark:hover:bg-zinc-800/90`}
                   style={{ lineHeight: "1.2" }}
                   aria-label={q.text}
-                  whileHover={{
-                    scale: 1.026,
-                    y: -2.5,
-                    zIndex: 20,
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 320,
-                    damping: 26,
-                    mass: 0.95,
-                  }}
+                  whileHover={{ scale: 1.026, y: -2.5, zIndex: 20 }}
+                  transition={{ type: "spring", stiffness: 320, damping: 26, mass: 0.95 }}
                   whileTap={{ scale: 0.985 }}
                 >
                   <span className="mr-2 text-lg">{q.emoji}</span>
@@ -180,6 +282,17 @@ export default function AIFeatures() {
               ))}
             </motion.div>
           </div>
+
+          {/* Answer display */}
+          {answer && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="w-full mb-6 glass-card rounded-2xl p-4 text-sm text-brand-navy dark:text-white leading-relaxed"
+            >
+              {answer}
+            </motion.div>
+          )}
 
           {/* How it works link */}
           <button
@@ -201,11 +314,7 @@ export default function AIFeatures() {
             border border-brand-navy/20 dark:border-white/10
             shadow-[0_2px_12px_rgba(0,48,95,0.07),0_1px_4px_rgba(0,48,95,0.045),inset_0_1px_0_rgba(255,255,255,0.92)]
             dark:shadow-[0_2px_14px_rgba(0,0,0,0.28),0_1px_4px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.06)]
-            ${
-              showHowItWorks || showComingSoon
-                ? "opacity-30 pointer-events-none blur-[1px]"
-                : "opacity-100 hover:shadow-[0_5px_20px_rgba(0,48,95,0.09),0_2px_6px_rgba(0,48,95,0.055),inset_0_1px_0_rgba(255,255,255,0.98)] dark:hover:shadow-[0_6px_22px_rgba(0,0,0,0.36),0_2px_8px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.08)]"
-            }`}
+            ${showHowItWorks ? "opacity-30 pointer-events-none blur-[1px]" : "opacity-100"}`}
           style={{ zIndex: 30 }}
         >
           <input
@@ -214,27 +323,32 @@ export default function AIFeatures() {
             placeholder="Ask a question"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            onFocus={handleInputFocus}
+            disabled={showHowItWorks}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
                 handleSubmitQuestion();
               }
             }}
-            disabled={showHowItWorks}
           />
           <button
             type="button"
             onClick={() => handleSubmitQuestion()}
-            className="ml-2 bg-brand-red hover:bg-red-800 text-white rounded-full w-12 h-10 flex items-center justify-center font-semibold text-lg shadow transition-[transform,background-color,box-shadow] duration-200 ease-out hover:shadow-lg hover:scale-105 motion-reduce:hover:scale-100"
+            disabled={isSubmitting || showHowItWorks}
+            className="ml-2 bg-brand-red hover:bg-red-800 text-white rounded-full w-12 h-10 flex items-center justify-center font-semibold text-lg shadow transition-[transform,background-color,box-shadow] duration-200 ease-out hover:shadow-lg hover:scale-105 motion-reduce:hover:scale-100 disabled:opacity-60 disabled:cursor-not-allowed"
             style={{ minWidth: "48px" }}
-            disabled={showHowItWorks}
           >
-            &gt;
+            {isSubmitting ? (
+              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            ) : ">"}
           </button>
         </div>
       </div>
 
+      {/* How It Works Modal */}
       {typeof document !== "undefined" &&
         createPortal(
           <AnimatePresence>
@@ -245,9 +359,7 @@ export default function AIFeatures() {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
                 className="glass-modal-overlay modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain p-3 sm:items-center sm:p-4"
-                onClick={(e) => {
-                  if (e.target === e.currentTarget) setShowHowItWorks(false)
-                }}
+                onClick={(e) => { if (e.target === e.currentTarget) setShowHowItWorks(false) }}
               >
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -267,7 +379,7 @@ export default function AIFeatures() {
                   </button>
                   <div className="glass-modal-accent mx-auto mb-3 h-1.5 w-24 rounded-full opacity-90" />
                   <h2 className="mb-2 text-center text-2xl font-bold text-brand-navy dark:text-white sm:text-3xl">
-                    How <span className="gradient-text">Queen&apos;s Answers</span> Works
+                    How <span className="gradient-text">Queen's Answers</span> Works
                   </h2>
                   <p className="mx-auto max-w-xl text-center text-sm leading-snug text-brand-navy/68 dark:text-white/68">
                     Course data and AI, distilled into answers you can use—four quick ideas below.
@@ -276,20 +388,13 @@ export default function AIFeatures() {
                     {howItWorksItems.map((item) => {
                       const Icon = item.icon
                       return (
-                        <li
-                          key={item.title}
-                          className="glass-card flex items-center gap-2.5 rounded-xl p-2.5 sm:gap-3 sm:p-3"
-                        >
+                        <li key={item.title} className="glass-card flex items-center gap-2.5 rounded-xl p-2.5 sm:gap-3 sm:p-3">
                           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/55 dark:bg-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] ring-1 ring-white/70 dark:shadow-none dark:ring-white/10">
                             <Icon className="h-4 w-4 text-brand-navy dark:text-white" strokeWidth={1.85} />
                           </div>
                           <div className="min-w-0">
-                            <div className="text-sm font-semibold leading-tight text-brand-navy dark:text-white">
-                              {item.title}
-                            </div>
-                            <div className="mt-0.5 text-xs leading-snug text-brand-navy/70 dark:text-white/70">
-                              {item.description}
-                            </div>
+                            <div className="text-sm font-semibold leading-tight text-brand-navy dark:text-white">{item.title}</div>
+                            <div className="mt-0.5 text-xs leading-snug text-brand-navy/70 dark:text-white/70">{item.description}</div>
                           </div>
                         </li>
                       )
@@ -302,68 +407,131 @@ export default function AIFeatures() {
           document.body
         )}
 
+      {/* Distribution Required Modal */}
       {typeof document !== "undefined" &&
         createPortal(
           <AnimatePresence>
-            {showComingSoon && (
+            {showDistributionRequired && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="glass-modal-overlay modal-backdrop fixed inset-0 z-40 flex min-h-0 flex-col items-center justify-start gap-6 overflow-y-auto overscroll-contain p-4 sm:justify-center sm:gap-8"
+                className="glass-modal-overlay modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4"
+                onClick={(e) => { if (e.target === e.currentTarget) setShowDistributionRequired(false) }}
               >
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="glass-modal-panel relative my-auto flex w-full max-w-xl min-h-0 max-h-[min(90dvh,calc(100dvh-1.5rem-env(safe-area-inset-top)-env(safe-area-inset-bottom)))] flex-col overflow-hidden rounded-[1.75rem] p-6 sm:p-7"
+                  className="glass-modal-panel relative max-w-md w-full rounded-[1.75rem] p-6"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <button
                     type="button"
-                    className="glass-modal-close absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-2xl font-bold text-brand-navy/55 dark:text-white/55 hover:text-brand-red"
-                    onClick={() => setShowComingSoon(false)}
+                    className="glass-modal-close absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-xl font-bold text-brand-navy/55 dark:text-white/55 hover:text-brand-red"
+                    onClick={() => setShowDistributionRequired(false)}
                     aria-label="Close"
                   >
                     &times;
                   </button>
-                  <div className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]">
-                    <div className="glass-modal-accent mb-5 h-1.5 w-24 shrink-0 rounded-full opacity-90" />
-                    <h2 className="mb-2 shrink-0 text-center text-2xl font-bold text-brand-navy dark:text-white sm:text-3xl">
-                      Coming Soon
-                    </h2>
-                    <p className="mb-5 shrink-0 text-center text-lg leading-8 text-brand-navy/72 dark:text-white/72">
-                      We&apos;re working hard to bring Queen&apos;s Answers to life. This feature will be available in the near future.
-                    </p>
-                    <div className="glass-card mb-6 h-3 w-full shrink-0 overflow-hidden rounded-full p-0.5">
-                      <motion.div
-                        className="glass-modal-accent h-full rounded-full"
-                        initial={{ width: "0%" }}
-                        animate={{ width: "75%" }}
-                        transition={{ duration: 1.5, ease: "easeInOut" }}
-                      />
+                  <div className="glass-modal-accent h-1.5 w-24 rounded-full mb-5 opacity-90" />
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-brand-red/15 flex items-center justify-center shrink-0">
+                      <UploadCloud className="w-5 h-5 text-brand-red" />
                     </div>
-                    <p className="shrink-0 text-center text-sm italic text-brand-navy/60 dark:text-white/60">
-                      Queen&apos;s Answers will provide AI-powered insights on courses, professors, and more!
-                    </p>
+                    <h2 className="text-xl font-bold text-brand-navy dark:text-white">Distribution Required</h2>
+                  </div>
+                  <p className="text-sm text-brand-navy/70 dark:text-white/70 leading-relaxed mb-6">
+                    AI features are unlocked by contributing your grade distribution. This helps the whole Queen's student community make better course decisions.
+                  </p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowDistributionRequired(false)}
+                      className="flex-1 px-4 py-2.5 rounded-2xl border border-brand-navy/15 dark:border-white/15 text-sm font-medium text-brand-navy/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                    >
+                      Not now
+                    </button>
+                    <Link href="/add-courses" className="flex-1">
+                      <button className="w-full liquid-btn-red text-white px-4 py-2.5 rounded-2xl text-sm font-medium flex items-center justify-center gap-2">
+                        Upload Distribution
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </Link>
                   </div>
                 </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
 
+      {/* Rate Limit Modal */}
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {showRateLimited && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="glass-modal-overlay modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4"
+                onClick={(e) => { if (e.target === e.currentTarget) setShowRateLimited(false) }}
+              >
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ delay: 0.2, duration: 0.25 }}
-                  className="shrink-0 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="glass-modal-panel relative max-w-md w-full rounded-[1.75rem] p-6"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <a
-                    href="/"
-                    className="liquid-btn-blue inline-flex items-center justify-center rounded-2xl px-6 py-3 font-medium text-white"
+                  <button
+                    type="button"
+                    className="glass-modal-close absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-xl font-bold text-brand-navy/55 dark:text-white/55 hover:text-brand-red"
+                    onClick={() => setShowRateLimited(false)}
+                    aria-label="Close"
                   >
-                    Return to Home
-                    <ArrowRight className="ml-2 h-4 w-4" strokeWidth={1.8} />
-                  </a>
+                    &times;
+                  </button>
+                  <div className="glass-modal-accent h-1.5 w-24 rounded-full mb-5 opacity-90" />
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center shrink-0">
+                      <Zap className="w-5 h-5 text-brand-gold" />
+                    </div>
+                    <h2 className="text-xl font-bold text-brand-navy dark:text-white">Daily limit reached</h2>
+                  </div>
+                  <p className="text-sm text-brand-navy/70 dark:text-white/70 leading-relaxed mb-4">
+                    You've used all {accessStatus?.maxRequests ?? 3} requests for today. Your limit resets in{" "}
+                    <strong>{formatResetTime(accessStatus?.resetAt ?? null)}</strong>.
+                  </p>
+                  {accessStatus && !accessStatus.isFirstYear && (
+                    <div className="glass-card rounded-2xl p-3 mb-5">
+                      <p className="text-xs text-brand-navy/60 dark:text-white/60 leading-relaxed">
+                        Contribute more grade distributions to unlock up to{" "}
+                        <strong className="text-brand-navy dark:text-white">5 requests/day</strong>.
+                        Currently at {accessStatus.contributionCount} contribution{accessStatus.contributionCount !== 1 ? "s" : ""}.
+                      </p>
+                    </div>
+                  )}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowRateLimited(false)}
+                      className="flex-1 px-4 py-2.5 rounded-2xl border border-brand-navy/15 dark:border-white/15 text-sm font-medium text-brand-navy/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                    >
+                      OK
+                    </button>
+                    {accessStatus && !accessStatus.isFirstYear && (
+                      <Link href="/add-courses" className="flex-1">
+                        <button className="w-full liquid-btn-blue text-white px-4 py-2.5 rounded-2xl text-sm font-medium flex items-center justify-center gap-2">
+                          Add Distribution
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                      </Link>
+                    )}
+                  </div>
                 </motion.div>
               </motion.div>
             )}
@@ -372,14 +540,13 @@ export default function AIFeatures() {
         )}
 
       {/* Auth Modal */}
-      <AuthModal 
-        isOpen={showAuthModal} 
+      <AuthModal
+        isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         title="Sign in to use Queen's Answers"
         description="You need to sign in with your Queen's University email to access this feature."
       />
 
-      {/* All styles in one place */}
       <style jsx>{`
         .carousel-container {
           position: relative;
@@ -388,19 +555,17 @@ export default function AIFeatures() {
           padding: 12px 0;
           border-radius: 8px;
         }
-        
         .animated-title {
           position: relative;
           overflow: hidden;
           padding: 0.2em 0;
         }
-        
         .gradient-text {
           background: linear-gradient(
-            90deg, 
-            #00305f 0%, 
-            #d62839 30%, 
-            #efb215 60%, 
+            90deg,
+            #00305f 0%,
+            #d62839 30%,
+            #efb215 60%,
             #00305f 100%
           );
           background-size: 200% auto;
@@ -412,7 +577,6 @@ export default function AIFeatures() {
           display: inline-block;
           text-shadow: 0 0 3px rgba(0, 48, 95, 0.1);
         }
-        
         :is(.dark) .gradient-text {
           background: linear-gradient(
             90deg,
@@ -428,22 +592,13 @@ export default function AIFeatures() {
           text-fill-color: transparent;
           text-shadow: none;
         }
-        
         @keyframes shine {
-          to {
-            background-position: 200% center;
-          }
+          to { background-position: 200% center; }
         }
-        
         @keyframes float {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-3px);
-          }
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-3px); }
         }
-        
         .animated-title::before {
           content: '';
           position: absolute;
@@ -456,37 +611,20 @@ export default function AIFeatures() {
           transform: translateX(-100%);
           opacity: 0.2;
         }
-        
         :is(.dark) .animated-title::before {
           background: linear-gradient(90deg, transparent, #ff4d5e, transparent);
           opacity: 0.35;
         }
-        
         @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
         }
-        
-        .animate-fade-in {
-          animation: fadeInModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
         .modal-backdrop {
           animation: fadeIn 0.3s ease-in-out;
         }
-
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
-        }
-        
-        @keyframes fadeInModal {
-          from { opacity: 0; transform: translateY(24px) scale(0.98); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
         }
       `}</style>
     </div>

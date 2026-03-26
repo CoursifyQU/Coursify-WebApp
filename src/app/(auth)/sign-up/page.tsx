@@ -7,13 +7,22 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { getSupabaseClient } from "@/lib/supabase/client";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ChevronDown } from "lucide-react";
 import { useMotionTier } from "@/lib/motion-prefs";
+
+const YEAR_OPTIONS = [
+  { value: 1, label: "1st Year" },
+  { value: 2, label: "2nd Year" },
+  { value: 3, label: "3rd Year" },
+  { value: 4, label: "4th Year" },
+  { value: 5, label: "5th Year+" },
+];
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [yearOfStudy, setYearOfStudy] = useState<number>(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +94,7 @@ export default function SignUp() {
         return;
       }
 
-      const { error } = await signUp(email, password);
+      const { error } = await signUp(email, password, yearOfStudy);
       if (error) {
         if (error.message && (error.message.includes("already registered") || error.message.includes("already exists") || error.message.includes("already taken"))) {
           setAccountConflict(true);
@@ -212,12 +221,41 @@ export default function SignUp() {
                   </div>
                 </motion.div>
 
+                <motion.div initial={false} animate={lite ? undefined : { opacity: 1, y: 0 }} transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.50 }}>
+                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">Year of Study</label>
+                  <div className="glass-card rounded-2xl relative transition-all duration-300 focus-within:border-brand-navy/30 dark:focus-within:border-blue-400/30 focus-within:shadow-[0_0_0_3px_rgba(0,48,95,0.08)]">
+                    <select
+                      value={yearOfStudy}
+                      onChange={(e) => setYearOfStudy(Number(e.target.value))}
+                      required
+                      className="w-full bg-transparent text-sm text-brand-navy dark:text-white px-4 py-4 pr-10 rounded-2xl focus:outline-none appearance-none cursor-pointer"
+                    >
+                      {YEAR_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value} className="bg-white dark:bg-zinc-900 text-brand-navy dark:text-white">
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
+                  </div>
+                  {yearOfStudy === 1 && (
+                    <p className="text-xs text-brand-gold dark:text-yellow-400 mt-1.5 px-1">
+                      First-year students get full access to all features.
+                    </p>
+                  )}
+                  {yearOfStudy > 1 && (
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 px-1">
+                      Upper-year students unlock AI features by uploading a grade distribution.
+                    </p>
+                  )}
+                </motion.div>
+
                 <motion.button
                   type="submit"
                   disabled={isLoading}
                   initial={false}
                   animate={lite ? undefined : { opacity: 1, y: 0 }}
-                  transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.55 }}
+                  transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.60 }}
                   className="liquid-btn-red w-full rounded-2xl py-4 font-medium text-white text-sm disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
@@ -232,7 +270,7 @@ export default function SignUp() {
                 </motion.button>
               </form>
 
-              <motion.p className="text-center text-sm text-gray-500 dark:text-gray-400" initial={false} animate={lite ? undefined : { opacity: 1 }} transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.6 }}>
+              <motion.p className="text-center text-sm text-gray-500 dark:text-gray-400" initial={false} animate={lite ? undefined : { opacity: 1 }} transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.65 }}>
                 Already have an account?{" "}
                 <Link href="/sign-in" className="text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium transition-colors duration-300">
                   Sign in
