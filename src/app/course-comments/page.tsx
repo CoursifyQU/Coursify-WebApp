@@ -171,6 +171,7 @@ export default function CourseCommentsPage() {
         }
         :is(.dark) .tab-pill:hover { background: rgba(50,50,50,0.80); }
         :is(.dark) .tab-pill.active-all { background: rgba(59,130,246,0.9); border-color: rgba(59,130,246,0.3); }
+        :is(.dark) .tab-pill.active-reddit { background: rgba(255,69,0,0.9); border-color: rgba(255,69,0,0.3); color: white; }
         :is(.dark) .tab-pill.active-rmp { background: rgba(59,130,246,0.9); border-color: rgba(59,130,246,0.3); }
       ` }} />
 
@@ -404,10 +405,10 @@ export default function CourseCommentsPage() {
 
                       {/* Source badge + sentiment */}
                       <div className="flex flex-wrap gap-2 justify-start sm:justify-end sm:flex-shrink-0">
-                        <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full capitalize ${sentimentBadge(comment.sentiment_label)}`}>
+                        <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full capitalize glass-pill ${sentimentBadge(comment.sentiment_label)}`}>
                           {comment.sentiment_label}
                         </span>
-                        <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
+                        <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium glass-pill ${
                           isReddit
                             ? 'bg-[#FF4500]/10 text-[#FF4500] border border-[#FF4500]/20'
                             : 'bg-brand-navy/10 dark:bg-blue-400/10 text-brand-navy dark:text-white border border-brand-navy/20 dark:border-blue-400/20'
@@ -440,17 +441,13 @@ export default function CourseCommentsPage() {
                     {/* Comment text */}
                     <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-3">{comment.text}</p>
 
-                    {/* Tags */}
-                    {comment.tags && comment.tags.length > 0 && (
+                    {/* RMP Tags (official site chips only) */}
+                    {!isReddit && comment.tags && comment.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mb-3">
                         {comment.tags.map((tag, idx) => (
                           <span
-                            key={idx}
-                            className={`text-xs px-2.5 py-0.5 rounded-full border ${
-                              isReddit
-                                ? 'bg-[#FF4500]/6 text-[#FF4500]/80 border-[#FF4500]/15'
-                                : 'bg-brand-navy/6 dark:bg-blue-400/6 text-brand-navy/80 dark:text-white/80 border-brand-navy/15 dark:border-blue-400/15'
-                            }`}
+                            key={`${tag}-${idx}`}
+                            className="text-xs glass-pill px-2.5 py-0.5 rounded-full text-brand-navy dark:text-white"
                           >
                             {tag}
                           </span>
@@ -471,10 +468,10 @@ export default function CourseCommentsPage() {
                         )}
                         {!isReddit && (
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-xs px-2.5 py-0.5 rounded-full bg-brand-navy/8 dark:bg-blue-400/8 text-brand-navy dark:text-white font-medium">
+                            <span className="glass-pill text-xs px-2.5 py-0.5 rounded-full text-brand-navy dark:text-white font-medium">
                               Quality: {(comment as RmpComment).quality_rating}/5
                             </span>
-                            <span className="text-xs px-2.5 py-0.5 rounded-full bg-brand-red/8 text-brand-red font-medium">
+                            <span className="glass-pill text-xs px-2.5 py-0.5 rounded-full text-brand-red font-medium">
                               Difficulty: {(comment as RmpComment).difficulty_rating}/5
                             </span>
                           </div>
@@ -486,7 +483,7 @@ export default function CourseCommentsPage() {
                           href={comment.source_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`text-xs font-medium flex items-center gap-1 hover:underline self-start sm:self-auto shrink-0 ${
+                          className={`glass-pill px-2.5 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 hover:underline self-start sm:self-auto shrink-0 ${
                             isReddit ? 'text-[#FF4500]' : 'text-brand-navy dark:text-white'
                           }`}
                         >

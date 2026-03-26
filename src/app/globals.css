@@ -80,6 +80,14 @@
     @apply text-foreground;
     background-color: var(--page-bg);
     background-image: none;
+    overflow-y: scroll;
+  }
+
+  html body[data-scroll-locked],
+  html body[data-scroll-locked="1"] {
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+    --removed-body-scroll-bar-size: 0px !important;
   }
 }
 
