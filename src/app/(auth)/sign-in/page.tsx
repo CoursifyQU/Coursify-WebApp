@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@/lib/auth/auth-context";
+import { getSafeRedirectPath, buildAuthHref } from "@/lib/auth/safe-redirect";
 import { toast } from "@/components/ui/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import { useMotionTier } from "@/lib/motion-prefs";
@@ -15,8 +16,19 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { signIn } = useAuth();
   const lite = useMotionTier() === "lite";
+
+  const nextPath = useMemo(
+    () => getSafeRedirectPath(searchParams.get("redirect"), "/"),
+    [searchParams]
+  );
+
+  const signUpHref = useMemo(
+    () => buildAuthHref("/sign-up", nextPath),
+    [nextPath]
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +40,7 @@ export default function SignIn() {
         setIsLoading(false);
         return;
       }
-      router.push("/");
+      router.push(nextPath);
       router.refresh();
       toast({ title: "Success", description: "You have been signed in successfully", variant: "success" });
     } catch (error: any) {
@@ -123,7 +135,7 @@ export default function SignIn() {
 
           <motion.p className="text-center text-sm text-gray-500 dark:text-gray-400" initial={false} animate={lite ? undefined : { opacity: 1 }} transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.5 }}>
             New to our platform?{" "}
-            <Link href="/sign-up" className="text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium transition-colors duration-300">
+            <Link href={signUpHref} className="text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium transition-colors duration-300">
               Create Account
             </Link>
           </motion.p>

@@ -1,21 +1,55 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { Suspense, useState, useEffect, useRef, useMemo } from "react"
 import { createPortal } from "react-dom"
 import { motion, useAnimation, AnimatePresence } from "framer-motion"
+import { usePathname, useSearchParams } from "next/navigation"
 import { QUEENS_ANSWERS_DRAFT_STORAGE_KEY } from "@/constants/queens-answers"
 import { Bot, Search, MessageSquare, Target } from "lucide-react"
 import { useMotionTier } from "@/lib/motion-prefs"
-import AuthRequired from "@/components/auth-required"
+import { useAuth } from "@/lib/auth/auth-context"
+import { buildAuthHref } from "@/lib/auth/safe-redirect"
+import { AuthModal } from "@/components/auth-modal"
 import ContributionGate from "@/components/contribution-gate"
 
-export default function AIFeatures() {
+function QueensAnswersSuspenseFallback() {
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center p-6 bg-[var(--page-bg)]">
+      <div
+        className="h-12 w-12 animate-spin rounded-full border-4 border-brand-navy/20 border-t-brand-navy dark:border-blue-400/20 dark:border-t-blue-400"
+        aria-label="Loading"
+      />
+    </div>
+  )
+}
+
+function AIFeatures() {
   const [question, setQuestion] = useState("")
   const [showHowItWorks, setShowHowItWorks] = useState(false)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const controls = useAnimation()
   const motionTier = useMotionTier()
   const marqueeLite = motionTier === "lite"
+  const { user, isLoading: authLoading } = useAuth()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const search = searchParams?.toString() ?? ""
+  const redirectPath = useMemo(() => {
+    return search ? `${pathname}?${search}` : pathname ?? "/queens-answers"
+  }, [pathname, search])
+
+  const signInHref = useMemo(
+    () => buildAuthHref("/sign-in", redirectPath),
+    [redirectPath]
+  )
+  const signUpHref = useMemo(
+    () => buildAuthHref("/sign-up", redirectPath),
+    [redirectPath]
+  )
+
+  const needsAuthToAsk = !authLoading && !user
 
   useEffect(() => {
     const stored = sessionStorage.getItem(QUEENS_ANSWERS_DRAFT_STORAGE_KEY)
@@ -47,19 +81,15 @@ export default function AIFeatures() {
     },
   ]
 
-  // Disable scrolling on component mount
+  // Full-page layout uses h-screen; only lock body scroll once the user can see the real page
   useEffect(() => {
-    // Save the current overflow style
-    const originalStyle = window.getComputedStyle(document.body).overflow;
-    
-    // Disable scrolling on body
-    document.body.style.overflow = 'hidden';
-    
-    // Re-enable scrolling on component unmount
+    if (authLoading || !user) return
+    const originalStyle = window.getComputedStyle(document.body).overflow
+    document.body.style.overflow = "hidden"
     return () => {
-      document.body.style.overflow = originalStyle;
-    };
-  }, []);
+      document.body.style.overflow = originalStyle
+    }
+  }, [authLoading, user])
 
   // Sample questions with emojis
   const sampleQuestions = [
@@ -107,13 +137,20 @@ export default function AIFeatures() {
 
   // Function to actually submit a question
   const handleSubmitQuestion = (questionText: string = question) => {
+    if (needsAuthToAsk) {
+      setAuthModalOpen(true)
+      return
+    }
     // Handle question submission
     console.log("Question submitted:", questionText);
     // TODO: implement actual submission logic
   };
 
+  const openAuthModalForQuestion = () => {
+    if (needsAuthToAsk) setAuthModalOpen(true)
+  };
+
   return (
-    <AuthRequired>
       <ContributionGate>
     <div className="h-screen overflow-hidden bg-[var(--page-bg)] pt-20">
       <div className="h-full flex flex-col items-center justify-center px-4 overflow-hidden">
@@ -201,14 +238,22 @@ export default function AIFeatures() {
             className="flex-grow bg-transparent outline-none px-2 py-2 text-lg text-[#222] dark:text-gray-100 placeholder:text-[#b0b3b8] dark:placeholder:text-gray-500 placeholder:font-medium transition-colors duration-[420ms] ease-in-out motion-reduce:transition-none"
             placeholder="Ask a question"
             value={question}
+            readOnly={showHowItWorks || needsAuthToAsk}
             onChange={(e) => setQuestion(e.target.value)}
+            onClick={openAuthModalForQuestion}
+            onFocus={(e) => {
+              if (needsAuthToAsk) {
+                e.target.blur()
+                setAuthModalOpen(true)
+              }
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
                 handleSubmitQuestion();
               }
             }}
-            disabled={showHowItWorks}
+            disabled={showHowItWorks || authLoading}
           />
           <button
             type="button"
@@ -401,7 +446,23 @@ export default function AIFeatures() {
         }
       `}</style>
     </div>
+
+    <AuthModal
+      isOpen={authModalOpen}
+      onClose={() => setAuthModalOpen(false)}
+      title="Sign in to use Queen's Answers"
+      description="You need to sign in with your Queen's University email to ask a question."
+      signInHref={signInHref}
+      signUpHref={signUpHref}
+    />
       </ContributionGate>
-    </AuthRequired>
   );
+}
+
+export default function QueensAnswersPage() {
+  return (
+    <Suspense fallback={<QueensAnswersSuspenseFallback />}>
+      <AIFeatures />
+    </Suspense>
+  )
 }
