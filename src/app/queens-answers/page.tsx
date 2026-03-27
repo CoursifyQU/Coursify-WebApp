@@ -3,22 +3,19 @@
 import { useState, useEffect, useRef } from "react"
 import { createPortal } from "react-dom"
 import { motion, useAnimation, AnimatePresence } from "framer-motion"
-import { useAuth } from "@/lib/auth/auth-context"
 import { QUEENS_ANSWERS_DRAFT_STORAGE_KEY } from "@/constants/queens-answers"
-import { AuthModal } from "@/components/auth-modal"
-import { Bot, Search, MessageSquare, Target, ArrowRight } from "lucide-react"
+import { Bot, Search, MessageSquare, Target } from "lucide-react"
 import { useMotionTier } from "@/lib/motion-prefs"
+import AuthRequired from "@/components/auth-required"
+import ContributionGate from "@/components/contribution-gate"
 
 export default function AIFeatures() {
   const [question, setQuestion] = useState("")
   const [showHowItWorks, setShowHowItWorks] = useState(false)
-  const [showAuthModal, setShowAuthModal] = useState(false)
-  const [showComingSoon, setShowComingSoon] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
   const controls = useAnimation()
   const motionTier = useMotionTier()
   const marqueeLite = motionTier === "lite"
-  const { user } = useAuth()
 
   useEffect(() => {
     const stored = sessionStorage.getItem(QUEENS_ANSWERS_DRAFT_STORAGE_KEY)
@@ -108,25 +105,16 @@ export default function AIFeatures() {
     setQuestion(questionText);
   };
 
-  // Function to actually submit a question (includes auth check)
+  // Function to actually submit a question
   const handleSubmitQuestion = (questionText: string = question) => {
-    if (!user) {
-      // If not authenticated, show auth modal
-      setShowAuthModal(true);
-      return;
-    }
-
-    // Handle question submission (only when authenticated)
+    // Handle question submission
     console.log("Question submitted:", questionText);
-    // Implement your actual submission logic here
-  };
-
-  // Function to handle input focus
-  const handleInputFocus = () => {
-    setShowComingSoon(true);
+    // TODO: implement actual submission logic
   };
 
   return (
+    <AuthRequired>
+      <ContributionGate>
     <div className="h-screen overflow-hidden bg-[var(--page-bg)] pt-20">
       <div className="h-full flex flex-col items-center justify-center px-4 overflow-hidden">
         <div className="w-full max-w-2xl flex flex-col items-center">
@@ -202,7 +190,7 @@ export default function AIFeatures() {
             shadow-[0_2px_12px_rgba(0,48,95,0.07),0_1px_4px_rgba(0,48,95,0.045),inset_0_1px_0_rgba(255,255,255,0.92)]
             dark:shadow-[0_2px_14px_rgba(0,0,0,0.28),0_1px_4px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.06)]
             ${
-              showHowItWorks || showComingSoon
+              showHowItWorks
                 ? "opacity-30 pointer-events-none blur-[1px]"
                 : "opacity-100 hover:shadow-[0_5px_20px_rgba(0,48,95,0.09),0_2px_6px_rgba(0,48,95,0.055),inset_0_1px_0_rgba(255,255,255,0.98)] dark:hover:shadow-[0_6px_22px_rgba(0,0,0,0.36),0_2px_8px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.08)]"
             }`}
@@ -214,7 +202,6 @@ export default function AIFeatures() {
             placeholder="Ask a question"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            onFocus={handleInputFocus}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
@@ -302,82 +289,6 @@ export default function AIFeatures() {
           document.body
         )}
 
-      {typeof document !== "undefined" &&
-        createPortal(
-          <AnimatePresence>
-            {showComingSoon && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="glass-modal-overlay modal-backdrop fixed inset-0 z-40 flex min-h-0 flex-col items-center justify-start gap-6 overflow-y-auto overscroll-contain p-4 sm:justify-center sm:gap-8"
-              >
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="glass-modal-panel relative my-auto flex w-full max-w-xl min-h-0 max-h-[min(90dvh,calc(100dvh-1.5rem-env(safe-area-inset-top)-env(safe-area-inset-bottom)))] flex-col overflow-hidden rounded-[1.75rem] p-6 sm:p-7"
-                >
-                  <button
-                    type="button"
-                    className="glass-modal-close absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-2xl font-bold text-brand-navy/55 dark:text-white/55 hover:text-brand-red"
-                    onClick={() => setShowComingSoon(false)}
-                    aria-label="Close"
-                  >
-                    &times;
-                  </button>
-                  <div className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]">
-                    <div className="glass-modal-accent mb-5 h-1.5 w-24 shrink-0 rounded-full opacity-90" />
-                    <h2 className="mb-2 shrink-0 text-center text-2xl font-bold text-brand-navy dark:text-white sm:text-3xl">
-                      Coming Soon
-                    </h2>
-                    <p className="mb-5 shrink-0 text-center text-lg leading-8 text-brand-navy/72 dark:text-white/72">
-                      We&apos;re working hard to bring Queen&apos;s Answers to life. This feature will be available in the near future.
-                    </p>
-                    <div className="glass-card mb-6 h-3 w-full shrink-0 overflow-hidden rounded-full p-0.5">
-                      <motion.div
-                        className="glass-modal-accent h-full rounded-full"
-                        initial={{ width: "0%" }}
-                        animate={{ width: "75%" }}
-                        transition={{ duration: 1.5, ease: "easeInOut" }}
-                      />
-                    </div>
-                    <p className="shrink-0 text-center text-sm italic text-brand-navy/60 dark:text-white/60">
-                      Queen&apos;s Answers will provide AI-powered insights on courses, professors, and more!
-                    </p>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ delay: 0.2, duration: 0.25 }}
-                  className="shrink-0 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-center"
-                >
-                  <a
-                    href="/"
-                    className="liquid-btn-blue inline-flex items-center justify-center rounded-2xl px-6 py-3 font-medium text-white"
-                  >
-                    Return to Home
-                    <ArrowRight className="ml-2 h-4 w-4" strokeWidth={1.8} />
-                  </a>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>,
-          document.body
-        )}
-
-      {/* Auth Modal */}
-      <AuthModal 
-        isOpen={showAuthModal} 
-        onClose={() => setShowAuthModal(false)}
-        title="Sign in to use Queen's Answers"
-        description="You need to sign in with your Queen's University email to access this feature."
-      />
 
       {/* All styles in one place */}
       <style jsx>{`
@@ -490,5 +401,7 @@ export default function AIFeatures() {
         }
       `}</style>
     </div>
+      </ContributionGate>
+    </AuthRequired>
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Menu, X, LogOut, User, Sun, Moon } from "lucide-react"
+import { Menu, X, LogOut, User, Sun, Moon, Settings, UploadCloud } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useAuth } from "@/lib/auth/auth-context"
 import {
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { toast } from "@/components/ui/use-toast"
+import { getSupabaseClient } from "@/lib/supabase/client"
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -22,6 +23,8 @@ const Navigation = () => {
   const [mounted, setMounted] = useState(false)
   const [isMobileViewport, setIsMobileViewport] = useState(false)
   const { user, signOut } = useAuth()
+  const [pendingSeasonal, setPendingSeasonal] = useState(false)
+  const [dueTerm, setDueTerm] = useState<string | null>(null)
   const { theme, setTheme } = useTheme()
   const router = useRouter()
   /** After pointer interaction, ignore scroll-up–based nav reveal (avoids layout/anchoring jumps from accordions, etc.). */
@@ -112,6 +115,37 @@ const Navigation = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (!user) return
+    const checkSeasonal = async () => {
+      try {
+        const { data: session } = await getSupabaseClient().auth.getSession()
+        const token = session?.session?.access_token
+        if (!token) return
+        const res = await fetch("/api/me/access-status", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        if (!res.ok) return
+        const status = await res.json()
+        if (!status.pending_seasonal_upload) return
+        setPendingSeasonal(true)
+        setDueTerm(status.due_term)
+        // Toast once per browser session
+        const sessionKey = `seasonal_toast_${status.due_term}`
+        if (!sessionStorage.getItem(sessionKey)) {
+          sessionStorage.setItem(sessionKey, "1")
+          toast({
+            title: `${status.due_term} grades are available on SOLUS`,
+            description: "Upload your grade distribution to keep Queen's Answers access and help your peers.",
+          })
+        }
+      } catch {
+        // non-critical, silently fail
+      }
+    }
+    void checkSeasonal()
+  }, [user])
+
   const handleSignOut = async () => {
     toast({
       title: "Signing out...",
@@ -195,13 +229,10 @@ const Navigation = () => {
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-black/[0.06] dark:bg-white/[0.10] hover:bg-black/[0.10] dark:hover:bg-white/[0.16] text-gray-600 dark:text-white/75 border border-black/[0.06] dark:border-white/[0.10] transition-colors duration-[420ms] ease-in-out motion-reduce:transition-none"
+              className="flex items-center justify-center p-2 rounded-full text-sm font-medium bg-black/[0.06] dark:bg-white/[0.10] hover:bg-black/[0.10] dark:hover:bg-white/[0.16] text-gray-600 dark:text-white/75 border border-black/[0.06] dark:border-white/[0.10] transition-colors duration-[420ms] ease-in-out motion-reduce:transition-none"
               aria-label="Toggle theme"
             >
-              {mounted && theme === "dark"
-                ? <><Sun size={15} /><span className="hidden nav:inline text-xs">Light</span></>
-                : <><Moon size={15} /><span className="hidden nav:inline text-xs">Dark</span></>
-              }
+              {mounted && theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
             </button>
 
             {user ? (
@@ -211,7 +242,12 @@ const Navigation = () => {
                     className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 dark:text-white/75 hover:text-brand-navy dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-all duration-200 border border-white/60 dark:border-white/10"
                     style={{ background: "var(--nav-bg)" }}
                   >
-                    <User className="w-4 h-4" strokeWidth={1.5} />
+                    <span className="relative">
+                      <User className="w-4 h-4" strokeWidth={1.5} />
+                      {pendingSeasonal && (
+                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-brand-red rounded-full border-2 border-white dark:border-gray-900" />
+                      )}
+                    </span>
                     <span className="hidden nav:block max-w-[80px] truncate text-xs">
                       {user.email?.split("@")[0]}
                     </span>
@@ -222,6 +258,23 @@ const Navigation = () => {
                   className="rounded-2xl border-0 shadow-xl mt-2 glass-card"
                 >
                   <div className="p-2 text-xs font-medium text-gray-500 dark:text-white/50">{user.email}</div>
+                  <DropdownMenuSeparator className="bg-black/5 dark:bg-white/5" />
+                  {pendingSeasonal && dueTerm && (
+                    <>
+                      <DropdownMenuItem
+                        onClick={() => router.push("/add-courses")}
+                        className="cursor-pointer text-sm text-brand-red rounded-xl mx-1 font-medium"
+                      >
+                        <UploadCloud className="mr-2 h-4 w-4" />
+                        Upload {dueTerm} data
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="bg-black/5 dark:bg-white/5" />
+                    </>
+                  )}
+                  <DropdownMenuItem onClick={() => router.push("/settings")} className="cursor-pointer text-sm text-gray-600 dark:text-white/80 hover:text-brand-navy dark:hover:text-white rounded-xl mx-1">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-black/5 dark:bg-white/5" />
                   <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-sm text-gray-600 dark:text-white/80 hover:text-brand-red rounded-xl mx-1">
                     <LogOut className="mr-2 h-4 w-4" />
@@ -289,18 +342,24 @@ const Navigation = () => {
                 <button
                   type="button"
                   onClick={toggleTheme}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-black/[0.06] dark:bg-white/[0.10] hover:bg-black/[0.10] dark:hover:bg-white/[0.16] text-gray-600 dark:text-white/75 border border-black/[0.06] dark:border-white/[0.10] transition-colors duration-[420ms] ease-in-out motion-reduce:transition-none"
+                  className="flex items-center justify-center p-2 rounded-full text-sm font-medium bg-black/[0.06] dark:bg-white/[0.10] hover:bg-black/[0.10] dark:hover:bg-white/[0.16] text-gray-600 dark:text-white/75 border border-black/[0.06] dark:border-white/[0.10] transition-colors duration-[420ms] ease-in-out motion-reduce:transition-none"
+                  aria-label="Toggle theme"
                 >
-                  {mounted && theme === "dark"
-                    ? <><Sun size={15} /><span className="text-xs">Light mode</span></>
-                    : <><Moon size={15} /><span className="text-xs">Dark mode</span></>
-                  }
+                  {mounted && theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
                 </button>
               </div>
 
               {user ? (
                 <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/5">
                   <div className="text-xs font-medium text-gray-400 dark:text-white/45 mb-1 px-4">{user.email}</div>
+                  <button
+                    type="button"
+                    className="w-full flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-white/80 hover:text-brand-navy dark:hover:text-white rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors duration-200"
+                    onClick={() => { router.push("/settings"); setIsMenuOpen(false); }}
+                  >
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </button>
                   <button
                     type="button"
                     className="w-full flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-white/80 hover:text-brand-red rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors duration-200"

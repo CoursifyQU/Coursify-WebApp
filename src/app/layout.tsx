@@ -6,6 +6,7 @@ import Navigation from "@/components/Navigation";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/lib/auth/auth-context";
+import OnboardingGuard from "@/components/onboarding-guard";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -36,10 +37,12 @@ export default function RootLayout({
           defaultTheme="light"
         >
           <AuthProvider>
-            <div className="flex min-h-screen flex-col">
-              <Navigation />
-              <main className="flex-1">{children}</main>
-            </div>
+            <OnboardingGuard>
+              <div className="flex min-h-screen flex-col">
+                <Navigation />
+                <main className="flex-1">{children}</main>
+              </div>
+            </OnboardingGuard>
             <Toaster />
           </AuthProvider>
         </ThemeProvider>
