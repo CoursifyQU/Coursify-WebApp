@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Menu, X, LogOut, User, Sun, Moon } from "lucide-react"
+import { Menu, X, LogOut, User, Sun, Moon, Settings } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useAuth } from "@/lib/auth/auth-context"
 import {
@@ -223,6 +223,11 @@ const Navigation = () => {
                 >
                   <div className="p-2 text-xs font-medium text-gray-500 dark:text-white/50">{user.email}</div>
                   <DropdownMenuSeparator className="bg-black/5 dark:bg-white/5" />
+                  <DropdownMenuItem onClick={() => router.push("/settings")} className="cursor-pointer text-sm text-gray-600 dark:text-white/80 hover:text-brand-navy dark:hover:text-white rounded-xl mx-1">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-black/5 dark:bg-white/5" />
                   <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-sm text-gray-600 dark:text-white/80 hover:text-brand-red rounded-xl mx-1">
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign out
@@ -301,6 +306,14 @@ const Navigation = () => {
               {user ? (
                 <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/5">
                   <div className="text-xs font-medium text-gray-400 dark:text-white/45 mb-1 px-4">{user.email}</div>
+                  <button
+                    type="button"
+                    className="w-full flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-white/80 hover:text-brand-navy dark:hover:text-white rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors duration-200"
+                    onClick={() => { router.push("/settings"); setIsMenuOpen(false); }}
+                  >
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </button>
                   <button
                     type="button"
                     className="w-full flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-white/80 hover:text-brand-red rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors duration-200"

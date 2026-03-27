@@ -80,6 +80,24 @@ export interface CoursePageResult {
   totalPages: number;
 }
 
+// User Profile & Access Types
+export interface UserProfile {
+  id: string;                       // PK, matches auth.users.id
+  display_name: string | null;
+  year_of_study: number;            // 1–6
+  current_semester: number | null;  // 1 or 2; null until onboarding
+  onboarding_completed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AccessStatus {
+  has_access: boolean;
+  is_exempt: boolean;
+  upload_count: number;             // only status='processed' uploads
+  needs_onboarding: boolean;
+}
+
 // PDF Upload Types
 export interface ParsedCourseRow {
   course_code: string;
