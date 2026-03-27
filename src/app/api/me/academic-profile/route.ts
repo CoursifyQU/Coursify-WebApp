@@ -43,20 +43,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error }, { status: 401 });
   }
 
-  let body: { year_of_study: number; current_semester: number };
+  let body: { semesters_completed: number };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { year_of_study, current_semester } = body;
+  const { semesters_completed } = body;
 
-  if (!Number.isInteger(year_of_study) || year_of_study < 1 || year_of_study > 6) {
-    return NextResponse.json({ error: "year_of_study must be 1–6" }, { status: 400 });
-  }
-  if (current_semester !== 1 && current_semester !== 2) {
-    return NextResponse.json({ error: "current_semester must be 1 or 2" }, { status: 400 });
+  if (!Number.isInteger(semesters_completed) || semesters_completed < 0 || semesters_completed > 8) {
+    return NextResponse.json({ error: "semesters_completed must be 0–8" }, { status: 400 });
   }
 
   const now = new Date().toISOString();
@@ -65,8 +62,7 @@ export async function POST(request: NextRequest) {
     .upsert(
       {
         id: user.id,
-        year_of_study,
-        current_semester,
+        semesters_completed,
         onboarding_completed: true,
         updated_at: now,
       },

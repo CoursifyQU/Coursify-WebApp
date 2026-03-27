@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Pencil, Check, X, UploadCloud } from "lucide-react";
+import { Pencil, Check, X, UploadCloud, RefreshCw } from "lucide-react";
 import { useAuth } from "@/lib/auth/auth-context";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { toast } from "@/components/ui/use-toast";
@@ -13,34 +13,26 @@ type UploadRow = {
   id: string;
   original_filename: string;
   status: string;
-  uploaded_at: string | null;
+  term: string | null;
   processed_at: string | null;
 };
 
-const YEAR_LABELS: Record<number, string> = {
-  1: "1st Year",
-  2: "2nd Year",
-  3: "3rd Year",
-  4: "4th Year",
-  5: "5th Year",
-  6: "6th+ Year",
-};
+const SEMESTERS_OPTIONS = [
+  { label: "None", sublabel: "1st sem", value: 0 },
+  { label: "1", value: 1 },
+  { label: "2", value: 2 },
+  { label: "3", value: 3 },
+  { label: "4", value: 4 },
+  { label: "5", value: 5 },
+  { label: "6", value: 6 },
+  { label: "7", value: 7 },
+  { label: "8+", value: 8 },
+];
 
-const SEMESTER_LABELS: Record<number, string> = {
-  1: "1st Semester",
-  2: "2nd Semester",
-};
-
-const YEAR_OPTIONS = [1, 2, 3, 4, 5, 6];
-const SEMESTER_OPTIONS = [1, 2];
-
-function getCurrentSemester(): 1 | 2 {
-  const month = new Date().getMonth() + 1; // 1–12
-  return month >= 9 ? 1 : 2; // Sept–Dec = Semester 1, Jan–Aug = Semester 2
-}
-
-function isSemesterDisabled(semester: number): boolean {
-  return semester !== getCurrentSemester();
+function semestersLabel(n: number): string {
+  if (n === 0) return "None (1st semester)";
+  if (n >= 8) return "8+ semesters";
+  return `${n} semester${n === 1 ? "" : "s"}`;
 }
 
 function StatusBadge({ status }: { status: AccessStatus }) {
@@ -48,7 +40,7 @@ function StatusBadge({ status }: { status: AccessStatus }) {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold px-3 py-1">
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-        Exempt · First Year
+        Exempt · First Semester
       </span>
     );
   }
@@ -60,6 +52,16 @@ function StatusBadge({ status }: { status: AccessStatus }) {
       </span>
     );
   }
+  // Seasonal gate — quota met but a specific term is outstanding
+  if (status.pending_seasonal_upload && status.upload_count >= status.required_uploads) {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-semibold px-3 py-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+        Locked · Upload {status.due_term} data
+      </span>
+    );
+  }
+  // Base quota not met
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-semibold px-3 py-1">
       <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
@@ -107,9 +109,9 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
 
   const [editing, setEditing] = useState(false);
-  const [editYear, setEditYear] = useState<number | null>(null);
-  const [editSemester, setEditSemester] = useState<number | null>(null);
+  const [editSemesters, setEditSemesters] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -117,56 +119,56 @@ export default function SettingsPage() {
     }
   }, [user, authLoading, router]);
 
+  const load = async (silent = false) => {
+    if (!user) return;
+    if (!silent) setLoading(true);
+    else setRefreshing(true);
+    try {
+      const { data: session } = await getSupabaseClient().auth.getSession();
+      const token = session?.session?.access_token;
+      if (!token) return;
+
+      const headers = { Authorization: `Bearer ${token}` };
+
+      const [profileRes, statusRes, uploadsRes] = await Promise.all([
+        fetch("/api/me/academic-profile", { headers }),
+        fetch("/api/me/access-status", { headers }),
+        fetch("/api/me/uploads", { headers }),
+      ]);
+
+      if (profileRes.ok) {
+        const { profile: p } = await profileRes.json();
+        setProfile(p);
+      }
+      if (statusRes.ok) {
+        const s = await statusRes.json();
+        setAccessStatus(s);
+      }
+      if (uploadsRes.ok) {
+        const { uploads: u } = await uploadsRes.json();
+        setUploads(u ?? []);
+      }
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
   useEffect(() => {
     if (!user) return;
-
-    const load = async () => {
-      try {
-        const { data: session } = await getSupabaseClient().auth.getSession();
-        const token = session?.session?.access_token;
-        if (!token) return;
-
-        const headers = { Authorization: `Bearer ${token}` };
-
-        const [profileRes, statusRes, uploadsRes] = await Promise.all([
-          fetch("/api/me/academic-profile", { headers }),
-          fetch("/api/me/access-status", { headers }),
-          getSupabaseClient()
-            .from("distribution_uploads")
-            .select("id, original_filename, status, uploaded_at, processed_at")
-            .eq("user_id", user.id)
-            .order("uploaded_at", { ascending: false }),
-        ]);
-
-        if (profileRes.ok) {
-          const { profile: p } = await profileRes.json();
-          setProfile(p);
-        }
-        if (statusRes.ok) {
-          const s = await statusRes.json();
-          setAccessStatus(s);
-        }
-        if (!uploadsRes.error) {
-          setUploads(uploadsRes.data ?? []);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
     void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const startEdit = () => {
-    setEditYear(profile?.year_of_study ?? null);
-    setEditSemester(getCurrentSemester());
+    setEditSemesters(profile?.semesters_completed ?? null);
     setEditing(true);
   };
 
   const cancelEdit = () => setEditing(false);
 
   const saveProfile = async () => {
-    if (!editYear || !editSemester) return;
+    if (editSemesters === null) return;
     setSaving(true);
     try {
       const { data: session } = await getSupabaseClient().auth.getSession();
@@ -179,7 +181,7 @@ export default function SettingsPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ year_of_study: editYear, current_semester: editSemester }),
+        body: JSON.stringify({ semesters_completed: editSemesters }),
       });
 
       if (!res.ok) {
@@ -191,7 +193,6 @@ export default function SettingsPage() {
       setProfile(updated);
       setEditing(false);
 
-      // Re-fetch access status since year/semester change affects exemption
       const statusRes = await fetch("/api/me/access-status", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -234,7 +235,10 @@ export default function SettingsPage() {
               <StatusBadge status={accessStatus} />
               {!accessStatus.has_access && !accessStatus.needs_onboarding && (
                 <p className="text-sm text-brand-navy/70 dark:text-white/70">
-                  Upload a SOLUS grade distribution PDF to unlock Queen&apos;s Answers.{" "}
+                  {accessStatus.pending_seasonal_upload && accessStatus.upload_count >= accessStatus.required_uploads
+                    ? `Upload your ${accessStatus.due_term} SOLUS grade distribution to keep access.`
+                    : "Upload your SOLUS grade distribution PDFs to unlock Queen's Answers."
+                  }{" "}
                   <Link href="/add-courses" className="text-brand-red hover:underline font-medium">
                     Upload now →
                   </Link>
@@ -272,75 +276,45 @@ export default function SettingsPage() {
               </Link>
             </div>
           ) : !editing ? (
-            <div className="flex gap-6">
-              <div>
-                <div className="text-xs text-gray-400 dark:text-gray-500 mb-0.5">Year</div>
-                <div className="text-sm font-semibold text-brand-navy dark:text-white">
-                  {YEAR_LABELS[profile.year_of_study] ?? `Year ${profile.year_of_study}`}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-400 dark:text-gray-500 mb-0.5">Semester</div>
-                <div className="text-sm font-semibold text-brand-navy dark:text-white">
-                  {profile.current_semester
-                    ? SEMESTER_LABELS[profile.current_semester]
-                    : "—"}
-                </div>
+            <div>
+              <div className="text-xs text-gray-400 dark:text-gray-500 mb-0.5">Semesters Completed</div>
+              <div className="text-sm font-semibold text-brand-navy dark:text-white">
+                {semestersLabel(profile.semesters_completed)}
               </div>
             </div>
           ) : (
             <div className="flex flex-col gap-4">
               <div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-2.5">Year</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400 mb-2.5">Semesters Completed</div>
                 <div className="grid grid-cols-3 gap-2">
-                  {YEAR_OPTIONS.map((y) => (
+                  {SEMESTERS_OPTIONS.map((opt) => (
                     <button
-                      key={y}
+                      key={opt.value}
                       type="button"
-                      onClick={() => setEditYear(y)}
+                      onClick={() => setEditSemesters(opt.value)}
                       className={`rounded-full px-3 py-2.5 text-sm font-semibold border transition-all duration-200
                         focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy/40
-                        ${editYear === y
+                        flex flex-col items-center leading-tight
+                        ${editSemesters === opt.value
                           ? "bg-brand-navy text-white border-brand-navy shadow-md scale-[1.03]"
                           : "bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white hover:bg-brand-navy/10 dark:hover:bg-white/[0.12] hover:border-brand-navy/25"
                         }`}
                     >
-                      {YEAR_LABELS[y]}
+                      <span>{opt.label}</span>
+                      {opt.sublabel && (
+                        <span className={`text-[10px] mt-0.5 ${editSemesters === opt.value ? "text-white/70" : "text-brand-navy/50 dark:text-white/40"}`}>
+                          {opt.sublabel}
+                        </span>
+                      )}
                     </button>
                   ))}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-2.5">Semester</div>
-                <div className="grid grid-cols-2 gap-2">
-                  {SEMESTER_OPTIONS.map((s) => {
-                    const disabled = isSemesterDisabled(s);
-                    return (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => !disabled && setEditSemester(s)}
-                        disabled={disabled}
-                        className={`rounded-full px-3 py-2.5 text-sm font-semibold border transition-all duration-200
-                          focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy/40
-                          ${disabled
-                            ? "opacity-35 cursor-not-allowed bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white"
-                            : editSemester === s
-                              ? "bg-brand-navy text-white border-brand-navy shadow-md scale-[1.03]"
-                              : "bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white hover:bg-brand-navy/10 dark:hover:bg-white/[0.12] hover:border-brand-navy/25"
-                          }`}
-                      >
-                        {SEMESTER_LABELS[s]}
-                      </button>
-                    );
-                  })}
                 </div>
               </div>
               <div className="flex gap-2 mt-1">
                 <button
                   type="button"
                   onClick={saveProfile}
-                  disabled={!editYear || !editSemester || saving}
+                  disabled={editSemesters === null || saving}
                   className="liquid-btn-red rounded-full px-5 py-2 text-sm font-semibold text-white disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none"
                 >
                   {saving ? "Saving…" : "Save"}
@@ -363,13 +337,24 @@ export default function SettingsPage() {
             <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               Upload History
             </h2>
-            <Link
-              href="/add-courses"
-              className="flex items-center gap-1.5 text-xs text-brand-navy dark:text-white/70 hover:text-brand-red transition-colors"
-            >
-              <UploadCloud className="w-3.5 h-3.5" />
-              Upload
-            </Link>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => void load(true)}
+                disabled={refreshing}
+                className="flex items-center gap-1.5 text-xs text-brand-navy dark:text-white/70 hover:text-brand-red transition-colors disabled:opacity-40"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
+                Refresh
+              </button>
+              <Link
+                href="/add-courses"
+                className="flex items-center gap-1.5 text-xs text-brand-navy dark:text-white/70 hover:text-brand-red transition-colors"
+              >
+                <UploadCloud className="w-3.5 h-3.5" />
+                Upload
+              </Link>
+            </div>
           </div>
 
           {uploads.length === 0 ? (
@@ -391,10 +376,10 @@ export default function SettingsPage() {
                 <div key={u.id} className="flex items-center justify-between py-3 gap-3">
                   <div className="min-w-0">
                     <div className="text-sm font-medium text-brand-navy dark:text-white truncate">
-                      {u.original_filename}
+                      {u.term ?? u.original_filename}
                     </div>
                     <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                      {formatDate(u.uploaded_at)}
+                      {u.original_filename} · {formatDate(u.processed_at)}
                     </div>
                   </div>
                   <UploadStatusBadge status={u.status} />

@@ -82,10 +82,9 @@ export interface CoursePageResult {
 
 // User Profile & Access Types
 export interface UserProfile {
-  id: string;                       // PK, matches auth.users.id
+  id: string;                         // PK, matches auth.users.id
   display_name: string | null;
-  year_of_study: number;            // 1–6
-  current_semester: number | null;  // 1 or 2; null until onboarding
+  semesters_completed: number;        // 0–8+; set at onboarding
   onboarding_completed: boolean;
   created_at: string;
   updated_at: string;
@@ -95,8 +94,10 @@ export interface AccessStatus {
   has_access: boolean;
   is_exempt: boolean;
   upload_count: number;             // only status='processed' uploads
-  required_uploads: number;         // 0 = exempt, 1–6 based on year/semester
+  required_uploads: number;         // 0 = exempt, 1–6 based on semesters completed
   needs_onboarding: boolean;
+  pending_seasonal_upload: boolean; // true if due term not yet uploaded
+  due_term: string | null;          // e.g. "Fall 2025"
 }
 
 // PDF Upload Types

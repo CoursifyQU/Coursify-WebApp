@@ -2,43 +2,30 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useAuth } from "@/lib/auth/auth-context";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import { useMotionTier } from "@/lib/motion-prefs";
 
-const YEAR_OPTIONS = [
-  { label: "1st Year", value: 1 },
-  { label: "2nd Year", value: 2 },
-  { label: "3rd Year", value: 3 },
-  { label: "4th Year", value: 4 },
-  { label: "5th Year", value: 5 },
-  { label: "6th+ Year", value: 6 },
-];
-
 const SEMESTER_OPTIONS = [
-  { label: "1st Semester", value: 1 },
-  { label: "2nd Semester", value: 2 },
+  { label: "None", sublabel: "1st semester", value: 0 },
+  { label: "1", value: 1 },
+  { label: "2", value: 2 },
+  { label: "3", value: 3 },
+  { label: "4", value: 4 },
+  { label: "5", value: 5 },
+  { label: "6", value: 6 },
+  { label: "7", value: 7 },
+  { label: "8+", value: 8 },
 ];
-
-function getCurrentSemester(): 1 | 2 {
-  const month = new Date().getMonth() + 1; // 1–12
-  return month >= 9 ? 1 : 2; // Sept–Dec = Semester 1, Jan–Aug = Semester 2
-}
-
-function isSemesterDisabled(semester: number): boolean {
-  return semester !== getCurrentSemester();
-}
 
 export default function OnboardingPage() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const lite = useMotionTier() === "lite";
 
-  const [step, setStep] = useState<1 | 2>(1);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [selectedSemester, setSelectedSemester] = useState<number | null>(getCurrentSemester());
+  const [selected, setSelected] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checking, setChecking] = useState(true);
 
@@ -68,7 +55,7 @@ export default function OnboardingPage() {
   }, [user, router]);
 
   const handleSubmit = async () => {
-    if (!selectedYear || !selectedSemester || !user) return;
+    if (selected === null || !user) return;
     setIsSubmitting(true);
     try {
       const { data: session } = await getSupabaseClient().auth.getSession();
@@ -77,7 +64,7 @@ export default function OnboardingPage() {
       const res = await fetch("/api/me/academic-profile", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ year_of_study: selectedYear, current_semester: selectedSemester }),
+        body: JSON.stringify({ semesters_completed: selected }),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -114,132 +101,64 @@ export default function OnboardingPage() {
       {/* Card */}
       <motion.div
         className="relative z-10 glass-modal-panel w-full max-w-md rounded-[1.75rem] p-7 sm:p-8"
-        initial={false}
-        animate={lite ? undefined : { opacity: 1, y: 0 }}
+        initial={lite ? false : { opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={lite ? { duration: 0 } : { duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
         {/* Accent bar */}
         <div className="glass-modal-accent mx-auto mb-5 h-1.5 w-20 rounded-full opacity-90" />
 
-        {/* Step indicator */}
-        <div className="flex items-center gap-2 mb-5">
-          <div className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${step >= 1 ? "glass-modal-accent opacity-90" : "bg-brand-navy/10 dark:bg-white/10"}`} />
-          <div className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${step >= 2 ? "glass-modal-accent opacity-90" : "bg-brand-navy/10 dark:bg-white/10"}`} />
+        <h1 className="text-2xl sm:text-3xl font-bold text-brand-navy dark:text-white mb-1.5 tracking-tight">
+          How many semesters have you completed?
+        </h1>
+        <p className="text-sm text-brand-navy/60 dark:text-white/55 mb-6 leading-relaxed">
+          This determines how much grade data you have available to contribute.
+        </p>
+
+        <div className="grid grid-cols-3 gap-2.5 mb-6">
+          {SEMESTER_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setSelected(opt.value)}
+              className={`rounded-full px-4 py-3 text-sm font-semibold transition-all duration-200
+                border focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy/40
+                flex flex-col items-center leading-tight
+                ${selected === opt.value
+                  ? "bg-brand-navy text-white border-brand-navy shadow-md scale-[1.03]"
+                  : "bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white hover:bg-brand-navy/10 dark:hover:bg-white/[0.12] hover:border-brand-navy/25"
+                }`}
+            >
+              <span>{opt.label}</span>
+              {opt.sublabel && (
+                <span className={`text-[10px] mt-0.5 ${selected === opt.value ? "text-white/70" : "text-brand-navy/50 dark:text-white/40"}`}>
+                  {opt.sublabel}
+                </span>
+              )}
+            </button>
+          ))}
         </div>
 
-        <AnimatePresence mode="wait">
-          {step === 1 ? (
-            <motion.div
-              key="step1"
-              initial={lite ? false : { opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={lite ? undefined : { opacity: 0, x: -16 }}
-              transition={{ duration: 0.22, ease: "easeOut" }}
-            >
-              <h1 className="text-2xl sm:text-3xl font-bold text-brand-navy dark:text-white mb-1.5 tracking-tight">
-                What year are you in?
-              </h1>
-              <p className="text-sm text-brand-navy/60 dark:text-white/55 mb-6 leading-relaxed">
-                This tells us whether you&apos;re required to contribute grade data.
-              </p>
+        <button
+          type="button"
+          disabled={selected === null || isSubmitting}
+          onClick={handleSubmit}
+          className="liquid-btn-red w-full rounded-full py-3.5 font-semibold text-white text-sm disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none"
+        >
+          {isSubmitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              Getting started…
+            </span>
+          ) : "Get Started →"}
+        </button>
 
-              <div className="grid grid-cols-2 gap-2.5 mb-5">
-                {YEAR_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => setSelectedYear(opt.value)}
-                    className={`rounded-full px-4 py-3 text-sm font-semibold transition-all duration-200
-                      border focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy/40
-                      ${selectedYear === opt.value
-                        ? "bg-brand-navy dark:bg-brand-navy text-white border-brand-navy shadow-md scale-[1.03]"
-                        : "bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white hover:bg-brand-navy/10 dark:hover:bg-white/[0.12] hover:border-brand-navy/25"
-                      }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                disabled={selectedYear === null}
-                onClick={() => setStep(2)}
-                className="liquid-btn-red w-full rounded-full py-3.5 font-semibold text-white text-sm disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none"
-              >
-                Continue →
-              </button>
-
-              <p className="mt-4 text-xs text-center text-brand-navy/40 dark:text-white/35">
-                First-year, first-semester students are exempt from contributing.
-              </p>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="step2"
-              initial={lite ? false : { opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={lite ? undefined : { opacity: 0, x: -16 }}
-              transition={{ duration: 0.22, ease: "easeOut" }}
-            >
-              <h1 className="text-2xl sm:text-3xl font-bold text-brand-navy dark:text-white mb-1.5 tracking-tight">
-                Which semester?
-              </h1>
-              <p className="text-sm text-brand-navy/60 dark:text-white/55 mb-6 leading-relaxed">
-                We use this to understand your current academic stage.
-              </p>
-
-              <div className="grid grid-cols-2 gap-2.5 mb-5">
-                {SEMESTER_OPTIONS.map((opt) => {
-                  const disabled = isSemesterDisabled(opt.value);
-                  return (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => !disabled && setSelectedSemester(opt.value)}
-                      disabled={disabled}
-                      className={`rounded-full px-4 py-3 text-sm font-semibold transition-all duration-200
-                        border focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy/40
-                        ${disabled
-                          ? "opacity-35 cursor-not-allowed bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white"
-                          : selectedSemester === opt.value
-                            ? "bg-brand-navy dark:bg-brand-navy text-white border-brand-navy shadow-md scale-[1.03]"
-                            : "bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white hover:bg-brand-navy/10 dark:hover:bg-white/[0.12] hover:border-brand-navy/25"
-                        }`}
-                    >
-                      {opt.label}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <button
-                type="button"
-                disabled={selectedSemester === null || isSubmitting}
-                onClick={handleSubmit}
-                className="liquid-btn-red w-full rounded-full py-3.5 font-semibold text-white text-sm disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none"
-              >
-                {isSubmitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    Getting started…
-                  </span>
-                ) : "Get Started →"}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                className="mt-3 w-full text-sm text-brand-navy/45 dark:text-white/35 hover:text-brand-navy dark:hover:text-white transition-colors text-center py-1"
-              >
-                ← Back
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <p className="mt-4 text-xs text-center text-brand-navy/40 dark:text-white/35">
+          Students in their first semester are exempt from contributing.
+        </p>
       </motion.div>
     </div>
   );
