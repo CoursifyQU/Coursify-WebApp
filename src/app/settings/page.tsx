@@ -34,6 +34,15 @@ const SEMESTER_LABELS: Record<number, string> = {
 const YEAR_OPTIONS = [1, 2, 3, 4, 5, 6];
 const SEMESTER_OPTIONS = [1, 2];
 
+function getCurrentSemester(): 1 | 2 {
+  const month = new Date().getMonth() + 1; // 1–12
+  return month >= 9 ? 1 : 2; // Sept–Dec = Semester 1, Jan–Aug = Semester 2
+}
+
+function isSemesterDisabled(semester: number): boolean {
+  return semester !== getCurrentSemester();
+}
+
 function StatusBadge({ status }: { status: AccessStatus }) {
   if (status.is_exempt) {
     return (
@@ -43,18 +52,18 @@ function StatusBadge({ status }: { status: AccessStatus }) {
       </span>
     );
   }
-  if (status.upload_count > 0) {
+  if (status.has_access) {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-semibold px-3 py-1">
         <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-        Contributor · {status.upload_count} {status.upload_count === 1 ? "upload" : "uploads"}
+        Contributor · {status.upload_count}/{status.required_uploads} uploads
       </span>
     );
   }
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-semibold px-3 py-1">
       <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-      Locked · Upload to Unlock
+      Locked · {status.upload_count}/{status.required_uploads} uploads
     </span>
   );
 }
@@ -150,7 +159,7 @@ export default function SettingsPage() {
 
   const startEdit = () => {
     setEditYear(profile?.year_of_study ?? null);
-    setEditSemester(profile?.current_semester ?? null);
+    setEditSemester(getCurrentSemester());
     setEditing(true);
   };
 
@@ -304,21 +313,27 @@ export default function SettingsPage() {
               <div>
                 <div className="text-xs text-gray-500 dark:text-gray-400 mb-2.5">Semester</div>
                 <div className="grid grid-cols-2 gap-2">
-                  {SEMESTER_OPTIONS.map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => setEditSemester(s)}
-                      className={`rounded-full px-3 py-2.5 text-sm font-semibold border transition-all duration-200
-                        focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy/40
-                        ${editSemester === s
-                          ? "bg-brand-navy text-white border-brand-navy shadow-md scale-[1.03]"
-                          : "bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white hover:bg-brand-navy/10 dark:hover:bg-white/[0.12] hover:border-brand-navy/25"
-                        }`}
-                    >
-                      {SEMESTER_LABELS[s]}
-                    </button>
-                  ))}
+                  {SEMESTER_OPTIONS.map((s) => {
+                    const disabled = isSemesterDisabled(s);
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => !disabled && setEditSemester(s)}
+                        disabled={disabled}
+                        className={`rounded-full px-3 py-2.5 text-sm font-semibold border transition-all duration-200
+                          focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy/40
+                          ${disabled
+                            ? "opacity-35 cursor-not-allowed bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white"
+                            : editSemester === s
+                              ? "bg-brand-navy text-white border-brand-navy shadow-md scale-[1.03]"
+                              : "bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white hover:bg-brand-navy/10 dark:hover:bg-white/[0.12] hover:border-brand-navy/25"
+                          }`}
+                      >
+                        {SEMESTER_LABELS[s]}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
               <div className="flex gap-2 mt-1">

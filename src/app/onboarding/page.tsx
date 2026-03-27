@@ -22,6 +22,15 @@ const SEMESTER_OPTIONS = [
   { label: "2nd Semester", value: 2 },
 ];
 
+function getCurrentSemester(): 1 | 2 {
+  const month = new Date().getMonth() + 1; // 1–12
+  return month >= 9 ? 1 : 2; // Sept–Dec = Semester 1, Jan–Aug = Semester 2
+}
+
+function isSemesterDisabled(semester: number): boolean {
+  return semester !== getCurrentSemester();
+}
+
 export default function OnboardingPage() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
@@ -29,7 +38,7 @@ export default function OnboardingPage() {
 
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [selectedSemester, setSelectedSemester] = useState<number | null>(null);
+  const [selectedSemester, setSelectedSemester] = useState<number | null>(getCurrentSemester());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checking, setChecking] = useState(true);
 
@@ -181,21 +190,27 @@ export default function OnboardingPage() {
               </p>
 
               <div className="grid grid-cols-2 gap-2.5 mb-5">
-                {SEMESTER_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => setSelectedSemester(opt.value)}
-                    className={`rounded-full px-4 py-3 text-sm font-semibold transition-all duration-200
-                      border focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy/40
-                      ${selectedSemester === opt.value
-                        ? "bg-brand-navy dark:bg-brand-navy text-white border-brand-navy shadow-md scale-[1.03]"
-                        : "bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white hover:bg-brand-navy/10 dark:hover:bg-white/[0.12] hover:border-brand-navy/25"
-                      }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+                {SEMESTER_OPTIONS.map((opt) => {
+                  const disabled = isSemesterDisabled(opt.value);
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => !disabled && setSelectedSemester(opt.value)}
+                      disabled={disabled}
+                      className={`rounded-full px-4 py-3 text-sm font-semibold transition-all duration-200
+                        border focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy/40
+                        ${disabled
+                          ? "opacity-35 cursor-not-allowed bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white"
+                          : selectedSemester === opt.value
+                            ? "bg-brand-navy dark:bg-brand-navy text-white border-brand-navy shadow-md scale-[1.03]"
+                            : "bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white hover:bg-brand-navy/10 dark:hover:bg-white/[0.12] hover:border-brand-navy/25"
+                        }`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
               </div>
 
               <button

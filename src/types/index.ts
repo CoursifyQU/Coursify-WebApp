@@ -95,6 +95,7 @@ export interface AccessStatus {
   has_access: boolean;
   is_exempt: boolean;
   upload_count: number;             // only status='processed' uploads
+  required_uploads: number;         // 0 = exempt, 1–6 based on year/semester
   needs_onboarding: boolean;
 }
 

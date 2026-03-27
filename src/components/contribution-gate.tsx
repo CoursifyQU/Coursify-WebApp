@@ -75,8 +75,8 @@ export default function ContributionGate({ children }: Props) {
             </h2>
 
             <p className="text-sm leading-relaxed text-brand-navy/70 dark:text-white/70 mb-6 max-w-sm">
-              Queen&apos;s Answers is powered by community-contributed grade data. Upload at least
-              one SOLUS grade distribution PDF to get access.
+              Queen&apos;s Answers is powered by community-contributed grade data. Upload your SOLUS grade distribution
+              PDF{status && status.required_uploads > 1 ? `s (${status.upload_count}/${status.required_uploads} done)` : ""} to get access.
             </p>
 
             <Link

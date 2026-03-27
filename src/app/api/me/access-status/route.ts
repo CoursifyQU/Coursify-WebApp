@@ -41,16 +41,18 @@ export async function GET(request: NextRequest) {
   const needs_onboarding =
     !profile || !profile.onboarding_completed || profile.current_semester === null;
 
-  const is_exempt = needs_onboarding
-    ? false
-    : profile.year_of_study === 1 && profile.current_semester === 1;
+  const required_uploads = needs_onboarding
+    ? 0
+    : Math.min((profile.year_of_study - 1) * 2 + (profile.current_semester - 1), 6);
 
-  const has_access = needs_onboarding ? false : is_exempt || upload_count > 0;
+  const is_exempt = required_uploads === 0;
+  const has_access = needs_onboarding ? false : upload_count >= required_uploads;
 
   const status: AccessStatus = {
     has_access,
     is_exempt,
     upload_count,
+    required_uploads,
     needs_onboarding,
   };
 
