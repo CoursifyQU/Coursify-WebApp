@@ -294,18 +294,19 @@ export default function SettingsPage() {
                       onClick={() => setEditSemesters(opt.value)}
                       className={`rounded-full px-3 py-2.5 text-sm font-semibold border transition-all duration-200
                         focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy/40
-                        flex flex-col items-center leading-tight
                         ${editSemesters === opt.value
                           ? "bg-brand-navy text-white border-brand-navy shadow-md scale-[1.03]"
                           : "bg-brand-navy/5 dark:bg-white/[0.07] border-brand-navy/15 dark:border-white/10 text-brand-navy dark:text-white hover:bg-brand-navy/10 dark:hover:bg-white/[0.12] hover:border-brand-navy/25"
                         }`}
                     >
-                      <span>{opt.label}</span>
-                      {opt.sublabel && (
-                        <span className={`text-[10px] mt-0.5 ${editSemesters === opt.value ? "text-white/70" : "text-brand-navy/50 dark:text-white/40"}`}>
-                          {opt.sublabel}
-                        </span>
-                      )}
+                      <span>
+                        {opt.label}
+                        {opt.sublabel && (
+                          <span className={`text-[10px] ml-1 ${editSemesters === opt.value ? "text-white/70" : "text-brand-navy/50 dark:text-white/40"}`}>
+                            · {opt.sublabel}
+                          </span>
+                        )}
+                      </span>
                     </button>
                   ))}
                 </div>
