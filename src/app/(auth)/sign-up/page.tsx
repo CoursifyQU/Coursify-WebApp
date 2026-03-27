@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@/lib/auth/auth-context";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { buildAuthHref, getSafeRedirectPath } from "@/lib/auth/safe-redirect";
 import { Eye, EyeOff } from "lucide-react";
 import { useMotionTier } from "@/lib/motion-prefs";
 
@@ -23,6 +25,17 @@ export default function SignUp() {
   const { signUp } = useAuth();
   const supabase = getSupabaseClient();
   const lite = useMotionTier() === "lite";
+  const searchParams = useSearchParams();
+
+  const nextPath = useMemo(
+    () => getSafeRedirectPath(searchParams.get("redirect"), "/"),
+    [searchParams]
+  );
+
+  const signInHref = useMemo(
+    () => buildAuthHref("/sign-in", nextPath),
+    [nextPath]
+  );
 
   const isQueensEmail = (email: string) => email.endsWith("@queensu.ca");
 
@@ -140,7 +153,7 @@ export default function SignUp() {
                   Please check your inbox and click the link to verify your account.
                 </p>
               </div>
-              <Link href="/sign-in" className="block text-center text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium text-sm transition-colors duration-300">
+              <Link href={signInHref} className="block text-center text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium text-sm transition-colors duration-300">
                 Return to sign in
               </Link>
             </motion.div>
@@ -154,7 +167,7 @@ export default function SignUp() {
                     <Button type="button" variant="outline" size="sm" onClick={resetAccount} disabled={isResetting} className="text-brand-navy dark:text-white border-brand-gold/40 dark:border-brand-gold/40 hover:bg-brand-gold/10 dark:hover:bg-brand-gold/10 text-xs transition-all duration-300">
                       {isResetting ? "Processing..." : "Reset Account"}
                     </Button>
-                    <Link href="/sign-in">
+                    <Link href={signInHref}>
                       <Button type="button" variant="outline" size="sm" className="text-brand-navy dark:text-white border-brand-gold/40 dark:border-brand-gold/40 hover:bg-brand-gold/10 dark:hover:bg-brand-gold/10 text-xs transition-all duration-300">
                         Sign In Instead
                       </Button>
@@ -234,7 +247,7 @@ export default function SignUp() {
 
               <motion.p className="text-center text-sm text-gray-500 dark:text-gray-400" initial={false} animate={lite ? undefined : { opacity: 1 }} transition={lite ? { duration: 0 } : { duration: 0.5, delay: 0.6 }}>
                 Already have an account?{" "}
-                <Link href="/sign-in" className="text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium transition-colors duration-300">
+                <Link href={signInHref} className="text-brand-red hover:text-brand-navy dark:hover:text-blue-400 font-medium transition-colors duration-300">
                   Sign in
                 </Link>
               </motion.p>
