@@ -2,10 +2,10 @@ import { Redis } from "@upstash/redis"
 
 let _redis: Redis | null = null
 
-function getRedis(): Redis {
+function getRedis(): Redis | null {
   if (_redis) return _redis
   if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
-    throw new Error("Missing UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN")
+    return null
   }
   _redis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL,
@@ -15,7 +15,26 @@ function getRedis(): Redis {
 }
 
 export const redis = {
-  get: <T = unknown>(...args: Parameters<Redis["get"]>) => getRedis().get<T>(...args),
-  set: (...args: Parameters<Redis["set"]>) => getRedis().set(...args),
-  del: (...args: Parameters<Redis["del"]>) => getRedis().del(...args),
+  get: async <T = unknown>(...args: Parameters<Redis["get"]>): Promise<T | null> => {
+    try {
+      return await getRedis()?.get<T>(...args) ?? null
+    } catch (err) {
+      console.warn("[redis] get failed:", err)
+      return null
+    }
+  },
+  set: async (...args: Parameters<Redis["set"]>): Promise<void> => {
+    try {
+      await getRedis()?.set(...args)
+    } catch (err) {
+      console.warn("[redis] set failed:", err)
+    }
+  },
+  del: async (...args: Parameters<Redis["del"]>): Promise<void> => {
+    try {
+      await getRedis()?.del(...args)
+    } catch (err) {
+      console.warn("[redis] del failed:", err)
+    }
+  },
 }
