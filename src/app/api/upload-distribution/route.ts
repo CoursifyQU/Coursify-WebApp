@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { extractTextFromPdf, validateSolusFormat, parseCourseRows } from "@/lib/pdf/parse-distribution";
 import type { UploadDistributionResponse } from "@/types";
+import { redis } from "@/lib/redis";
 
 export const runtime = "nodejs";
 
@@ -192,6 +193,18 @@ export async function POST(request: NextRequest) {
     duplicates,
     errors,
   };
+
+  // Invalidate user-specific and affected course caches on successful upload
+  if (errors.length === 0) {
+    const invalidations: Promise<unknown>[] = [
+      redis.del(`access_status:${user.id}`),
+      redis.del(`uploads:${user.id}`),
+    ];
+    for (const code of courseCodes) {
+      invalidations.push(redis.del(`course:${code}`));
+    }
+    await Promise.all(invalidations);
+  }
 
   return NextResponse.json(response);
 }

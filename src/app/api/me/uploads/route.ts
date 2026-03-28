@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { redis } from "@/lib/redis";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || "";
@@ -24,6 +25,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Authentication failed" }, { status: 401 });
   }
 
+  const cacheKey = `uploads:${user.id}`;
+  const cached = await redis.get(cacheKey);
+  if (cached) {
+    return NextResponse.json({ uploads: cached });
+  }
+
   const { data, error } = await supabase
     .from("distribution_uploads")
     .select("id, original_filename, status, term, processed_at")
@@ -34,5 +41,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ uploads: data ?? [] });
+  const uploads = data ?? [];
+  await redis.set(cacheKey, uploads, { ex: 300 }); // 5 minutes
+  return NextResponse.json({ uploads });
 }
